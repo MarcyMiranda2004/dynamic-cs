@@ -36,7 +36,7 @@ const SheetHeader = () => {
 
             {/* Ritratto grande quanto la colonna, sopra la reputazione */}
             <figure className="m-0 grid content-start gap-3 xl:col-start-1 xl:row-start-1">
-                <div className="grid aspect-square w-4/5 justify-self-center place-items-center overflow-hidden border border-cpr-red/50 bg-cpr-panel">
+                <div className="grid aspect-square w-full place-items-center overflow-hidden border border-cpr-red/50 bg-cpr-panel">
                     {character.portraitUrl ? (
                         <img
                             src={character.portraitUrl}
