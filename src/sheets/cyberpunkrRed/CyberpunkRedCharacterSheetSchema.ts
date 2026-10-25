@@ -141,6 +141,7 @@ export type Skills = Record<SkillKey, SkillValue>;
 
 // #region Personaggio e salute
 export interface CharacterInfo {
+    playerName: string; // Nome del giocatore
     alias: string;
     tag: string;
     role: string; // Ruolo
@@ -151,6 +152,7 @@ export interface CharacterInfo {
     };
     improvementPoints: number; // Punti Miglioramento
     notes: string;
+    portraitUrl: string;       // URL dell'immagine del personaggio (ritratto)
 }
 
 export interface Health {
@@ -182,11 +184,19 @@ export interface Weapon {
     damage: string;      // DAN, es. "2d6"
     shots: string;       // Colpi
     rof: string;         // CF, Cadenza di Fuoco
+    ammo: string;        // Munizioni, es. "12 / 24"
     notes: string;       // Note
 }
 // #endregion
 
 // #region Background
+// Amico o storia d'amore: nome, legame con il personaggio e dettaglio libero
+export interface Relation {
+    name: string;     // Nome
+    bond: string;     // Legame
+    details: string;  // Dettaglio
+}
+
 export interface Enemy {
     who: string;           // Chi?
     why: string;           // Perché?
@@ -207,26 +217,34 @@ export interface Background {
     childhood: string;           // La Tua Infanzia
     familyCrisis: string;        // Crisi Familiare
     lifeGoal: string;            // Scopo nella Vita
-    friends: string[];           // Amici (3 slot)
-    tragicLoveStories: string[]; // Tragiche Storie d'Amore (3 slot)
+    friends: Relation[];         // Amici
+    tragicLoveStories: Relation[]; // Tragiche Storie d'Amore
     enemies: Enemy[];            // Nemici (4 righe)
     fashion: string;             // Moda
     housing: string;             // Alloggio
     rent: string;                // Affitto
     lifestyle: string;           // Stile di Vita
-    roleBackground: string;      // Background di Ruolo
+    roleBackground: RoleBackgroundField[]; // Background di Ruolo: campi etichetta/valore
+    description: string;         // Descrizione libera del personaggio
+}
+
+// Campo del background di ruolo (TIPO, PARTNER, POSTAZIONE...). Il set è estendibile.
+export interface RoleBackgroundField {
+    label: string;
+    value: string;
 }
 // #endregion
 
 // #region Equipaggiamento
 export interface EquipmentItem {
-    item: string;   // Equipaggiamento
-    notes: string;  // Note
+    item: string;          // Equipaggiamento
+    description: string;   // Descrizione mostrata al click
+    notes: string;         // Note
+    image?: string;        // URL immagine opzionale
 }
 
 export interface Equipment {
     items: EquipmentItem[];
-    ammunition: string;  // Munizioni
     money: number;       // Denaro
 }
 // #endregion
@@ -234,7 +252,8 @@ export interface Equipment {
 // #region Cyberware
 export interface CyberwareItem {
     name: string;
-    date: string;   // Data
+    date: string;         // Data
+    description: string;  // Info varie mostrate nel dettaglio
 }
 
 // Slot con componente base (es. Cyberocchio): la casella indica l'installazione
@@ -287,7 +306,7 @@ export interface CyberwareSection {
 // #endregion
 
 // #region Scheda completa
-export interface CyberpunkRedCharacterSheet extends BaseSheet {
+export interface CyberpunkRedCharacterSheetSchema extends BaseSheet {
     gameSystem: "Cyberpunk Red";
     character: CharacterInfo;
     stats: Stats;

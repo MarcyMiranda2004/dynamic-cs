@@ -19,6 +19,7 @@ export type Program = {
     att: number;     // ATT
     def: number;     // DIF
     rez: number;     // REZ
+    damage: string;  // DAN, es. "2d6"; vuoto se il programma non infligge danni
     effect: string;  // testo dell'effetto
 } & (
         | {class: "boost" | "defensive"}
