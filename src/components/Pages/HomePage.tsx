@@ -1,8 +1,9 @@
-import {gamesSheets} from "../types/games";
+import {useNavigate} from "react-router-dom";
+import {gamesSheets, type GameProps} from "../../types/games";
+import CardItems from "../common/CardItems";
 
 const HomePage = () => {
-
-    const gamesCard = gamesSheets;
+    const navigate = useNavigate();
 
     return (
         <div className="dcs-container">
@@ -12,11 +13,8 @@ const HomePage = () => {
             </div>
 
             <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 my-6">
-                {gamesCard.length > 0 && gamesCard.map((gc) => (
-                    <span key={gc.key} className="flex flex-col border border-gray-100 rounded-md cursor-pointer">
-                        <img src={gc.coverCard} alt={gc.label} className="rounded-t-md w-100" />
-                        <p className="p-4 font-semibold">{gc.label}</p>
-                    </span>
+                {gamesSheets.length > 0 && gamesSheets.map((gs: GameProps) => (
+                    <CardItems gameSheet={gs} onClick={() => navigate(`sheets/${gs.gameSystem}`)} />
                 ))}
             </div>
         </div>

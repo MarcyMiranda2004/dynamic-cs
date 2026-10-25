@@ -1,5 +1,12 @@
 import cyberpunkRedCard from "../assets/cyberpunk/cyberpunkRedCard.jpg";
 
-export const gamesSheets = [
-    {key: "cyberpunk-red", label: "Cyberpunk Red", coverCard: cyberpunkRedCard}
-]
+export interface GameProps {
+    key: string;
+    label: string;
+    gameSystem: string;
+    coverCard: string;
+};
+
+export const gamesSheets: GameProps[] = [
+    {key: "cyberpunk-red", label: "Cyberpunk Red", gameSystem: "cyberpunk-red", coverCard: cyberpunkRedCard}
+];
