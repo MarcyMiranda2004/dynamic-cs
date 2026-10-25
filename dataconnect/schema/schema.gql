@@ -1,0 +1,5 @@
+type Character @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String!
+  role: String
+}
