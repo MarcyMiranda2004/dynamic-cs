@@ -291,7 +291,7 @@ export interface CyberpunkRedCharacterSheet extends BaseSheet {
     gameSystem: "Cyberpunk Red";
     character: CharacterInfo;
     stats: Stats;
-    statsBoost: Partial<Stats>;   // caselle "su" accanto alle statistiche
+    statsBoost: Partial<Stats>;
     skills: Skills;
     health: Health;
     armor: Armor;
