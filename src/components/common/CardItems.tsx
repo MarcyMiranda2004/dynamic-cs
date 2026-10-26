@@ -14,7 +14,7 @@ const CardItems: React.FC<CardItems> = ({ gameSheet, onClick }) => {
             className="flex flex-col border border-gray-300 rounded-md cursor-pointer overflow-hidden"
             onClick={onClick}
         >
-            <img src={gameSheet.coverCard} alt={gameSheet.label} className="w-100" />
+            <img src={gameSheet.coverCard} alt={gameSheet.label} className="h-50 w-full object-cover" />
             <p className="p-3 font-semibold bg-gray-100">{gameSheet.label}</p>
         </div>
     )
