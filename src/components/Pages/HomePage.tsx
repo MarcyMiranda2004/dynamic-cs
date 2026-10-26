@@ -12,7 +12,7 @@ const HomePage = () => {
                 <span className="text-sm">scegli la tua scheda per iniziare</span>
             </div>
 
-            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 my-6">
+            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 my-6 gap-4">
                 {gamesSheets.length > 0 && gamesSheets.map((gs: GameProps) => (
                     <CardItems gameSheet={gs} onClick={() => navigate(`sheets/${gs.gameSystem}`)} />
                 ))}
