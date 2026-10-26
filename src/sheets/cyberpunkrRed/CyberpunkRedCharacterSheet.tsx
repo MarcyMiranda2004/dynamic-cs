@@ -32,9 +32,9 @@ const CyberpunkRedCharacterSheet = () => {
 
     return (
         <SheetContext.Provider value={contextValue}>
-            <div data-editing={editMode} className="group/sheet mx-auto grid w-full max-w-450 gap-4 p-3 pb-14 text-left text-(--text-h) max-sm:p-2.5 max-sm:pb-12">
-                <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-2">
-                    <h1 className="m-0 text-[1.2rem] font-extrabold tracking-widest uppercase md:text-[2rem]">
+            <div data-editing={editMode} className="group/sheet mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
+                <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-1.5">
+                    <h1 className="m-0 text-[1.1rem] font-extrabold tracking-widest uppercase md:text-[1.5rem]">
                         Cyberpunk <span className="text-cpr-red italic">Red</span>
                     </h1>
                     <button
@@ -63,7 +63,7 @@ const CyberpunkRedCharacterSheet = () => {
                             aria-selected={tab === key}
                             aria-controls="cpr-tabpanel"
                             onClick={() => setTab(key)}
-                            className={`min-h-11 shrink-0 snap-start cursor-pointer border-0 border-b-[3px] bg-transparent px-4 font-bold tracking-wide uppercase hover:text-cpr-red max-sm:px-3 ${
+                            className={`min-h-9 shrink-0 snap-start cursor-pointer border-0 border-b-[3px] bg-transparent px-3.5 font-bold tracking-wide uppercase hover:text-cpr-red max-sm:min-h-11 max-sm:px-3 ${
                                 tab === key ? "border-cpr-red text-cpr-red" : "border-transparent"
                             }`}
                         >

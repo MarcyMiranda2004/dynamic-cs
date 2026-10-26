@@ -17,7 +17,7 @@ export const TextField = ({label, value, onChange, editMode, multiline = false, 
         {editMode ? (
             multiline ? (
                 <textarea
-                    className={`${inputClass} min-h-24 resize-y`}
+                    className={`${inputClass} min-h-20 max-sm:min-h-24 resize-y`}
                     value={value}
                     placeholder={placeholder}
                     onChange={(event) => onChange(event.target.value)}

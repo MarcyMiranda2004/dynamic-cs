@@ -33,7 +33,7 @@ const EntryList = ({
                 key={index}
                 type="button"
                 onClick={() => onOpen(index)}
-                className="grid w-full min-h-11 cursor-pointer content-start gap-1 border border-cpr-red/30 bg-[color-mix(in_srgb,currentColor_4%,transparent)] px-3 py-2.5 text-left hover:border-cpr-red focus-visible:border-cpr-red focus-visible:outline-none"
+                className="grid w-full min-h-9 max-sm:min-h-11 cursor-pointer content-start gap-1 border border-cpr-red/30 bg-[color-mix(in_srgb,currentColor_4%,transparent)] px-3 py-2 text-left hover:border-cpr-red focus-visible:border-cpr-red focus-visible:outline-none"
             >
                 <span className="font-bold [overflow-wrap:anywhere]">{entry.title || 'Senza nome'}</span>
                 {entry.preview && (

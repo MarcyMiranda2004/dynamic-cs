@@ -41,15 +41,15 @@ const CyberwarePanel = () => {
     const ToggleIcon = allOpen ? ChevronsDownUp : ChevronsUpDown;
 
     return (
-        <div className="grid items-start gap-4 xl:grid-cols-[minmax(260px,340px)_1fr_minmax(260px,340px)]">
-            <div className="xl:sticky xl:top-16">
+        <div className="grid items-start gap-3 xl:grid-cols-[minmax(260px,340px)_1fr_minmax(260px,340px)]">
+            <div className="xl:sticky xl:top-14">
                 <BodySilhouette selected={selectedZone} onSelect={(zone: BodyZoneId) => setSelection({kind: "zone", zone})}/>
             </div>
 
             <CyberwareInspector selection={selection} onChange={setSelection}/>
 
             {/* Impianti extra sulla destra: sempre visibili, compattabili */}
-            <aside className="grid content-start gap-3" aria-label="Impianti extra">
+            <aside className="grid content-start gap-2" aria-label="Impianti extra">
                 <div className="flex items-center justify-between gap-2">
                     <h3 className="m-0 text-sm font-bold tracking-widest uppercase text-cpr-red">Impianti extra</h3>
                     <button type="button" onClick={() => setAllOpen(!allOpen)} className={buttonClass}>

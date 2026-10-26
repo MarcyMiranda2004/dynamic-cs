@@ -22,7 +22,7 @@ export type CyberwareSelection =
 const BLANK_ITEM: CyberwareItem = {name: "", date: "", description: ""};
 
 // Pannello HUD affiancato alla silhouette: resta accanto al corpo, senza sfondo oscurato né finestra centrata
-const shell = "relative grid min-h-64 content-start gap-4 border border-cpr-red bg-cpr-ink p-4 font-mono text-cpr-ink-fg";
+const shell = "relative grid min-h-64 content-start gap-3 border border-cpr-red bg-cpr-ink p-3 font-mono text-cpr-ink-fg";
 
 interface CyberwareInspectorProps {
     selection: CyberwareSelection | null;
