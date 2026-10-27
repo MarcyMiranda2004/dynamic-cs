@@ -13,6 +13,7 @@ import {
     type ProgramClass,
 } from "../program";
 import {useSheet} from "../SheetContext";
+import "./netrunner.css";
 import {removeAt, replaceAt} from "../../../utils/list";
 
 const BLANK_PROGRAM: Program = {name: "", att: 0, def: 0, rez: 0, damage: "", effect: "", class: "boost"};
@@ -49,13 +50,19 @@ const NetrunnerPanel = () => {
                 <SlotCard key={index} slot={slot} onOpen={() => setOpenIndex(index)}/>
             ))}
 
-            <button
-                type="button"
-                onClick={addSlot}
-                className="grid min-h-32 cursor-pointer place-items-center content-center gap-2 border border-dashed border-cpr-red/60 bg-transparent p-3 hover:border-cpr-glow focus-visible:border-cpr-glow focus-visible:outline-none"
-            >
-                <Plus size={24} aria-hidden="true" className="justify-self-center text-cpr-red"/>
-                <span className="font-bold tracking-wide uppercase">Aggiungi slot</span>
+            <button type="button" onClick={addSlot} className="chip chip--empty">
+                <span className="chip-inner">
+                    <span className="chip-body">
+                        <span className="chip-plate">
+                            <span className="chip-serial"><i className="chip-led"/>Nuovo slot</span>
+                        </span>
+                        <span className="chip-empty-label">
+                            <Plus size={22} aria-hidden="true" className="justify-self-center text-cpr-red"/>
+                            <span className="font-bold tracking-wide uppercase">Aggiungi slot</span>
+                        </span>
+                    </span>
+                    <span className="chip-pins" aria-hidden="true"/>
+                </span>
             </button>
 
             {openIndex !== null && deck[openIndex] && (
@@ -73,63 +80,67 @@ const NetrunnerPanel = () => {
 };
 export default NetrunnerPanel;
 
-// Card del deck: riepilogo di slot, classe, bersaglio e statistiche del programma
+// Slot del deck come chip di memoria: riepilogo di slot, classe, bersaglio e statistiche del programma
 const SlotCard = ({slot, onOpen}: {slot: DeckSlot; onOpen: () => void}) => {
     const program = slot.program;
     const slotNumber = `Slot ${String(slot.slot).padStart(2, "0")}`;
 
     if (!program) {
         return (
-            <button
-                type="button"
-                onClick={onOpen}
-                className="grid min-h-32 cursor-pointer content-center gap-2 border border-dashed border-cpr-red/40 bg-cpr-panel p-3 text-center opacity-80 hover:border-cpr-glow hover:opacity-100 focus-visible:border-cpr-glow focus-visible:outline-none"
-            >
-                <span className="font-mono text-[0.75em] tracking-widest opacity-70">{slotNumber}</span>
-                <span>Slot libero</span>
-                <span className="text-[0.8em] font-bold tracking-wide text-cpr-red uppercase">Installa programma</span>
+            <button type="button" onClick={onOpen} className="chip chip--empty">
+                <span className="chip-inner">
+                    <span className="chip-body">
+                        <span className="chip-plate">
+                            <span className="chip-serial"><i className="chip-led"/>{slotNumber}</span>
+                        </span>
+                        <span className="chip-empty-label">
+                            <span>Slot libero</span>
+                            <span className="text-[0.8em] font-bold tracking-wide text-cpr-red uppercase">Installa programma</span>
+                        </span>
+                    </span>
+                    <span className="chip-pins" aria-hidden="true"/>
+                </span>
             </button>
         );
     }
 
     return (
-        <button
-            type="button"
-            onClick={onOpen}
-            className="grid cursor-pointer content-start gap-2 border border-cpr-red bg-cpr-panel p-2.5 text-left hover:border-cpr-glow hover:shadow-[0_0_14px_rgb(255_90_96/0.4)] focus-visible:border-cpr-glow focus-visible:outline-none"
-        >
-            <header className="flex items-center justify-between gap-2">
-                <span className="font-mono text-[0.75em] tracking-widest opacity-70">{slotNumber}</span>
-                <span className="border border-cpr-red/60 px-2 py-0.5 text-[0.7em] font-bold tracking-wider uppercase">
-                    {PROGRAM_CLASS_LABELS[program.class]}
+        <button type="button" onClick={onOpen} className="chip chip--on">
+            <span className="chip-inner">
+                <span className="chip-body">
+                    <span className="chip-plate">
+                        <span className="chip-serial"><i className="chip-led"/>{slotNumber}</span>
+                        <span className="chip-class">{PROGRAM_CLASS_LABELS[program.class]}</span>
+                    </span>
+
+                    <h4 className="m-0 mt-1 text-lg font-bold [overflow-wrap:anywhere]">{program.name || "Senza nome"}</h4>
+
+                    {"target" in program && (
+                        <span className="text-[0.8em] tracking-wide text-cpr-glow uppercase">
+                            Bersaglio · {OFFENSIVE_TARGET_LABELS[program.target]}
+                        </span>
+                    )}
+
+                    <span className="grid grid-cols-4 gap-1.5 text-center">
+                        <Cell label="ATT" value={String(program.att)}/>
+                        <Cell label="DIF" value={String(program.def)}/>
+                        <Cell label="REZ" value={String(program.rez)}/>
+                        <Cell label="DAN" value={program.damage || "—"}/>
+                    </span>
+
+                    {program.effect && <span className="line-clamp-2 text-[0.9em] opacity-75">{program.effect}</span>}
                 </span>
-            </header>
-
-            <h4 className="m-0 text-lg font-bold [overflow-wrap:anywhere]">{program.name || "Senza nome"}</h4>
-
-            {"target" in program && (
-                <span className="text-[0.8em] tracking-wide text-cpr-glow uppercase">
-                    Bersaglio · {OFFENSIVE_TARGET_LABELS[program.target]}
-                </span>
-            )}
-
-            <div className="grid grid-cols-4 gap-1.5 text-center">
-                <Cell label="ATT" value={String(program.att)}/>
-                <Cell label="DIF" value={String(program.def)}/>
-                <Cell label="REZ" value={String(program.rez)}/>
-                <Cell label="DAN" value={program.damage || "—"}/>
-            </div>
-
-            {program.effect && <p className="m-0 line-clamp-2 text-[0.9em] opacity-75">{program.effect}</p>}
+                <span className="chip-pins" aria-hidden="true"/>
+            </span>
         </button>
     );
 };
 
 const Cell = ({label, value}: {label: string; value: string}) => (
-    <div className="grid gap-0.5 border border-cpr-red/30 px-1 py-1.5">
+    <span className="grid gap-0.5 border border-white/15 bg-black/25 px-1 py-1.5">
         <span className="text-[0.65em] font-extrabold tracking-widest uppercase opacity-70">{label}</span>
         <strong className="font-mono text-[1.1rem]">{value}</strong>
-    </div>
+    </span>
 );
 
 interface ProgramModalProps {

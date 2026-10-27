@@ -1,0 +1,172 @@
+/*
+ * Slot del deck come chip di memoria: corpo con due angoli smussati, targhetta metallica con il numero di slot,
+ * LED di stato e pin dorati sul lato. Il chip installato è sempre scuro (è hardware); la presa vuota segue il tema.
+ */
+.chip {
+    --chip-cut: 14px;
+    --chip-edge: var(--color-cpr-red, #d7262e);
+    --chip-pin: #d8b04c;
+
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 8.5rem;
+    padding: 1px;
+    border: 0;
+    background: var(--chip-edge);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    clip-path: polygon(
+        0 0,
+        calc(100% - var(--chip-cut)) 0,
+        100% var(--chip-cut),
+        100% 100%,
+        var(--chip-cut) 100%,
+        0 calc(100% - var(--chip-cut))
+    );
+    transition: background 0.2s;
+}
+
+/* Il bordo è il fondo del chip visibile attorno al corpo: al passaggio o al focus si accende */
+.chip:hover,
+.chip:focus-visible {
+    --chip-edge: var(--color-cpr-glow, #ff5a60);
+    outline: none;
+}
+
+.chip-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22px;
+    height: 100%;
+    min-height: calc(8.5rem - 2px);
+    clip-path: polygon(
+        0 0,
+        calc(100% - var(--chip-cut) + 1px) 0,
+        100% calc(var(--chip-cut) - 1px),
+        100% 100%,
+        calc(var(--chip-cut) - 1px) 100%,
+        0 calc(100% - var(--chip-cut) + 1px)
+    );
+}
+
+.chip-body {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    min-width: 0;
+    padding: 0 0.75rem 0.625rem;
+}
+
+/* Targhetta metallica in cima al chip: numero di slot a sinistra, classe a destra */
+.chip-plate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 0 -0.75rem;
+    padding: 0.2rem 0.75rem;
+    font-family: var(--mono, ui-monospace, Consolas, monospace);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.chip-serial {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.chip-led {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.35;
+}
+
+/* Pin di contatto sul lato lungo, come il connettore degli shard */
+.chip-pins {
+    border-left: 1px solid rgb(255 255 255 / 0.08);
+    background:
+        repeating-linear-gradient(to bottom, transparent 0 7px, var(--chip-pin) 7px 13px) center / 10px 100% no-repeat,
+        #130d0f;
+}
+
+/* --- Chip installato --- */
+.chip--on .chip-inner {
+    background:
+        repeating-linear-gradient(0deg, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 3px),
+        linear-gradient(135deg, color-mix(in srgb, var(--color-cpr-red, #d7262e) 40%, #0d0a0b) 0%, #170e10 55%, #0d0a0b 100%);
+    color: var(--color-cpr-ink-fg, #f3dede);
+}
+
+.chip--on:hover .chip-inner,
+.chip--on:focus-visible .chip-inner {
+    background:
+        repeating-linear-gradient(0deg, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 3px),
+        linear-gradient(135deg, color-mix(in srgb, var(--color-cpr-red, #d7262e) 52%, #0d0a0b) 0%, #1c1013 55%, #0d0a0b 100%);
+}
+
+.chip--on .chip-plate {
+    background: linear-gradient(180deg, #d4d7db, #9aa0a6);
+    color: #1a1214;
+}
+
+.chip--on .chip-led {
+    background: var(--color-cpr-red, #d7262e);
+    box-shadow: 0 0 6px 1px var(--color-cpr-glow, #ff5a60);
+    opacity: 1;
+}
+
+.chip-class {
+    padding: 0 0.35rem;
+    border: 1px solid rgb(26 18 20 / 0.55);
+}
+
+/* --- Presa vuota: stessa sagoma, corpo vuoto e pin spenti; segue il colore della pagina --- */
+.chip--empty {
+    --chip-edge: color-mix(in srgb, var(--color-cpr-red, #d7262e) 45%, transparent);
+    --chip-pin: color-mix(in srgb, currentColor 28%, transparent);
+}
+
+.chip--empty:hover,
+.chip--empty:focus-visible {
+    --chip-edge: var(--color-cpr-glow, #ff5a60);
+}
+
+.chip--empty .chip-inner {
+    background: color-mix(in srgb, var(--bg, #e4e1da) 90%, var(--color-cpr-red, #d7262e) 10%);
+    box-shadow: inset 0 0 14px rgb(0 0 0 / 0.12);
+}
+
+.chip--empty .chip-pins {
+    background:
+        repeating-linear-gradient(to bottom, transparent 0 7px, var(--chip-pin) 7px 13px) center / 10px 100% no-repeat,
+        color-mix(in srgb, currentColor 8%, transparent);
+    border-left-color: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.chip--empty .chip-plate {
+    opacity: 0.7;
+}
+
+.chip--empty .chip-body {
+    grid-template-rows: auto 1fr;
+    align-content: stretch;
+}
+
+.chip-empty-label {
+    display: grid;
+    place-content: center;
+    gap: 0.35rem;
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chip {
+        transition: none;
+    }
+}
