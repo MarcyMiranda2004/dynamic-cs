@@ -1,87 +1,163 @@
-import {useState} from "react";
-import {ChevronsDownUp, ChevronsUpDown} from "lucide-react";
-import CompactSection from "../../../components/common/CompactSection";
-import EntryList from "../../../components/common/EntryList";
-import {buttonClass} from "../../../components/common/ui";
-import {CYBERWARE_CATEGORY_KEYS, type CyberwareCategoryKey} from "../CyberpunkRedCharacterSheetSchema";
+import {useEffect, useRef, useState} from "react";
+import {getCyberwareGroup, type CyberwareKey} from "../cyberware";
 import {useSheet} from "../SheetContext";
-import type {BodyZoneId} from "../bodyZones";
-import {CYBERWARE_LABELS, toEntry} from "../cyberwareLabels";
 import BodySilhouette from "./BodySilhouette";
-import CyberwareInspector, {type CyberwareSelection} from "./CyberwareInspector";
+import CyberwareDetail from "./CyberwareDetail";
+import CyberwareGroupCard, {type CyberwareSide} from "./CyberwareGroupCard";
+import "./cyberware.css";
+
+// Posizione delle categorie nella vista totale, come sulla scheda cartacea: colonna a sinistra e a destra
+// del corpo, e colonna laterale per i cyberware senza componente base. L'ordine è anche quello su schermi stretti.
+const PLACEMENT: Record<CyberwareKey, {side: CyberwareSide; row: number}> = {
+    neuralLink: {side: "left", row: 1},
+    cyberAudioSystem: {side: "right", row: 1},
+    rightCyberEye: {side: "left", row: 2},
+    leftCyberEye: {side: "right", row: 2},
+    rightCyberArm: {side: "left", row: 3},
+    leftCyberArm: {side: "right", row: 3},
+    rightCyberLeg: {side: "left", row: 4},
+    leftCyberLeg: {side: "right", row: 4},
+    internalImplants: {side: "aside", row: 1},
+    externalImplants: {side: "aside", row: 2},
+    fashionware: {side: "aside", row: 3},
+    borgware: {side: "aside", row: 4},
+};
+const GROUP_KEYS = Object.keys(PLACEMENT) as CyberwareKey[];
+
+// La modalità compatta è una preferenza del dispositivo, non della scheda
+const COMPACT_STORAGE_KEY = "cpr.cyberware.compact";
+
+const readCompact = () => {
+    try {
+        return localStorage.getItem(COMPACT_STORAGE_KEY) === "1";
+    } catch {
+        return false;
+    }
+};
+
+const writeCompact = (compact: boolean) => {
+    try {
+        localStorage.setItem(COMPACT_STORAGE_KEY, compact ? "1" : "0");
+    } catch {
+        // Storage non disponibile: la preferenza vale solo per questa sessione
+    }
+};
 
 const CyberwarePanel = () => {
-    const {sheet, editMode, update} = useSheet();
-    const [selection, setSelection] = useState<CyberwareSelection | null>(null);
-    const [overrides, setOverrides] = useState<Partial<Record<CyberwareCategoryKey, boolean>>>({});
+    const {sheet} = useSheet();
+    const [compact, setCompact] = useState(readCompact);
+    // Il pannello resta montato per animare la chiusura: view ricorda l'ultima categoria aperta
+    const [isOpen, setIsOpen] = useState(false);
+    const [view, setView] = useState<{key: CyberwareKey; item: number | null}>({key: "neuralLink", item: null});
+    const [hovered, setHovered] = useState<CyberwareKey | null>(null);
+    const stageRef = useRef<HTMLDivElement>(null);
+    const figureRef = useRef<HTMLDivElement>(null);
 
-    const isOpen = (key: CyberwareCategoryKey) => overrides[key] ?? sheet.cyberware[key].components.length > 0;
-    const allOpen = CYBERWARE_CATEGORY_KEYS.every(isOpen);
-
-    const setAllOpen = (open: boolean) =>setOverrides(
-        Object.fromEntries(CYBERWARE_CATEGORY_KEYS.map((key) => [key, open])) as Record<CyberwareCategoryKey, boolean>
-    );
-
-    const selectedZone: BodyZoneId | null = selection?.kind === "zone" 
-        ? selection.zone 
-        : selection?.kind === "item" 
-            ? selection.from 
-            : null;
-
-    const addCategoryItem = (key: CyberwareCategoryKey) => {
-        const index = sheet.cyberware[key].components.length;
-        update((s) => ({
-            ...s,
-            cyberware: {
-                ...s.cyberware,
-                [key]: {...s.cyberware[key], components: [...s.cyberware[key].components, {name: "", date: "", description: ""}]},
-            },
-        }));
-        setSelection({kind: "item", key, index, from: null});
+    const open = (key: CyberwareKey, item: number | null = null) => {
+        setView({key, item});
+        setIsOpen(true);
     };
 
-    const ToggleIcon = allOpen ? ChevronsDownUp : ChevronsUpDown;
+    // Aperta una categoria, la silhouette scivola a sinistra: la distanza dipende dalla larghezza della scena
+    useEffect(() => {
+        const stage = stageRef.current;
+        const figure = figureRef.current;
+        if (!stage || !figure) return;
+
+        const measure = () => {
+            const center = figure.offsetLeft + figure.offsetWidth / 2;
+            stage.style.setProperty("--cw-shift", `${stage.clientWidth * 0.27 - center}px`);
+        };
+
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(stage);
+        return () => observer.disconnect();
+    }, []);
+
+    // Esc torna indietro di un livello: dal dettaglio alla lista, dalla lista al corpo
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key !== "Escape") return;
+            if (view.item !== null) setView((current) => ({...current, item: null}));
+            else setIsOpen(false);
+        };
+
+        document.addEventListener("keydown", onKeyDown);
+        return () => document.removeEventListener("keydown", onKeyDown);
+    }, [isOpen, view.item]);
+
+    const toggleCompact = (next: boolean) => {
+        setCompact(next);
+        writeCompact(next);
+    };
 
     return (
-        <div className="grid items-start gap-3 xl:grid-cols-[minmax(260px,340px)_1fr_minmax(260px,340px)]">
-            <div className="xl:sticky xl:top-14">
-                <BodySilhouette selected={selectedZone} onSelect={(zone: BodyZoneId) => setSelection({kind: "zone", zone})}/>
-            </div>
+        <section aria-label="Cyberware">
+            <div ref={stageRef} className="cw" data-state={isOpen ? "open" : "hub"} data-mode={compact ? "compact" : "list"}>
+                <label className="cw-mode" title="Attiva o disattiva la modalità compatta">
+                    <span>Modalità compatta</span>
+                    <input type="checkbox" checked={compact} onChange={(event) => toggleCompact(event.target.checked)}/>
+                    <i className="cw-switch" aria-hidden="true"/>
+                </label>
 
-            <CyberwareInspector selection={selection} onChange={setSelection}/>
+                <div className="cw-layout">
+                    <div ref={figureRef} className="cw-figure">
+                        <BodySilhouette
+                            selected={isOpen ? view.key : null}
+                            hovered={hovered}
+                            onSelect={(key) => open(key)}
+                            onHover={setHovered}
+                        />
+                    </div>
 
-            {/* Impianti extra sulla destra: sempre visibili, compattabili */}
-            <aside className="grid content-start gap-2" aria-label="Impianti extra">
-                <div className="flex items-center justify-between gap-2">
-                    <h3 className="m-0 text-sm font-bold tracking-widest uppercase text-cpr-red">Impianti extra</h3>
-                    <button type="button" onClick={() => setAllOpen(!allOpen)} className={buttonClass}>
-                        <ToggleIcon size={16} aria-hidden="true" className="inline-block align-text-bottom"/>{" "}
-                        {allOpen ? "Chiudi tutto" : "Apri tutto"}
-                    </button>
+                    {/* Aperta una categoria le card si dissolvono e non sono più raggiungibili con la tastiera */}
+                    <div className="cw-groups" inert={isOpen}>
+                        {GROUP_KEYS.map((key) => (
+                            <CyberwareGroupCard
+                                key={key}
+                                group={getCyberwareGroup(sheet.cyberware, key)}
+                                compact={compact}
+                                side={PLACEMENT[key].side}
+                                row={PLACEMENT[key].row}
+                                highlighted={hovered === key}
+                                onOpen={() => open(key)}
+                                onOpenItem={(index) => open(key, index)}
+                                onHover={(isHovered) => setHovered(isHovered ? key : null)}
+                            />
+                        ))}
+                    </div>
                 </div>
 
-                {CYBERWARE_CATEGORY_KEYS.map((key) => {
-                    const items = sheet.cyberware[key].components;
-                    return (
-                        <CompactSection
-                            key={key}
-                            title={CYBERWARE_LABELS[key]}
-                            meta={String(items.length)}
-                            open={isOpen(key)}
-                            onToggle={(open) => setOverrides((prev) => ({...prev, [key]: open}))}
-                        >
-                            <EntryList
-                                entries={items.map(toEntry)}
-                                onOpen={(index) => setSelection({kind: "item", key, index, from: null})}
-                                onAdd={editMode ? () => addCategoryItem(key) : undefined}
-                                addLabel="Aggiungi"
-                                emptyLabel="Nessun elemento"
-                            />
-                        </CompactSection>
-                    );
-                })}
-            </aside>
-        </div>
+                <section className="cw-panel" aria-label="Dettaglio cyberware" inert={!isOpen}>
+                    <CyberwareDetail
+                        cyberwareKey={view.key}
+                        itemIndex={view.item}
+                        onOpenItem={(item) => setView((current) => ({...current, item}))}
+                        onClose={() => setIsOpen(false)}
+                    />
+                </section>
+            </div>
+
+            <ul className="cw-legend">
+                {compact ? (
+                    <>
+                        <li>cerchio = slot libero</li>
+                        <li>lettera = impianto installato</li>
+                        <li>bordo ambra tratteggiato = slot extra</li>
+                        <li>quadrati scuri = componente base non installato</li>
+                    </>
+                ) : (
+                    <>
+                        <li><b>+1</b> slot extra aggiunti</li>
+                        <li><b>×2</b> impianto da 2 slot</li>
+                        <li>casella spenta e tabella opaca = componente base non installato</li>
+                    </>
+                )}
+            </ul>
+        </section>
     );
 };
 export default CyberwarePanel;

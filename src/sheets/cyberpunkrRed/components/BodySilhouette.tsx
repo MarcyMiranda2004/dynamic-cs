@@ -1,6 +1,6 @@
 import type {KeyboardEvent} from "react";
 import {BODY_PATH, BODY_VIEWBOX} from "../bodyOutline";
-import type {CyberwareSlotKey} from "../CyberpunkRedCharacterSheetSchema";
+import {getCyberwareGroup, type CyberwareKey} from "../cyberware";
 import {useSheet} from "../SheetContext";
 import {BODY_ZONES, type BodyZoneId} from "../bodyZones";
 
@@ -23,6 +23,9 @@ const RIGHT_LEG: Point[] = [
     [180, 620], [180, 600], [180, 550], [160, 480], [160, 480], [165, 390],
 ];
 
+// Il busto: braccia e gambe sono disegnate dopo, quindi vincono sul click dove si sovrappongono
+const TORSO: Point[] = [[100, 98], [231, 98], [231, 392], [100, 392]];
+
 const mirror = (points: Point[]): Point[] => points.map(([x, y]) => [MIRROR_X - x, y]);
 const toPoints = (points: Point[]) => points.map(([x, y]) => `${x},${y}`).join(" ");
 
@@ -33,99 +36,105 @@ const EYE_RIGHT = {cx: 151, cy: 58, r: 7};
 
 const mirrorX = (shape: {cx: number}) => ({...shape, cx: MIRROR_X - shape.cx});
 
-// Le zone sono trasparenti finché non servono: si accendono su hover e focus e quando contengono cyberware
-const ZONE_CLASS =
-    "cursor-pointer outline-none fill-transparent stroke-transparent transition-[fill,stroke] duration-200 " +
-    "motion-reduce:transition-none data-[active=true]:fill-cpr-red/25 data-[active=true]:stroke-cpr-red/70 " +
-    "hover:fill-cpr-red/40 hover:stroke-cpr-glow focus-visible:fill-cpr-red/40 focus-visible:stroke-cpr-glow " +
-    "data-[selected=true]:!fill-cpr-red/60 data-[selected=true]:!stroke-cpr-glow";
-
 const CLIP_ID = "cpr-body-clip";
+const GLASS_ID = "cpr-body-glass";
 // Il path è in unità 10× con asse Y invertito: stessa trasformazione per la figura e per il ritaglio
 const BODY_TRANSFORM = "translate(0,758) scale(0.1,-0.1)";
 
 interface BodySilhouetteProps {
-    selected: BodyZoneId | null;
-    onSelect: (zone: BodyZoneId) => void;
+    selected: CyberwareKey | null;
+    hovered: CyberwareKey | null;
+    onSelect: (key: CyberwareKey) => void;
+    onHover: (key: CyberwareKey | null) => void;
 }
 
-const BodySilhouette = ({selected, onSelect}: BodySilhouetteProps) => {
+const BodySilhouette = ({selected, hovered, onSelect, onHover}: BodySilhouetteProps) => {
     const {sheet} = useSheet();
 
-    const isActive = (zone: BodyZoneId) => {
-        const slots: CyberwareSlotKey[] = BODY_ZONES.find((z) => z.id === zone)?.slots ?? [];
-        return slots.some((key) => sheet.cyberware[key].installed || sheet.cyberware[key].components.length > 0);
-    };
-
+    const zoneKey = (zone: BodyZoneId) => BODY_ZONES.find((z) => z.id === zone)!.key;
     const label = (zone: BodyZoneId) => BODY_ZONES.find((z) => z.id === zone)?.label ?? zone;
 
-    // Proprietà comuni a ogni zona: accessibilità, stato e interazione
-    const zoneProps = (zone: BodyZoneId) => ({
-        role: "button" as const,
-        tabIndex: 0,
-        "aria-label": label(zone),
-        "aria-pressed": selected === zone,
-        "data-active": isActive(zone),
-        "data-selected": selected === zone,
-        clipPath: `url(#${CLIP_ID})`,
-        onClick: () => onSelect(zone),
-        onKeyDown: (event: KeyboardEvent<SVGElement>) => {
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                onSelect(zone);
-            }
-        },
-    });
+    // La zona è piena se la sua categoria ha il componente base installato o almeno un impianto
+    const hasCyberware = (key: CyberwareKey) => {
+        const group = getCyberwareGroup(sheet.cyberware, key);
+        return (group.needsBase && group.installed) || group.used > 0;
+    };
+
+    // Proprietà comuni a ogni zona: accessibilità, stato e interazione. Si seleziona la categoria intera.
+    const zoneProps = (zone: BodyZoneId) => {
+        const key = zoneKey(zone);
+        return {
+            className: "cw-zone",
+            role: "button" as const,
+            tabIndex: 0,
+            "aria-label": label(zone),
+            "aria-pressed": selected === key,
+            "data-has": hasCyberware(key),
+            "data-hover": hovered === key,
+            "data-selected": selected === key,
+            clipPath: `url(#${CLIP_ID})`,
+            onClick: () => onSelect(key),
+            onMouseEnter: () => onHover(key),
+            onMouseLeave: () => onHover(null),
+            onKeyDown: (event: KeyboardEvent<SVGElement>) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onSelect(key);
+                }
+            },
+        };
+    };
 
     return (
-        <svg
-            viewBox={BODY_VIEWBOX}
-            role="group"
-            aria-label="Corpo: tocca una parte per il cyberware"
-            className="mx-auto block h-auto w-full max-w-85"
-        >
+        <svg viewBox={BODY_VIEWBOX} role="group" aria-label="Corpo: scegli una parte per il cyberware">
             <defs>
+                <linearGradient id={GLASS_ID} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="var(--color-cpr-glow, #ff5a60)" stopOpacity=".4"/>
+                    <stop offset=".55" stopColor="var(--color-cpr-red, #d7262e)" stopOpacity=".17"/>
+                    <stop offset="1" stopColor="var(--color-cpr-red-deep, #7a1116)" stopOpacity=".1"/>
+                </linearGradient>
                 <clipPath id={CLIP_ID}>
                     <path d={BODY_PATH} transform={BODY_TRANSFORM}/>
                 </clipPath>
             </defs>
 
-            <path d={BODY_PATH} transform={BODY_TRANSFORM} className="fill-[#4d494f] stroke-[#08060d]/50   stroke-[0.5]"/>
+            {/* Il corpo resta sempre acceso: l'attenuazione riguarda solo le zone */}
+            <path d={BODY_PATH} transform={BODY_TRANSFORM} className="cw-outline" fill={`url(#${GLASS_ID})`}/>
 
-            {/* Cervello: calotta alta della testa */}
-            <ellipse cx={BRAIN.cx} cy={BRAIN.cy} rx={BRAIN.rx} ry={BRAIN.ry} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("brain")}>
-                <title>{label("brain")}</title>
-            </ellipse>
-
-            {/* Orecchie: una per lato, sul bordo della testa */}
-            <ellipse {...EAR_RIGHT} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("right-ear")}>
-                <title>{label("right-ear")}</title>
-            </ellipse>
-            <ellipse {...mirrorX(EAR_RIGHT)} cy={EAR_RIGHT.cy} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("left-ear")}>
-                <title>{label("left-ear")}</title>
-            </ellipse>
-
-            {/* Occhi: sopra il cervello, così il click sull'occhio vince su quello sulla calotta */}
-            <circle {...EYE_RIGHT} className={`${ZONE_CLASS} stroke-2`} {...zoneProps("right-eye")}>
-                <title>{label("right-eye")}</title>
-            </circle>
-            <circle {...mirrorX(EYE_RIGHT)} cy={EYE_RIGHT.cy} r={EYE_RIGHT.r} className={`${ZONE_CLASS} stroke-2`} {...zoneProps("left-eye")}>
-                <title>{label("left-eye")}</title>
-            </circle>
+            <polygon points={toPoints(TORSO)} {...zoneProps("torso")}>
+                <title>{label("torso")}</title>
+            </polygon>
 
             {/* Arti: il lato sinistro dell'immagine è il braccio e la gamba destri del personaggio */}
-            <polygon points={toPoints(RIGHT_ARM)} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("right-arm")}>
+            <polygon points={toPoints(RIGHT_ARM)} {...zoneProps("right-arm")}>
                 <title>{label("right-arm")}</title>
             </polygon>
-            <polygon points={toPoints(mirror(RIGHT_ARM))} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("left-arm")}>
+            <polygon points={toPoints(mirror(RIGHT_ARM))} {...zoneProps("left-arm")}>
                 <title>{label("left-arm")}</title>
             </polygon>
-            <polygon points={toPoints(RIGHT_LEG)} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("right-leg")}>
+            <polygon points={toPoints(RIGHT_LEG)} {...zoneProps("right-leg")}>
                 <title>{label("right-leg")}</title>
             </polygon>
-            <polygon points={toPoints(mirror(RIGHT_LEG))} className={`${ZONE_CLASS} stroke-[1.5]`} {...zoneProps("left-leg")}>
+            <polygon points={toPoints(mirror(RIGHT_LEG))} {...zoneProps("left-leg")}>
                 <title>{label("left-leg")}</title>
             </polygon>
+
+            {/* Testa: cervello, orecchie e occhi sopra il resto, così il click sull'occhio vince su quello sulla calotta */}
+            <ellipse {...BRAIN} {...zoneProps("brain")}>
+                <title>{label("brain")}</title>
+            </ellipse>
+            <ellipse {...EAR_RIGHT} {...zoneProps("right-ear")}>
+                <title>{label("right-ear")}</title>
+            </ellipse>
+            <ellipse {...mirrorX(EAR_RIGHT)} {...zoneProps("left-ear")}>
+                <title>{label("left-ear")}</title>
+            </ellipse>
+            <circle {...EYE_RIGHT} {...zoneProps("right-eye")}>
+                <title>{label("right-eye")}</title>
+            </circle>
+            <circle {...mirrorX(EYE_RIGHT)} {...zoneProps("left-eye")}>
+                <title>{label("left-eye")}</title>
+            </circle>
         </svg>
     );
 };

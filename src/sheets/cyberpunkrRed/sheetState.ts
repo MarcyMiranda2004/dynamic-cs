@@ -1,3 +1,4 @@
+import {createEmptyCells} from "./cyberware";
 import {
     SKILL_DEFS,
     type CyberpunkRedCharacterSheetSchema,
@@ -97,19 +98,20 @@ export const createEmptySheet = (): Sheet => {
             roleBackground: DEFAULT_ROLE_FIELDS.map((field) => ({...field})),
         },
         equipment: {items: [], money: 0},
+        // Ogni categoria parte con gli slot previsti dalle regole; l'utente può aggiungerne altri
         cyberware: {
-            cyberAudioSystem: {installed: false, components: []},
-            rightCyberEye: {installed: false, components: []},
-            leftCyberEye: {installed: false, components: []},
-            neuralLink: {installed: false, components: []},
-            rightCyberArm: {installed: false, components: []},
-            leftCyberArm: {installed: false, components: []},
-            rightCyberLeg: {installed: false, components: []},
-            leftCyberLeg: {installed: false, components: []},
-            internalImplants: {components: []},
-            externalImplants: {components: []},
-            fashionware: {components: []},
-            borgware: {components: []},
+            cyberAudioSystem: {installed: false, cells: createEmptyCells("cyberAudioSystem")},
+            rightCyberEye: {installed: false, cells: createEmptyCells("rightCyberEye")},
+            leftCyberEye: {installed: false, cells: createEmptyCells("leftCyberEye")},
+            neuralLink: {installed: false, cells: createEmptyCells("neuralLink")},
+            rightCyberArm: {installed: false, cells: createEmptyCells("rightCyberArm")},
+            leftCyberArm: {installed: false, cells: createEmptyCells("leftCyberArm")},
+            rightCyberLeg: {installed: false, cells: createEmptyCells("rightCyberLeg")},
+            leftCyberLeg: {installed: false, cells: createEmptyCells("leftCyberLeg")},
+            internalImplants: {cells: createEmptyCells("internalImplants")},
+            externalImplants: {cells: createEmptyCells("externalImplants")},
+            fashionware: {cells: createEmptyCells("fashionware")},
+            borgware: {cells: createEmptyCells("borgware")},
         },
         // Il Cyberdeck base ha 7 slot; l'utente può aggiungerne altri
         netrunner: {

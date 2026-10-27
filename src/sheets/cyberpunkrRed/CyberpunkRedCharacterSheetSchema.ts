@@ -1,4 +1,5 @@
 import type {BaseSheet} from "../../types/sheet";
+import type {CyberwareSection} from "./cyberware";
 import type {NetrunnerSection} from "./program";
 
 // #region Statistiche
@@ -246,62 +247,6 @@ export interface EquipmentItem {
 export interface Equipment {
     items: EquipmentItem[];
     money: number;       // Denaro
-}
-// #endregion
-
-// #region Cyberware
-export interface CyberwareItem {
-    name: string;
-    date: string;         // Data
-    description: string;  // Info varie mostrate nel dettaglio
-}
-
-// Slot con componente base (es. Cyberocchio): la casella indica l'installazione
-export interface CyberwareSlot {
-    installed: boolean;
-    components: CyberwareItem[];
-}
-
-// Categorie senza componente base (Implanti, Fashionware, Borgware)
-export interface CyberwareCategory {
-    components: CyberwareItem[];
-}
-
-// Chiavi delle slot con componente base (la casella di installazione)
-export const CYBERWARE_SLOT_KEYS = [
-    "cyberAudioSystem",
-    "rightCyberEye",
-    "leftCyberEye",
-    "neuralLink",
-    "rightCyberArm",
-    "leftCyberArm",
-    "rightCyberLeg",
-    "leftCyberLeg",
-] as const;
-export type CyberwareSlotKey = (typeof CYBERWARE_SLOT_KEYS)[number];
-
-// Chiavi delle categorie senza componente base
-export const CYBERWARE_CATEGORY_KEYS = [
-    "internalImplants",
-    "externalImplants",
-    "fashionware",
-    "borgware",
-] as const;
-export type CyberwareCategoryKey = (typeof CYBERWARE_CATEGORY_KEYS)[number];
-
-export interface CyberwareSection {
-    cyberAudioSystem: CyberwareSlot;       // Sistema Cyberudito, 3 righe
-    rightCyberEye: CyberwareSlot;          // Cyberocchio Dx, 3 righe
-    leftCyberEye: CyberwareSlot;           // Cyberocchio Sx, 3 righe
-    neuralLink: CyberwareSlot;             // Collegamento Neurale, 5 righe
-    rightCyberArm: CyberwareSlot;          // Cyberbraccio Dx, 4 righe
-    leftCyberArm: CyberwareSlot;           // Cyberbraccio Sx, 4 righe
-    rightCyberLeg: CyberwareSlot;          // Cybergamba Dx, 3 righe
-    leftCyberLeg: CyberwareSlot;           // Cybergamba Sx, 3 righe
-    internalImplants: CyberwareCategory;   // Implanti Interni, 6 righe
-    externalImplants: CyberwareCategory;   // Implanti Esterni, 7 righe
-    fashionware: CyberwareCategory;        // Fashionware, 7 righe
-    borgware: CyberwareCategory;           // Borgware, 7 righe
 }
 // #endregion
 
