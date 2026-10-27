@@ -13,18 +13,20 @@ import CyberwareInspector, {type CyberwareSelection} from "./CyberwareInspector"
 const CyberwarePanel = () => {
     const {sheet, editMode, update} = useSheet();
     const [selection, setSelection] = useState<CyberwareSelection | null>(null);
-    // Le sezioni seguono il loro default (aperte solo se hanno almeno un oggetto) finché l'utente non le sposta
     const [overrides, setOverrides] = useState<Partial<Record<CyberwareCategoryKey, boolean>>>({});
 
-    const isOpen = (key: CyberwareCategoryKey) =>
-        overrides[key] ?? sheet.cyberware[key].components.length > 0;
+    const isOpen = (key: CyberwareCategoryKey) => overrides[key] ?? sheet.cyberware[key].components.length > 0;
     const allOpen = CYBERWARE_CATEGORY_KEYS.every(isOpen);
 
-    const setAllOpen = (open: boolean) =>
-        setOverrides(Object.fromEntries(CYBERWARE_CATEGORY_KEYS.map((key) => [key, open])) as Record<CyberwareCategoryKey, boolean>);
+    const setAllOpen = (open: boolean) =>setOverrides(
+        Object.fromEntries(CYBERWARE_CATEGORY_KEYS.map((key) => [key, open])) as Record<CyberwareCategoryKey, boolean>
+    );
 
-    const selectedZone: BodyZoneId | null =
-        selection?.kind === "zone" ? selection.zone : selection?.kind === "item" ? selection.from : null;
+    const selectedZone: BodyZoneId | null = selection?.kind === "zone" 
+        ? selection.zone 
+        : selection?.kind === "item" 
+            ? selection.from 
+            : null;
 
     const addCategoryItem = (key: CyberwareCategoryKey) => {
         const index = sheet.cyberware[key].components.length;
