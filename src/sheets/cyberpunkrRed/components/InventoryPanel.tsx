@@ -35,7 +35,7 @@ const InventoryPanel = () => {
     const {sheet, editMode, update} = useSheet();
 
     return (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2">
             <WeaponsSection/>
 
             <section className={sectionClass} aria-label="Armature">
@@ -176,8 +176,32 @@ const EquipmentSection = () => {
     };
 
     return (
-        <section className={sectionClass} aria-label="Equipaggiamento">
-            <div className="flex items-center justify-between gap-3 bg-cpr-red px-4 py-3 text-white shadow-[0_0_18px_rgb(215_38_46/0.5)]">
+        // La lista occupa tutto lo spazio libero e il denaro resta in fondo alla sezione, anche se la card accanto è più alta
+        <section className={`${sectionClass} grid-rows-[1fr_auto]`} aria-label="Equipaggiamento">
+            <div className="grid content-start gap-2">
+                <h3 className={panelTitleClass}>Equipaggiamento</h3>
+                <div className={tableClass}>
+                    {sheet.equipment.items.length === 0 && <p className={`${rowClass} ${SINGLE_COLUMN} m-0 opacity-70`}>Nessun equipaggiamento</p>}
+
+                    {sheet.equipment.items.map((item, index) => (
+                        <button key={index} type="button" onClick={() => setSelected(index)} className={`${rowClass} ${SINGLE_COLUMN} ${rowButtonClass}`}>
+                            <span className={cellClass}><strong>{item.item || "—"}</strong></span>
+                        </button>
+                    ))}
+                </div>
+
+                {editMode && (
+                    <button type="button" onClick={addItem} className={`${buttonClass} justify-self-start`}>
+                        <Plus size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Aggiungi equipaggiamento
+                    </button>
+                )}
+
+                {selected !== null && sheet.equipment.items[selected] && (
+                    <EquipmentModal index={selected} onClose={() => setSelected(null)}/>
+                )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 bg-cpr-red px-3.5 py-2 text-white shadow-[0_0_18px_rgb(215_38_46/0.5)]">
                 <span className="font-extrabold tracking-widest uppercase">Denaro</span>
                 {editMode ? (
                     <input
@@ -192,30 +216,9 @@ const EquipmentSection = () => {
                         }}
                     />
                 ) : (
-                    <strong className="font-mono text-[2rem]">{sheet.equipment.money}</strong>
+                    <strong className="font-mono text-[1.6rem]">{sheet.equipment.money}</strong>
                 )}
             </div>
-
-            <h3 className={panelTitleClass}>Equipaggiamento</h3>
-            <div className={tableClass}>
-                {sheet.equipment.items.length === 0 && <p className={`${rowClass} ${SINGLE_COLUMN} m-0 opacity-70`}>Nessun equipaggiamento</p>}
-
-                {sheet.equipment.items.map((item, index) => (
-                    <button key={index} type="button" onClick={() => setSelected(index)} className={`${rowClass} ${SINGLE_COLUMN} ${rowButtonClass}`}>
-                        <span className={cellClass}><strong>{item.item || "—"}</strong></span>
-                    </button>
-                ))}
-            </div>
-
-            {editMode && (
-                <button type="button" onClick={addItem} className={`${buttonClass} justify-self-start`}>
-                    <Plus size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Aggiungi equipaggiamento
-                </button>
-            )}
-
-            {selected !== null && sheet.equipment.items[selected] && (
-                <EquipmentModal index={selected} onClose={() => setSelected(null)}/>
-            )}
         </section>
     );
 };

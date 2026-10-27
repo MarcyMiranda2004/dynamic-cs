@@ -31,3 +31,6 @@ dist-ssr
 .firebase/
 # cache e dati dell'emulatore Data Connect (rigenerati dalla CLI)
 dataconnect/.dataconnect/
+
+# Visual companion mockups (brainstorming)
+.superpowers/

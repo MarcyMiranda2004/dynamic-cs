@@ -44,7 +44,7 @@ const NetrunnerPanel = () => {
     };
 
     return (
-        <section aria-label="Deck netrunner" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <section aria-label="Deck netrunner" className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {deck.map((slot, index) => (
                 <SlotCard key={index} slot={slot} onOpen={() => setOpenIndex(index)}/>
             ))}
@@ -53,7 +53,7 @@ const NetrunnerPanel = () => {
                 <button
                     type="button"
                     onClick={addSlot}
-                    className="grid min-h-40 cursor-pointer place-items-center content-center gap-2 border border-dashed border-cpr-red/60 bg-transparent p-4 hover:border-cpr-glow focus-visible:border-cpr-glow focus-visible:outline-none"
+                    className="grid min-h-32 cursor-pointer place-items-center content-center gap-2 border border-dashed border-cpr-red/60 bg-transparent p-3 hover:border-cpr-glow focus-visible:border-cpr-glow focus-visible:outline-none"
                 >
                     <Plus size={24} aria-hidden="true" className="justify-self-center text-cpr-red"/>
                     <span className="font-bold tracking-wide uppercase">Aggiungi slot</span>
@@ -85,7 +85,7 @@ const SlotCard = ({slot, onOpen}: {slot: DeckSlot; onOpen: () => void}) => {
             <button
                 type="button"
                 onClick={onOpen}
-                className="grid min-h-40 cursor-pointer content-center gap-2 border border-dashed border-cpr-red/40 bg-cpr-panel p-4 text-center opacity-80 hover:border-cpr-glow hover:opacity-100 focus-visible:border-cpr-glow focus-visible:outline-none"
+                className="grid min-h-32 cursor-pointer content-center gap-2 border border-dashed border-cpr-red/40 bg-cpr-panel p-3 text-center opacity-80 hover:border-cpr-glow hover:opacity-100 focus-visible:border-cpr-glow focus-visible:outline-none"
             >
                 <span className="font-mono text-[0.75em] tracking-widest opacity-70">{slotNumber}</span>
                 <span>Slot libero</span>
@@ -97,7 +97,7 @@ const SlotCard = ({slot, onOpen}: {slot: DeckSlot; onOpen: () => void}) => {
         <button
             type="button"
             onClick={onOpen}
-            className="grid cursor-pointer content-start gap-3 border border-cpr-red bg-cpr-panel p-3.5 text-left hover:border-cpr-glow hover:shadow-[0_0_14px_rgb(255_90_96/0.4)] focus-visible:border-cpr-glow focus-visible:outline-none"
+            className="grid cursor-pointer content-start gap-2 border border-cpr-red bg-cpr-panel p-2.5 text-left hover:border-cpr-glow hover:shadow-[0_0_14px_rgb(255_90_96/0.4)] focus-visible:border-cpr-glow focus-visible:outline-none"
         >
             <header className="flex items-center justify-between gap-2">
                 <span className="font-mono text-[0.75em] tracking-widest opacity-70">{slotNumber}</span>

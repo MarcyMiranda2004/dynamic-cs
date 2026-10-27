@@ -1,5 +1,5 @@
 import { Link, Route, Routes } from 'react-router-dom'
-import HomePage from './components/Pages/HomePage'
+import HomePage from './components/pages/HomePage'
 import CyberpunkRedCharacterSheet from './sheets/cyberpunkrRed/CyberpunkRedCharacterSheet'
 import ThemeToggle from './components/common/ThemeToggle'
 

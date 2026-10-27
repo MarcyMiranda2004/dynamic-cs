@@ -30,7 +30,7 @@ const normalize = (text: string) =>
 
 const SkillsPanel = () => {
     const {sheet, editMode, update} = useSheet();
-    const [group, setGroup] = useState<SkillGroup | "all">("artistic");
+    const [group, setGroup] = useState<SkillGroup | "all">("all");
     const [query, setQuery] = useState("");
     const [activeKey, setActiveKey] = useState<SkillKey | null>(null);
 
@@ -65,9 +65,9 @@ const SkillsPanel = () => {
         : SKILL_KEYS.filter((key) => SKILL_DEFS[key].group === group);
 
     return (
-        <div className="grid gap-4 lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr]">
+        <div className="grid gap-3 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr]">
             {/* Sidebar: su mobile diventa una riga scorrevole di gruppi */}
-            <aside className="grid content-start gap-3 lg:sticky lg:top-16 lg:self-start">
+            <aside className="grid content-start gap-2 lg:sticky lg:top-14 lg:self-start">
                 <div className="relative">
                     <Search size={16} aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 opacity-60"/>
                     <input
@@ -101,7 +101,7 @@ const SkillsPanel = () => {
                                 <button
                                     type="button"
                                     onClick={() => pick(key)}
-                                    className={`flex w-full min-h-11 cursor-pointer items-center justify-between gap-2 border px-3 text-left ${
+                                    className={`flex w-full min-h-9 max-sm:min-h-11 cursor-pointer items-center justify-between gap-2 border px-3 text-left ${
                                         activeKey === key ? "border-cpr-glow bg-cpr-red/20" : "border-cpr-red/35"
                                     }`}
                                 >
@@ -126,7 +126,7 @@ const SkillsPanel = () => {
                                     setGroup(item.key);
                                     setActiveKey(null);
                                 }}
-                                className={`flex min-h-11 shrink-0 cursor-pointer items-center justify-between gap-3 border px-3 text-left font-bold tracking-wide uppercase ${
+                                className={`flex min-h-9 max-sm:min-h-11 shrink-0 cursor-pointer items-center justify-between gap-3 border px-3 text-left font-bold tracking-wide uppercase ${
                                     selected
                                         ? "border-cpr-red bg-cpr-red text-white"
                                         : "border-cpr-red/35 bg-cpr-panel hover:border-cpr-red"
@@ -141,7 +141,7 @@ const SkillsPanel = () => {
             </aside>
 
             {/* Griglia delle abilità del gruppo selezionato, come le colonne della scheda */}
-            <div key={group} className="grid animate-tab-in content-start gap-3 motion-reduce:animate-none sm:grid-cols-2 2xl:grid-cols-3">
+            <div key={group} className="grid animate-tab-in content-start gap-2 motion-reduce:animate-none sm:grid-cols-2 2xl:grid-cols-3">
                 {keysInGroup.map((key) => {
                     const def = SKILL_DEFS[key];
                     const skill = sheet.skills[key];
@@ -152,7 +152,7 @@ const SkillsPanel = () => {
                         <article
                             key={key}
                             id={`skill-${key}`}
-                            className={`grid content-start gap-3 border bg-cpr-panel p-3.5 transition-shadow duration-300 ${
+                            className={`grid content-start gap-2 border bg-cpr-panel p-2.5 transition-shadow duration-300 ${
                                 highlighted
                                     ? "border-cpr-glow shadow-[0_0_16px_rgb(255_90_96/0.55)]"
                                     : "border-cpr-red/35"
@@ -238,7 +238,7 @@ export default SkillsPanel;
 
 // Cella piccola della card abilità: etichetta sopra, valore sotto
 const Mini = ({label, accent = false, children}: {label: string; accent?: boolean; children: ReactNode}) => (
-    <div className={`grid gap-1 border px-1 py-2 ${accent ? "border-cpr-red/60" : "border-cpr-red/25"}`}>
+    <div className={`grid gap-1 border px-1 py-1.5 ${accent ? "border-cpr-red/60" : "border-cpr-red/25"}`}>
         <span className="text-[0.65em] font-extrabold tracking-widest uppercase opacity-70">{label}</span>
         <div className="flex min-h-7 items-center justify-center">{children}</div>
     </div>

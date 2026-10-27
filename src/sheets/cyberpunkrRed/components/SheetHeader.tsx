@@ -8,7 +8,7 @@ import {useSheet} from "../SheetContext";
 const STAT_KEYS = Object.keys(STAT_LABELS) as StatKey[];
 
 // Riepilogo a quattro colonne:
-// a sinistra reputazione sopra e ritratto sotto; accanto anagrafica sopra e note sotto;
+// a sinistra ritratto sopra e reputazione sotto; accanto anagrafica sopra e note sotto;
 // a destra statistiche e salute su tutta l'altezza
 const SheetHeader = () => {
     const {sheet, editMode, update} = useSheet();
@@ -25,42 +25,44 @@ const SheetHeader = () => {
         : 0;
 
     return (
-        <header className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] xl:grid-rows-[auto_auto] xl:items-stretch">
-            <section className={`${sectionClass} xl:col-start-1 xl:row-start-2`} aria-label="Reputazione">
-                <h2 className={panelTitleClass}>Reputazione</h2>
-                <NumberField label="Reputazione" value={character.reputation.points} editMode={editMode}
-                             onChange={(points) => patchCharacter({reputation: {...character.reputation, points}})}/>
-                <DetailField label="Motivi della reputazione" value={character.reputation.reasons} editMode={editMode}
-                           onChange={(reasons) => patchCharacter({reputation: {...character.reputation, reasons}})}/>
-            </section>
+        <header className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] xl:grid-rows-[auto_auto] xl:items-stretch">
+            {/* Ritratto in cima e reputazione sotto, nella stessa colonna: niente vuoto tra le due card */}
+            <div className="grid content-start gap-3 xl:col-start-1 xl:row-span-2 xl:row-start-1">
+                <figure className="m-0 grid content-start gap-2">
+                    <div className="grid aspect-4/3 w-full place-items-center overflow-hidden border border-cpr-red/50 bg-cpr-panel">
+                        {character.portraitUrl ? (
+                            <img
+                                src={character.portraitUrl}
+                                alt={character.tag ? `Ritratto di ${character.tag}` : "Ritratto del personaggio"}
+                                className="size-full object-cover object-top"
+                            />
+                        ) : (
+                            <div className="grid place-items-center content-center gap-2 p-4 text-center opacity-70">
+                                <UserRound size={48} aria-hidden="true" className="justify-self-center text-cpr-red"/>
+                                <span className="text-sm font-bold tracking-widest uppercase">Ritratto</span>
+                            </div>
+                        )}
+                    </div>
 
-            {/* Ritratto grande quanto la colonna, sopra la reputazione */}
-            <figure className="m-0 grid content-start gap-3 xl:col-start-1 xl:row-start-1">
-                <div className="grid aspect-square w-full place-items-center overflow-hidden border border-cpr-red/50 bg-cpr-panel">
-                    {character.portraitUrl ? (
-                        <img
-                            src={character.portraitUrl}
-                            alt={character.tag ? `Ritratto di ${character.tag}` : "Ritratto del personaggio"}
-                            className="size-full object-cover"
-                        />
-                    ) : (
-                        <div className="grid place-items-center content-center gap-2 p-4 text-center opacity-70">
-                            <UserRound size={64} aria-hidden="true" className="justify-self-center text-cpr-red"/>
-                            <span className="text-sm font-bold tracking-widest uppercase">Ritratto</span>
-                        </div>
+                    {editMode && (
+                        <TextField label="URL ritratto" value={character.portraitUrl} editMode
+                                   placeholder="https://..." onChange={(portraitUrl) => patchCharacter({portraitUrl})}/>
                     )}
-                </div>
+                </figure>
 
-                {editMode && (
-                    <TextField label="URL ritratto" value={character.portraitUrl} editMode
-                               placeholder="https://..." onChange={(portraitUrl) => patchCharacter({portraitUrl})}/>
-                )}
-            </figure>
+                <section className={sectionClass} aria-label="Reputazione">
+                    <h2 className={panelTitleClass}>Reputazione</h2>
+                    <NumberField label="Reputazione" value={character.reputation.points} editMode={editMode}
+                                 onChange={(points) => patchCharacter({reputation: {...character.reputation, points}})}/>
+                    <DetailField label="Motivi della reputazione" value={character.reputation.reasons} editMode={editMode}
+                               onChange={(reasons) => patchCharacter({reputation: {...character.reputation, reasons}})}/>
+                </section>
+            </div>
 
             <section className={`${sectionClass} xl:col-start-2 xl:row-start-1`} aria-label="Anagrafica">
                 <h2 className={panelTitleClass}>Anagrafica</h2>
 
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2">
                     <TextField label="Nome personaggio" value={character.tag} editMode={editMode}
                                onChange={(tag) => patchCharacter({tag})}/>
                     <TextField label="Nome giocatore" value={character.playerName} editMode={editMode}
@@ -86,14 +88,14 @@ const SheetHeader = () => {
 
             <section
                 aria-label="Statistiche"
-                className="group-data-[editing=true]/sheet:border-dashed grid grid-cols-2 grid-rows-5 gap-2 border-2 border-cpr-red bg-cpr-panel p-3.5 xl:col-start-3 xl:row-span-2 xl:row-start-1"
+                className="group-data-[editing=true]/sheet:border-dashed grid grid-cols-5 gap-1.5 border-2 md:grid-cols-2 md:grid-rows-5 border-cpr-red bg-cpr-panel p-2.5 xl:col-start-3 xl:row-span-2 xl:row-start-1"
             >
                 {STAT_KEYS.map((key) => (
-                    <div key={key} className="grid min-h-0 content-center gap-1 border border-cpr-red/35 px-2 py-3 text-center">
+                    <div key={key} className="grid min-h-0 content-center gap-0.5 border border-cpr-red/35 px-2 py-2 text-center">
                         <span className="text-[0.75em] font-extrabold tracking-widest text-cpr-red">{STAT_LABELS[key]}</span>
                         {editMode ? (
                             <input
-                                className={`${inputClass} min-h-11 text-center font-mono text-[1.4rem]`}
+                                className={`${inputClass} text-center font-mono text-[1.2rem]`}
                                 type="number"
                                 inputMode="numeric"
                                 aria-label={STAT_LABELS[key]}
@@ -104,7 +106,7 @@ const SheetHeader = () => {
                                 }}
                             />
                         ) : (
-                            <strong className="font-mono text-[2rem] leading-none font-bold max-sm:text-[1.5rem]">{stats[key]}</strong>
+                            <strong className="font-mono text-[1.6rem] leading-none font-bold max-sm:text-[1.3rem]">{stats[key]}</strong>
                         )}
                     </div>
                 ))}
@@ -127,7 +129,7 @@ const SheetHeader = () => {
                     />
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2">
                     <NumberField label="PF attuali" value={health.currentHitPoints} editMode={editMode}
                                  onChange={(currentHitPoints) => patchHealth({currentHitPoints})}/>
                     <NumberField label="PF massimi" value={health.maxHitPoints} editMode={editMode}

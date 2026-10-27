@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import Modal from './Modal'
 import {TextField} from './EditableField'
-import {buttonClass, fieldLabelClass, valueClass} from './ui'
+import {fieldLabelClass, rowButtonClass, valueClass} from './ui'
 
 interface DetailFieldProps {
     label: string
@@ -10,16 +10,15 @@ interface DetailFieldProps {
     editMode: boolean
 }
 
-// Testo lungo: in scheda mostra solo l'inizio, il pulsante apre il testo completo (e la modifica) in un modale
+// Testo lungo: in scheda mostra solo l'inizio. Cliccare il campo apre il testo completo (e la modifica) in un modale
 const DetailField = ({label, value, onChange, editMode}: DetailFieldProps) => {
     const [open, setOpen] = useState(false)
 
     return (
         <div className="grid min-w-0 content-start gap-1">
-            <span className={fieldLabelClass}>{label}</span>
-            <p className={`${valueClass} m-0 line-clamp-3`}>{value || '—'}</p>
-            <button type="button" onClick={() => setOpen(true)} className={`${buttonClass} justify-self-start`}>
-                Dettagli
+            <button type="button" onClick={() => setOpen(true)} className={`${rowButtonClass} grid min-w-0 content-start gap-1 py-0.5`}>
+                <span className={fieldLabelClass}>{label}</span>
+                <span className={`${valueClass} line-clamp-3`}>{value || '—'}</span>
             </button>
 
             {open && (
