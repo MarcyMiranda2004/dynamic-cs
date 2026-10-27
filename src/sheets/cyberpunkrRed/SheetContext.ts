@@ -6,7 +6,6 @@ export type SheetUpdater = (change: (sheet: Sheet) => Sheet) => void;
 
 export interface SheetContextValue {
     sheet: Sheet;
-    editMode: boolean;
     update: SheetUpdater;
 }
 

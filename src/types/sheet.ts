@@ -5,3 +5,9 @@ export interface BaseSheet {
     createdAt: string;
     lastUpdateAt: string;
 }
+
+// Campo con etichetta e valore, a elenco estendibile dall'utente (background di ruolo, moda...)
+export interface LabeledField {
+    label: string;
+    value: string;
+}

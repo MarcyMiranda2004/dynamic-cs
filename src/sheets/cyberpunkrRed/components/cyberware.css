@@ -1,14 +1,26 @@
 /*
  * Scheda cyberware in stile HUD: silhouette al centro, categorie intorno e pannello di dettaglio a destra.
- * La scena è sempre scura, indipendentemente dal tema. Colori dai token cpr-* di index.css (con valori di riserva).
+ * La scena segue il tema: chiara di default, scura con data-theme="dark" (vedi ThemeToggle).
+ * Colori dai token cpr-* di index.css (con valori di riserva).
  */
 .cw {
     --cw-red: var(--color-cpr-red, #d7262e);
-    --cw-glow: var(--color-cpr-glow, #ff5a60);
     --cw-deep: var(--color-cpr-red-deep, #7a1116);
-    --cw-ink: var(--color-cpr-ink, #0d0a0b);
-    --cw-fg: var(--color-cpr-ink-fg, #f3dede);
-    --cw-amber: #ffb454;
+
+    /* Tema chiaro: carta rosata, testo scuro, rosso e ambra più profondi per restare leggibili */
+    --cw-glow: #b3141c;
+    --cw-fg: #2b1a1d;
+    --cw-strong: #14090b;
+    --cw-amber: #a8650f;
+    --cw-bg: radial-gradient(ellipse at 45% 38%, #f3e7e4 0%, #ddcdcb 75%);
+    --cw-surface: rgb(255 250 249 / 0.9);
+    --cw-panel-bg: rgb(255 251 250 / 0.97);
+    --cw-head-bg: #6b1117;
+    --cw-head-fg: #fff;
+    --cw-on-glow: #fff;
+    --cw-sel-stroke: #5a0b10;
+    --cw-text-glow: none;
+    --cw-scan: rgb(0 0 0 / 0.03);
 
     --cw-red-8: color-mix(in srgb, var(--cw-red) 8%, transparent);
     --cw-red-14: color-mix(in srgb, var(--cw-red) 14%, transparent);
@@ -31,13 +43,30 @@
     padding: var(--cw-pad) 2.5%;
     overflow: hidden;
     border: 1px solid var(--cw-deep);
-    background: radial-gradient(ellipse at 45% 38%, #1c0a0f 0%, #08060d 70%);
+    background: var(--cw-bg);
     color: var(--cw-fg);
     font-family: ui-monospace, Menlo, Consolas, monospace;
     font-size: 12px;
     line-height: 16px;
     letter-spacing: normal;
     text-align: left;
+}
+
+/* Tema scuro: più chiaro di un nero pieno, con i riflessi rossi originali */
+:root[data-theme="dark"] .cw {
+    --cw-glow: var(--color-cpr-glow, #ff5a60);
+    --cw-fg: var(--color-cpr-ink-fg, #f3dede);
+    --cw-strong: #fff;
+    --cw-amber: #ffb454;
+    --cw-bg: radial-gradient(ellipse at 45% 38%, #3a1c25 0%, #1f1625 72%);
+    --cw-surface: rgb(32 21 27 / 0.88);
+    --cw-panel-bg: rgb(30 20 26 / 0.95);
+    --cw-head-bg: #170d11;
+    --cw-head-fg: #fff;
+    --cw-on-glow: #050304;
+    --cw-sel-stroke: #ffb0b3;
+    --cw-text-glow: 0 0 8px var(--cw-glow);
+    --cw-scan: rgb(0 0 0 / 0.14);
 }
 
 .cw *,
@@ -53,7 +82,7 @@
     inset: 0;
     z-index: 5;
     pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.2) 0 1px, transparent 1px 3px);
+    background: repeating-linear-gradient(0deg, var(--cw-scan) 0 1px, transparent 1px 3px);
 }
 
 .cw button {
@@ -233,7 +262,7 @@
 
 .cw .cw-zone[data-selected="true"] {
     fill: color-mix(in srgb, var(--cw-glow) 70%, transparent);
-    stroke: #ffb0b3;
+    stroke: var(--cw-sel-stroke);
     filter: drop-shadow(0 0 6px var(--cw-glow));
 }
 
@@ -349,7 +378,7 @@
     padding: 0;
     border: 1px solid var(--cw-red-60);
     background: color-mix(in srgb, var(--cw-red) 5%, transparent);
-    color: #fff;
+    color: var(--cw-strong);
     font-size: 13px;
     font-style: normal;
     font-weight: 700;
@@ -367,11 +396,11 @@
     border-color: var(--cw-glow);
     background: var(--cw-red-30);
     box-shadow: inset 0 0 8px color-mix(in srgb, var(--cw-glow) 35%, transparent);
-    text-shadow: 0 0 8px var(--cw-glow);
+    text-shadow: var(--cw-text-glow);
 }
 
 .cw .cw-cell--on:hover {
-    border-color: #fff;
+    border-color: var(--cw-strong);
     background: color-mix(in srgb, var(--cw-glow) 45%, transparent);
 }
 
@@ -401,7 +430,7 @@
 .cw .cw-group--table {
     max-width: 236px;
     border: 2px solid var(--cw-red);
-    background: rgb(13 10 11 / 0.88);
+    background: var(--cw-surface);
 }
 
 .cw .cw-group--table:hover,
@@ -418,8 +447,8 @@
     min-height: 22px;
     padding: 3px 7px;
     border-bottom: 2px solid var(--cw-red);
-    background: #050304;
-    color: #fff;
+    background: var(--cw-head-bg);
+    color: var(--cw-head-fg);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -447,7 +476,7 @@
     width: 12px;
     height: 12px;
     border: 1.5px solid var(--cw-glow);
-    color: #050304;
+    color: var(--cw-on-glow);
 }
 
 .cw .cw-check[data-on="true"] {
@@ -497,15 +526,18 @@
 .cw .cw-panel {
     position: absolute;
     top: var(--cw-pad);
-    left: 41%;
+    left: 36%;
     z-index: 4;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    width: min(470px, 57%);
+    width: min(680px, 62%);
     max-height: calc(100% - 2 * var(--cw-pad));
     border: 2px solid var(--cw-red);
-    background: rgb(13 10 11 / 0.94);
+    background: var(--cw-panel-bg);
     box-shadow: 0 0 24px var(--cw-red-22);
+    /* In primo piano si legge e si scrive: testo e righe più grandi della vista d'insieme */
+    font-size: 14px;
+    line-height: 20px;
     opacity: 0;
     transform: translateX(30px);
     pointer-events: none;
@@ -520,8 +552,10 @@
 }
 
 .cw .cw-panel-head {
-    min-height: 32px;
-    font-size: 12px;
+    gap: 10px;
+    min-height: 46px;
+    padding: 8px 14px;
+    font-size: 14px;
 }
 
 .cw .cw-panel-title {
@@ -534,8 +568,8 @@
 
 .cw .cw-panel-check {
     flex: none;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     margin: 0;
     accent-color: var(--cw-glow);
     cursor: pointer;
@@ -566,6 +600,12 @@
     white-space: nowrap;
 }
 
+.cw .cw-panel .cw-button {
+    min-height: 34px;
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
 /* Nella barra del pannello il bottone sta a destra; dopo il contatore (che spinge già a destra) non serve altro margine */
 .cw .cw-panel-head .cw-button {
     margin-left: auto;
@@ -591,7 +631,7 @@
 .cw .cw-notice,
 .cw .cw-meta {
     margin: 0;
-    padding: 8px 10px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--cw-red-50);
 }
 
@@ -600,7 +640,7 @@
 }
 
 .cw .cw-meta {
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.06em;
     opacity: 0.8;
     text-transform: uppercase;
@@ -613,12 +653,12 @@
 
 .cw .cw-row {
     display: grid;
-    grid-template-columns: 36px minmax(0, 1fr) auto;
-    gap: 10px;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 12px;
     align-items: center;
     width: 100%;
-    min-height: 32px;
-    padding: 3px 10px;
+    min-height: 44px;
+    padding: 6px 14px;
     border: 0;
     border-bottom: 1px solid var(--cw-red-50);
     background: none;
@@ -630,10 +670,10 @@
 }
 
 .cw .cw-row--head {
-    min-height: 22px;
+    min-height: 28px;
     border-bottom-color: var(--cw-red-50);
     background: var(--cw-red-14);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.1em;
     opacity: 0.8;
     text-transform: uppercase;
@@ -653,7 +693,7 @@
 }
 
 .cw .cw-slot-number {
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.06em;
     opacity: 0.65;
 }
@@ -683,10 +723,10 @@
 }
 
 .cw .cw-tag {
-    margin-left: 6px;
-    padding: 0 5px;
+    margin-left: 8px;
+    padding: 0 6px;
     border: 1px solid var(--cw-deep);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     vertical-align: 1px;
@@ -698,10 +738,10 @@
 }
 
 .cw .cw-link {
-    padding: 2px 0;
+    padding: 4px 0;
     border: 0;
     background: transparent;
-    font-size: 11px;
+    font-size: 13px;
     opacity: 0.8;
     text-decoration: underline;
 }
@@ -717,10 +757,10 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 9px;
+    padding: 14px;
     border: 0;
     background: transparent;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -738,31 +778,40 @@
 /* Dettaglio: i campi sono i TextField comuni, qui solo la spaziatura e il passo degli slot */
 .cw .cw-fields {
     display: grid;
-    gap: 12px;
-    padding: 10px;
+    gap: 18px;
+    padding: 16px 14px;
 }
 
 .cw .cw-fields input,
 .cw .cw-fields textarea {
-    font-size: 14px;
+    min-height: 40px;
+    font-size: 16px;
+}
+
+.cw .cw-fields textarea {
+    min-height: 110px;
+}
+
+.cw .cw-fields span {
+    font-size: 12px;
 }
 
 .cw .cw-stepper {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 }
 
 .cw .cw-stepper strong {
     min-width: 1.5em;
-    font-size: 14px;
+    font-size: 18px;
     text-align: center;
 }
 
 .cw .cw-panel-foot {
     display: flex;
     justify-content: flex-end;
-    padding: 9px 10px;
+    padding: 12px 14px;
     border-top: 1px solid var(--cw-red-50);
 }
 
@@ -781,6 +830,56 @@
 
 .cw-legend b {
     color: #b8741a;
+}
+
+/* Simboli della legenda in modalità compatta: copie in miniatura dei quadratini della scena */
+.cw-legend {
+    --key-glow: #b3141c;
+    --key-amber: #a8650f;
+}
+
+:root[data-theme="dark"] .cw-legend {
+    --key-glow: #ff5a60;
+    --key-amber: #ffb454;
+}
+
+.cw-legend .cw-key {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid color-mix(in srgb, var(--color-cpr-red, #d7262e) 60%, transparent);
+    background: color-mix(in srgb, var(--color-cpr-red, #d7262e) 5%, transparent);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.cw-legend .cw-key--free::after {
+    content: "";
+    width: 42%;
+    height: 42%;
+    border: 1.5px solid color-mix(in srgb, var(--color-cpr-red, #d7262e) 70%, transparent);
+    border-radius: 50%;
+}
+
+.cw-legend .cw-key--on {
+    border-color: var(--key-glow);
+    background: color-mix(in srgb, var(--color-cpr-red, #d7262e) 30%, transparent);
+}
+
+.cw-legend .cw-key--extra {
+    border-style: dashed;
+    border-color: var(--key-amber);
+}
+
+.cw-legend .cw-key--extra::after {
+    border-color: var(--key-amber);
+}
+
+.cw-legend .cw-key--locked {
+    opacity: 0.3;
 }
 
 /* --- Schermi stretti: corpo in alto e categorie in colonna; aperta una categoria, il pannello prende il posto della scena --- */

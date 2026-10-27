@@ -1,4 +1,4 @@
-import type {BaseSheet} from "../../types/sheet";
+import type {BaseSheet, LabeledField} from "../../types/sheet";
 import type {CyberwareSection} from "./cyberware";
 import type {NetrunnerSection} from "./program";
 
@@ -170,6 +170,7 @@ export interface Health {
 
 // #region Armi e armature
 export interface ArmorSlot {
+    name: string;         // Nome del pezzo di protezione
     armorValue: number;   // PA
     penalty: number;      // Penalità: applicata a RIF, DES e VEL
 }
@@ -221,18 +222,19 @@ export interface Background {
     friends: Relation[];         // Amici
     tragicLoveStories: Relation[]; // Tragiche Storie d'Amore
     enemies: Enemy[];            // Nemici (4 righe)
-    fashion: string;             // Moda
     housing: string;             // Alloggio
     rent: string;                // Affitto
     lifestyle: string;           // Stile di Vita
-    roleBackground: RoleBackgroundField[]; // Background di Ruolo: campi etichetta/valore
+    roleBackground: LabeledField[]; // Background di Ruolo: campi etichetta/valore
     description: string;         // Descrizione libera del personaggio
 }
+// #endregion
 
-// Campo del background di ruolo (TIPO, PARTNER, POSTAZIONE...). Il set è estendibile.
-export interface RoleBackgroundField {
-    label: string;
-    value: string;
+// #region Aspetto
+// Moda (sopra, sotto, giacca...) come campi etichetta/valore estendibili, più la descrizione fisica
+export interface Appearance {
+    fashion: LabeledField[];
+    physicalDescription: string;
 }
 // #endregion
 
@@ -261,6 +263,7 @@ export interface CyberpunkRedCharacterSheetSchema extends BaseSheet {
     armor: Armor;
     weapons: Weapon[];
     background: Background;
+    appearance: Appearance;
     equipment: Equipment;
     cyberware: CyberwareSection;
     netrunner: NetrunnerSection;

@@ -3,7 +3,7 @@ import {Check, Eraser, Plus} from "lucide-react";
 import DeleteButton from "../../../components/common/DeleteButton";
 import Modal from "../../../components/common/Modal";
 import {NumberField, TextField} from "../../../components/common/EditableField";
-import {buttonClass, inputClass} from "../../../components/common/ui";
+import {buttonClass, fieldLabelClass, inputClass} from "../../../components/common/ui";
 import {
     OFFENSIVE_TARGET_LABELS,
     PROGRAM_CLASS_LABELS,
@@ -13,7 +13,7 @@ import {
     type ProgramClass,
 } from "../program";
 import {useSheet} from "../SheetContext";
-import {removeAt, replaceAt} from "../sheetState";
+import {removeAt, replaceAt} from "../../../utils/list";
 
 const BLANK_PROGRAM: Program = {name: "", att: 0, def: 0, rez: 0, damage: "", effect: "", class: "boost"};
 
@@ -31,7 +31,7 @@ const withClass = (program: Program, cls: ProgramClass): Program => {
 const renumber = (deck: DeckSlot[]): DeckSlot[] => deck.map((slot, index) => ({...slot, slot: index + 1}));
 
 const NetrunnerPanel = () => {
-    const {sheet, editMode, update} = useSheet();
+    const {sheet, update} = useSheet();
     const deck = sheet.netrunner.deck;
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -49,16 +49,14 @@ const NetrunnerPanel = () => {
                 <SlotCard key={index} slot={slot} onOpen={() => setOpenIndex(index)}/>
             ))}
 
-            {editMode && (
-                <button
-                    type="button"
-                    onClick={addSlot}
-                    className="grid min-h-32 cursor-pointer place-items-center content-center gap-2 border border-dashed border-cpr-red/60 bg-transparent p-3 hover:border-cpr-glow focus-visible:border-cpr-glow focus-visible:outline-none"
-                >
-                    <Plus size={24} aria-hidden="true" className="justify-self-center text-cpr-red"/>
-                    <span className="font-bold tracking-wide uppercase">Aggiungi slot</span>
-                </button>
-            )}
+            <button
+                type="button"
+                onClick={addSlot}
+                className="grid min-h-32 cursor-pointer place-items-center content-center gap-2 border border-dashed border-cpr-red/60 bg-transparent p-3 hover:border-cpr-glow focus-visible:border-cpr-glow focus-visible:outline-none"
+            >
+                <Plus size={24} aria-hidden="true" className="justify-self-center text-cpr-red"/>
+                <span className="font-bold tracking-wide uppercase">Aggiungi slot</span>
+            </button>
 
             {openIndex !== null && deck[openIndex] && (
                 <ProgramModal
@@ -89,6 +87,7 @@ const SlotCard = ({slot, onOpen}: {slot: DeckSlot; onOpen: () => void}) => {
             >
                 <span className="font-mono text-[0.75em] tracking-widest opacity-70">{slotNumber}</span>
                 <span>Slot libero</span>
+                <span className="text-[0.8em] font-bold tracking-wide text-cpr-red uppercase">Installa programma</span>
             </button>
         );
     }
@@ -139,11 +138,11 @@ interface ProgramModalProps {
     onRemoveSlot: () => void;
 }
 
+// Slot libero: bozza da installare con "Installa". Slot occupato: dettaglio modificabile, ogni cambio è subito salvato
 const ProgramModal = ({index, onClose, onRemoveSlot}: ProgramModalProps) => {
-    const {sheet, editMode, update} = useSheet();
+    const {sheet, update} = useSheet();
     const slot = sheet.netrunner.deck[index];
-    // In modifica lavoriamo su una bozza, salvata solo con "Salva"
-    const [draft, setDraft] = useState<Program>(slot.program ?? BLANK_PROGRAM);
+    const [draft, setDraft] = useState<Program>(BLANK_PROGRAM);
 
     const writeSlot = (program: Program | null) =>
         update((s) => ({
@@ -154,73 +153,74 @@ const ProgramModal = ({index, onClose, onRemoveSlot}: ProgramModalProps) => {
             },
         }));
 
-    const save = () => {
-        writeSlot(draft);
-        onClose();
-    };
+    const installed = slot.program;
+    const slotLabel = `Slot ${String(slot.slot).padStart(2, "0")}`;
 
-    const clear = () => {
-        writeSlot(null);
-        onClose();
-    };
+    if (!installed) {
+        const install = () => {
+            writeSlot(draft);
+            onClose();
+        };
 
-    const title = slot.program?.name || `Slot ${slot.slot}`;
-
-    if (!editMode) {
-        const program = slot.program;
         return (
-            <Modal title={title} onClose={onClose}>
-                {!program ? (
-                    <p className="m-0">Slot libero: attiva la modifica per installare un programma.</p>
-                ) : (
+            <Modal
+                title={`${slotLabel} · Installa programma`}
+                onClose={onClose}
+                footer={
                     <>
-                        <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2">
-                            <Stat label="Classe" value={PROGRAM_CLASS_LABELS[program.class]}/>
-                            {"target" in program && <Stat label="Bersaglio" value={OFFENSIVE_TARGET_LABELS[program.target]}/>}
-                            <Stat label="ATT" value={String(program.att)}/>
-                            <Stat label="DIF" value={String(program.def)}/>
-                            <Stat label="REZ" value={String(program.rez)}/>
-                            <Stat label="DAN" value={program.damage || "—"}/>
-                        </div>
-                        <p className="m-0 border-l-2 border-cpr-red pl-3 leading-normal whitespace-pre-wrap">
-                            {program.effect || "Nessun effetto descritto."}
-                        </p>
+                        <DeleteButton label="Rimuovi slot" onClick={onRemoveSlot}/>
+                        <button type="button" onClick={install} className={buttonClass}>
+                            <Check size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Installa
+                        </button>
                     </>
-                )}
+                }
+            >
+                <ProgramForm program={draft} onChange={setDraft}/>
             </Modal>
         );
     }
 
-    const patch = (values: Partial<Pick<Program, "name" | "att" | "def" | "rez" | "damage" | "effect">>) =>
-        setDraft((current) => ({...current, ...values}));
-
     return (
         <Modal
-            title={title}
+            title={installed.name || slotLabel}
             onClose={onClose}
             footer={
                 <>
                     <DeleteButton label="Rimuovi slot" onClick={onRemoveSlot}/>
-                    {slot.program && (
-                        <button type="button" onClick={clear} className={buttonClass}>
-                            <Eraser size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Svuota
-                        </button>
-                    )}
-                    <button type="button" onClick={save} className={buttonClass}>
-                        <Check size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Salva
+                    <button
+                        type="button"
+                        onClick={() => {
+                            writeSlot(null);
+                            onClose();
+                        }}
+                        className={buttonClass}
+                    >
+                        <Eraser size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Svuota
                     </button>
                 </>
             }
         >
-            <TextField label="Nome" value={draft.name} editMode onChange={(name) => patch({name})}/>
+            <ProgramForm program={installed} onChange={writeSlot}/>
+        </Modal>
+    );
+};
+
+// Campi del programma: gli stessi per l'installazione e per la modifica
+const ProgramForm = ({program, onChange}: {program: Program; onChange: (program: Program) => void}) => {
+    const patch = (values: Partial<Pick<Program, "name" | "att" | "def" | "rez" | "damage" | "effect">>) =>
+        onChange({...program, ...values});
+
+    return (
+        <>
+            <TextField label="Nome" value={program.name} onChange={(name) => patch({name})}/>
 
             <div className="grid gap-3 sm:grid-cols-2">
                 <label className="grid min-w-0 gap-1">
-                    <span className="text-[0.75em] font-bold tracking-widest uppercase opacity-70">Classe</span>
+                    <span className={fieldLabelClass}>Classe</span>
                     <select
                         className={`${inputClass} [&_option]:bg-cpr-ink [&_option]:text-cpr-ink-fg`}
-                        value={draft.class}
-                        onChange={(event) => setDraft((current) => withClass(current, event.target.value as ProgramClass))}
+                        value={program.class}
+                        onChange={(event) => onChange(withClass(program, event.target.value as ProgramClass))}
                     >
                         {(Object.keys(PROGRAM_CLASS_LABELS) as ProgramClass[]).map((cls) => (
                             <option key={cls} value={cls}>{PROGRAM_CLASS_LABELS[cls]}</option>
@@ -228,19 +228,13 @@ const ProgramModal = ({index, onClose, onRemoveSlot}: ProgramModalProps) => {
                     </select>
                 </label>
 
-                {"target" in draft && (
+                {"target" in program && (
                     <label className="grid min-w-0 gap-1">
-                        <span className="text-[0.75em] font-bold tracking-widest uppercase opacity-70">Bersaglio</span>
+                        <span className={fieldLabelClass}>Bersaglio</span>
                         <select
                             className={`${inputClass} [&_option]:bg-cpr-ink [&_option]:text-cpr-ink-fg`}
-                            value={draft.target}
-                            onChange={(event) =>
-                                setDraft((current) =>
-                                    "target" in current
-                                        ? {...current, target: event.target.value as OffensiveTarget}
-                                        : current
-                                )
-                            }
+                            value={program.target}
+                            onChange={(event) => onChange({...program, target: event.target.value as OffensiveTarget})}
                         >
                             {(Object.keys(OFFENSIVE_TARGET_LABELS) as OffensiveTarget[]).map((target) => (
                                 <option key={target} value={target}>{OFFENSIVE_TARGET_LABELS[target]}</option>
@@ -251,21 +245,14 @@ const ProgramModal = ({index, onClose, onRemoveSlot}: ProgramModalProps) => {
             </div>
 
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <NumberField label="ATT" value={draft.att} editMode onChange={(att) => patch({att})}/>
-                <NumberField label="DIF" value={draft.def} editMode onChange={(def) => patch({def})}/>
-                <NumberField label="REZ" value={draft.rez} editMode onChange={(rez) => patch({rez})}/>
-                <TextField label="Danno (DAN)" value={draft.damage} editMode placeholder="es. 2d6"
+                <NumberField label="ATT" value={program.att} onChange={(att) => patch({att})}/>
+                <NumberField label="DIF" value={program.def} onChange={(def) => patch({def})}/>
+                <NumberField label="REZ" value={program.rez} onChange={(rez) => patch({rez})}/>
+                <TextField label="Danno (DAN)" value={program.damage} placeholder="es. 2d6"
                            onChange={(damage) => patch({damage})}/>
             </div>
 
-            <TextField label="Effetto" value={draft.effect} multiline editMode onChange={(effect) => patch({effect})}/>
-        </Modal>
+            <TextField label="Effetto" value={program.effect} multiline onChange={(effect) => patch({effect})}/>
+        </>
     );
 };
-
-const Stat = ({label, value}: {label: string; value: string}) => (
-    <div className="grid gap-0.5 border border-[#5a1116] p-2 text-center">
-        <span className="text-[0.7em] tracking-widest uppercase opacity-70">{label}</span>
-        <strong className="text-lg break-words text-cpr-glow [overflow-wrap:anywhere]">{value}</strong>
-    </div>
-);

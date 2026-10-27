@@ -14,7 +14,7 @@ import {
 } from "../cyberware";
 import {CYBERWARE_LABELS} from "../cyberwareLabels";
 import {useSheet} from "../SheetContext";
-import {removeAt, replaceAt} from "../sheetState";
+import {removeAt, replaceAt} from "../../../utils/list";
 import {SlotCount} from "./CyberwareGroupCard";
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -78,10 +78,10 @@ const CyberwareDetail = ({cyberwareKey, itemIndex, onOpenItem, onClose}: Cyberwa
                     </p>
 
                     <div className="cw-fields">
-                        <TextField label="Nome" value={item.name} editMode onChange={(name) => patch({name})}/>
-                        <TextField label="Data" value={item.date} editMode placeholder="es. 03/44"
+                        <TextField label="Nome" value={item.name} onChange={(name) => patch({name})}/>
+                        <TextField label="Data" value={item.date}
                                    onChange={(date) => patch({date})}/>
-                        <TextField label="Descrizione" value={item.description} multiline editMode
+                        <TextField label="Descrizione" value={item.description} multiline
                                    placeholder="Info varie sull'impianto" onChange={(description) => patch({description})}/>
 
                         <div className="grid gap-1">

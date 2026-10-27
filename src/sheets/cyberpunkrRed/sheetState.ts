@@ -1,8 +1,8 @@
+import type {LabeledField} from "../../types/sheet";
 import {createEmptyCells} from "./cyberware";
 import {
     SKILL_DEFS,
     type CyberpunkRedCharacterSheetSchema,
-    type RoleBackgroundField,
     type SkillKey,
     type Skills,
 } from "./CyberpunkRedCharacterSheetSchema";
@@ -10,13 +10,24 @@ import {
 export type Sheet = CyberpunkRedCharacterSheetSchema;
 
 // Campi di default del background di ruolo: l'utente può aggiungerne altri
-export const DEFAULT_ROLE_FIELDS: RoleBackgroundField[] = [
+export const DEFAULT_ROLE_FIELDS: LabeledField[] = [
     {label: "Tipo", value: ""},
     {label: "Partner", value: ""},
     {label: "Postazione", value: ""},
     {label: "Clienti", value: ""},
     {label: "Programmi", value: ""},
     {label: "Chi mi ha preso di mira", value: ""},
+];
+
+// Campi di default della moda: l'utente può aggiungerne altri
+export const DEFAULT_FASHION_FIELDS: LabeledField[] = [
+    {label: "Sopra", value: ""},
+    {label: "Sotto", value: ""},
+    {label: "Giacca", value: ""},
+    {label: "Occhiali", value: ""},
+    {label: "Cappello", value: ""},
+    {label: "Gioielli", value: ""},
+    {label: "Altri accessori", value: ""},
 ];
 
 // STAT e BASE delle abilità dipendono dalle statistiche: vanno ricalcolate a ogni modifica
@@ -69,9 +80,9 @@ export const createEmptySheet = (): Sheet => {
             dependencies: "",
         },
         armor: {
-            head: {armorValue: 0, penalty: 0},
-            body: {armorValue: 0, penalty: 0},
-            shield: {armorValue: 0, penalty: 0},
+            head: {name: "", armorValue: 0, penalty: 0},
+            body: {name: "", armorValue: 0, penalty: 0},
+            shield: {name: "", armorValue: 0, penalty: 0},
         },
         weapons: [],
         background: {
@@ -90,12 +101,15 @@ export const createEmptySheet = (): Sheet => {
             friends: [],
             tragicLoveStories: [],
             enemies: [],
-            fashion: "",
             housing: "",
             rent: "",
             lifestyle: "",
             description: "",
             roleBackground: DEFAULT_ROLE_FIELDS.map((field) => ({...field})),
+        },
+        appearance: {
+            fashion: DEFAULT_FASHION_FIELDS.map((field) => ({...field})),
+            physicalDescription: "",
         },
         equipment: {items: [], money: 0},
         // Ogni categoria parte con gli slot previsti dalle regole; l'utente può aggiungerne altri
@@ -119,10 +133,3 @@ export const createEmptySheet = (): Sheet => {
         },
     });
 };
-
-// Helper immutabili per liste
-export const replaceAt = <T,>(list: T[], index: number, value: T): T[] =>
-    list.map((item, i) => (i === index ? value : item));
-
-export const removeAt = <T,>(list: T[], index: number): T[] =>
-    list.filter((_, i) => i !== index);

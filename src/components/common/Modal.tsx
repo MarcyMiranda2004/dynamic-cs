@@ -11,9 +11,11 @@ interface ModalProps {
     footer?: ReactNode
     // Cambiando viewKey il contenuto si ridisegna con l'animazione di comparsa
     viewKey?: string
+    // Per i modali con molti campi in griglia a due colonne
+    wide?: boolean
 }
 
-const Modal = ({title, onClose, children, footer, viewKey}: ModalProps) => {
+const Modal = ({title, onClose, children, footer, viewKey, wide = false}: ModalProps) => {
     const [closing, setClosing] = useState(false)
     const panelRef = useRef<HTMLDivElement>(null)
 
@@ -58,7 +60,7 @@ const Modal = ({title, onClose, children, footer, viewKey}: ModalProps) => {
                 aria-modal="true"
                 aria-label={title}
                 tabIndex={-1}
-                className="relative flex max-h-[min(85svh,760px)] w-[min(640px,100%)] animate-modal-in flex-col border-2 border-cpr-red bg-cpr-ink font-mono text-left text-cpr-ink-fg shadow-[0_0_0_1px_#5a1116,0_0_24px_rgb(215_38_46/0.35)] outline-none [clip-path:polygon(16px_0,100%_0,100%_calc(100%-16px),calc(100%-16px)_100%,0_100%,0_16px)] before:pointer-events-none before:absolute before:inset-0 before:content-[''] before:bg-[repeating-linear-gradient(to_bottom,rgb(255_255_255/0.03)_0_1px,transparent_1px_3px)] motion-reduce:animate-none"
+                className={`relative flex max-h-[min(85svh,760px)] ${wide ? 'w-[min(860px,100%)]' : 'w-[min(640px,100%)]'} animate-modal-in flex-col border-2 border-cpr-red bg-cpr-ink font-mono text-left text-cpr-ink-fg shadow-[0_0_0_1px_#5a1116,0_0_24px_rgb(215_38_46/0.35)] outline-none [clip-path:polygon(16px_0,100%_0,100%_calc(100%-16px),calc(100%-16px)_100%,0_100%,0_16px)] before:pointer-events-none before:absolute before:inset-0 before:content-[''] before:bg-[repeating-linear-gradient(to_bottom,rgb(255_255_255/0.03)_0_1px,transparent_1px_3px)] motion-reduce:animate-none`}
             >
                 <header className="flex items-center justify-between gap-3 border-b border-[#5a1116] px-3.5 py-2.5">
                     <h2 className="m-0 text-base font-bold tracking-widest text-cpr-glow uppercase [overflow-wrap:anywhere] [text-shadow:0_0_8px_rgb(255_90_96/0.6)]">

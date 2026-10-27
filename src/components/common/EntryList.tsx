@@ -3,6 +3,8 @@ import {buttonClass} from './ui'
 
 export interface EntryItem {
     title: string
+    // Dato breve mostrato a destra del titolo (es. il legame)
+    meta?: string
     preview: string
 }
 
@@ -35,7 +37,10 @@ const EntryList = ({
                 onClick={() => onOpen(index)}
                 className="grid w-full min-h-9 max-sm:min-h-11 cursor-pointer content-start gap-1 border border-cpr-red/30 bg-[color-mix(in_srgb,currentColor_4%,transparent)] px-3 py-2 text-left hover:border-cpr-red focus-visible:border-cpr-red focus-visible:outline-none"
             >
-                <span className="font-bold [overflow-wrap:anywhere]">{entry.title || 'Senza nome'}</span>
+                <span className="flex items-baseline justify-between gap-3">
+                    <span className="font-bold [overflow-wrap:anywhere]">{entry.title || 'Senza nome'}</span>
+                    {entry.meta && <span className="max-w-[45%] shrink-0 text-right text-[0.85em] opacity-75 [overflow-wrap:anywhere]">{entry.meta}</span>}
+                </span>
                 {entry.preview && (
                     <span className="line-clamp-3 text-[0.9em] opacity-75 [overflow-wrap:anywhere]">{entry.preview}</span>
                 )}

@@ -1,21 +1,23 @@
 import {useState} from "react";
-import {Plus} from "lucide-react";
+import {Check, Pencil} from "lucide-react";
 import DeleteButton from "../../../components/common/DeleteButton";
 import Modal from "../../../components/common/Modal";
+import ClickableTable from "../../../components/common/ClickableTable";
+import PanelHeading from "../../../components/common/PanelHeading";
+import {AddButton} from "../../../components/common/SectionButtons";
 import {InlineNumber, TextField} from "../../../components/common/EditableField";
 import {
-    buttonClass,
     cellClass,
-    panelTitleClass,
-    rowButtonClass,
+    compactButtonClass,
+    inputClass,
     rowClass,
     rowHeadClass,
     sectionClass,
     tableClass,
 } from "../../../components/common/ui";
-import type {Armor, EquipmentItem, Weapon} from "../CyberpunkRedCharacterSheetSchema";
+import type {Armor, ArmorSlot, EquipmentItem, Weapon} from "../CyberpunkRedCharacterSheetSchema";
 import {useSheet} from "../SheetContext";
-import {removeAt, replaceAt} from "../sheetState";
+import {removeAt, replaceAt} from "../../../utils/list";
 
 const BLANK_WEAPON: Weapon = {name: "", damage: "", shots: "", rof: "", ammo: "", notes: ""};
 const BLANK_ITEM: EquipmentItem = {item: "", description: "", notes: ""};
@@ -26,67 +28,22 @@ const ARMOR_ROWS: {key: keyof Armor; label: string}[] = [
     {key: "shield", label: "Scudo"},
 ];
 
-const WEAPON_COLUMNS = "[--cols:minmax(0,2fr)_0.8fr_0.8fr_0.8fr_minmax(0,1.2fr)]";
-const ARMOR_COLUMNS = "[--cols:minmax(0,1.2fr)_1fr_1fr]";
-// Righe a cella singola (equipaggiamento, messaggi vuoti): non ereditano le colonne della tabella
-const SINGLE_COLUMN = "[--cols:1fr]";
+const WEAPON_COLUMNS = "minmax(0,2fr) 0.8fr 0.8fr 0.8fr minmax(0,1.2fr)";
+const ARMOR_COLUMNS = "[--cols:minmax(0,1.6fr)_1fr_1fr]";
 
-const InventoryPanel = () => {
-    const {sheet, editMode, update} = useSheet();
-
-    return (
-        <div className="grid gap-3 md:grid-cols-2">
-            <WeaponsSection/>
-
-            <section className={sectionClass} aria-label="Armature">
-                <h3 className={panelTitleClass}>Armature</h3>
-                <div className={`${tableClass} ${ARMOR_COLUMNS}`}>
-                    <div className={rowHeadClass}>
-                        <span>Armatura</span>
-                        <span>PA</span>
-                        <span>Penalità</span>
-                    </div>
-                    {ARMOR_ROWS.map(({key, label}) => (
-                        <div key={key} className={rowClass}>
-                            <span className={cellClass}><strong>{label}</strong></span>
-                            <InlineNumber
-                                label="PA"
-                                value={sheet.armor[key].armorValue}
-                                editMode={editMode}
-                                onChange={(armorValue) =>
-                                    update((s) => ({
-                                        ...s,
-                                        armor: {...s.armor, [key]: {...s.armor[key], armorValue}},
-                                    }))
-                                }
-                            />
-                            <InlineNumber
-                                label="Penalità"
-                                value={sheet.armor[key].penalty}
-                                editMode={editMode}
-                                onChange={(penalty) =>
-                                    update((s) => ({
-                                        ...s,
-                                        armor: {...s.armor, [key]: {...s.armor[key], penalty}},
-                                    }))
-                                }
-                            />
-                        </div>
-                    ))}
-                </div>
-                <p className="m-0 text-[0.85em] italic opacity-70">La penalità si applica a RIF, DES e VEL.</p>
-            </section>
-
-            <EquipmentSection/>
-        </div>
-    );
-};
+const InventoryPanel = () => (
+    <div className="grid gap-3 md:grid-cols-2">
+        <WeaponsSection/>
+        <ArmorSection/>
+        <EquipmentSection/>
+    </div>
+);
 export default InventoryPanel;
 
 // ---------- Armi ----------
 
 const WeaponsSection = () => {
-    const {sheet, editMode, update} = useSheet();
+    const {sheet, update} = useSheet();
     const [selected, setSelected] = useState<number | null>(null);
 
     const addWeapon = () => {
@@ -97,34 +54,20 @@ const WeaponsSection = () => {
 
     return (
         <section className={`${sectionClass} md:col-span-2`} aria-label="Armi">
-            <h3 className={panelTitleClass}>Armi</h3>
-            <div className={`${tableClass} ${WEAPON_COLUMNS}`}>
-                <div className={rowHeadClass}>
-                    <span>Arma</span>
-                    <span>DAN</span>
-                    <span>Colpi</span>
-                    <span>CF</span>
-                    <span>Munizioni</span>
-                </div>
-
-                {sheet.weapons.length === 0 && <p className={`${rowClass} ${SINGLE_COLUMN} m-0 opacity-70`}>Nessuna arma</p>}
-
-                {sheet.weapons.map((weapon, index) => (
-                    <button key={index} type="button" onClick={() => setSelected(index)} className={`${rowClass} ${rowButtonClass}`}>
-                        <span className={cellClass}><strong>{weapon.name || "—"}</strong></span>
-                        <span className={cellClass} data-label="DAN">{weapon.damage || "—"}</span>
-                        <span className={cellClass} data-label="Colpi">{weapon.shots || "—"}</span>
-                        <span className={cellClass} data-label="CF">{weapon.rof || "—"}</span>
-                        <span className={cellClass} data-label="Munizioni">{weapon.ammo || "—"}</span>
-                    </button>
-                ))}
-            </div>
-
-            {editMode && (
-                <button type="button" onClick={addWeapon} className={`${buttonClass} justify-self-start`}>
-                    <Plus size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Aggiungi arma
-                </button>
-            )}
+            <PanelHeading title="Armi" action={<AddButton onClick={addWeapon}/>}/>
+            <ClickableTable
+                rows={sheet.weapons}
+                onOpen={setSelected}
+                emptyLabel="Nessuna arma"
+                widths={WEAPON_COLUMNS}
+                columns={[
+                    {header: "Arma", render: (weapon) => weapon.name || "—"},
+                    {header: "DAN", render: (weapon) => weapon.damage || "—"},
+                    {header: "Colpi", render: (weapon) => weapon.shots || "—"},
+                    {header: "CF", render: (weapon) => weapon.rof || "—"},
+                    {header: "Munizioni", render: (weapon) => weapon.ammo || "—"},
+                ]}
+            />
 
             {selected !== null && sheet.weapons[selected] && (
                 <WeaponModal index={selected} onClose={() => setSelected(null)}/>
@@ -134,7 +77,7 @@ const WeaponsSection = () => {
 };
 
 const WeaponModal = ({index, onClose}: {index: number; onClose: () => void}) => {
-    const {sheet, editMode, update} = useSheet();
+    const {sheet, update} = useSheet();
     const weapon = sheet.weapons[index];
 
     const patch = (values: Partial<Weapon>) =>
@@ -146,27 +89,94 @@ const WeaponModal = ({index, onClose}: {index: number; onClose: () => void}) => 
     };
 
     return (
-        <Modal
-            title={weapon.name || "Arma"}
-            onClose={onClose}
-            footer={editMode && <DeleteButton label="Elimina arma" onClick={remove}/>}
-        >
-            <TextField label="Arma" value={weapon.name} editMode={editMode} onChange={(name) => patch({name})}/>
+        <Modal title={weapon.name || "Arma"} onClose={onClose} footer={<DeleteButton label="Elimina arma" onClick={remove}/>}>
+            <TextField label="Arma" value={weapon.name} onChange={(name) => patch({name})}/>
             <div className="grid gap-3 sm:grid-cols-2">
-                <TextField label="DAN" value={weapon.damage} editMode={editMode} onChange={(damage) => patch({damage})}/>
-                <TextField label="Colpi" value={weapon.shots} editMode={editMode} onChange={(shots) => patch({shots})}/>
-                <TextField label="CF" value={weapon.rof} editMode={editMode} onChange={(rof) => patch({rof})}/>
-                <TextField label="Munizioni" value={weapon.ammo} editMode={editMode} onChange={(ammo) => patch({ammo})}/>
+                <TextField label="DAN" value={weapon.damage} onChange={(damage) => patch({damage})}/>
+                <TextField label="Colpi" value={weapon.shots} onChange={(shots) => patch({shots})}/>
+                <TextField label="CF" value={weapon.rof} onChange={(rof) => patch({rof})}/>
+                <TextField label="Munizioni" value={weapon.ammo} onChange={(ammo) => patch({ammo})}/>
             </div>
-            <TextField label="Note" value={weapon.notes} multiline editMode={editMode} onChange={(notes) => patch({notes})}/>
+            <TextField label="Note" value={weapon.notes} multiline onChange={(notes) => patch({notes})}/>
         </Modal>
+    );
+};
+
+// ---------- Armature ----------
+
+// Niente modale: "Modifica" trasforma la tabella in campi, "Fine" la riporta in lettura
+const ArmorSection = () => {
+    const {sheet, update} = useSheet();
+    const [editing, setEditing] = useState(false);
+
+    const patchSlot = (key: keyof Armor, values: Partial<ArmorSlot>) =>
+        update((s) => ({...s, armor: {...s.armor, [key]: {...s.armor[key], ...values}}}));
+
+    return (
+        <section className={sectionClass} aria-label="Armature">
+            <PanelHeading
+                title="Armature"
+                action={
+                    <button type="button" aria-pressed={editing} onClick={() => setEditing((value) => !value)}
+                            className={compactButtonClass}>
+                        {editing ? <Check size={14} aria-hidden="true"/> : <Pencil size={14} aria-hidden="true"/>}
+                        {editing ? "Fine" : "Modifica"}
+                    </button>
+                }
+            />
+            <div className={`${tableClass} ${ARMOR_COLUMNS}`}>
+                <div className={rowHeadClass}>
+                    <span>Armatura</span>
+                    <span>PA</span>
+                    <span>Penalità</span>
+                </div>
+                {ARMOR_ROWS.map(({key, label}) => {
+                    const slot = sheet.armor[key];
+                    return (
+                        <div key={key} className={rowClass}>
+                            {/* Il nome del pezzo sta a destra del tipo: "Testa - Elmo antisommossa" */}
+                            <span className={`${cellClass} flex min-h-9 items-center gap-1.5`}>
+                                <strong>{label}</strong>
+                                {editing ? (
+                                    <>
+                                        <span aria-hidden="true">-</span>
+                                        <input
+                                            className={`${inputClass} min-h-9 flex-1`}
+                                            aria-label={`Nome del pezzo: ${label}`}
+                                            placeholder="Nome del pezzo"
+                                            value={slot.name}
+                                            onChange={(event) => patchSlot(key, {name: event.target.value})}
+                                        />
+                                    </>
+                                ) : (
+                                    slot.name && <span className="opacity-80">- {slot.name}</span>
+                                )}
+                            </span>
+                            {editing ? (
+                                <InlineNumber label="PA" value={slot.armorValue}
+                                              onChange={(armorValue) => patchSlot(key, {armorValue})}/>
+                            ) : (
+                                <span className={`${cellClass} flex min-h-9 items-center`} data-label="PA">{slot.armorValue}</span>
+                            )}
+                            {editing ? (
+                                <InlineNumber label="Penalità" value={slot.penalty}
+                                              onChange={(penalty) => patchSlot(key, {penalty})}/>
+                            ) : (
+                                <span className={`${cellClass} flex min-h-9 items-center`} data-label="Penalità">{slot.penalty}</span>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+            <p className="m-0 text-[0.85em] italic opacity-70">La penalità si applica a RIF, DES e VEL.</p>
+        </section>
     );
 };
 
 // ---------- Equipaggiamento e denaro ----------
 
 const EquipmentSection = () => {
-    const {sheet, editMode, update} = useSheet();
+    const {sheet, update} = useSheet();
     const [selected, setSelected] = useState<number | null>(null);
 
     const addItem = () => {
@@ -179,52 +189,39 @@ const EquipmentSection = () => {
         // La lista occupa tutto lo spazio libero e il denaro resta in fondo alla sezione, anche se la card accanto è più alta
         <section className={`${sectionClass} grid-rows-[1fr_auto]`} aria-label="Equipaggiamento">
             <div className="grid content-start gap-2">
-                <h3 className={panelTitleClass}>Equipaggiamento</h3>
-                <div className={tableClass}>
-                    {sheet.equipment.items.length === 0 && <p className={`${rowClass} ${SINGLE_COLUMN} m-0 opacity-70`}>Nessun equipaggiamento</p>}
-
-                    {sheet.equipment.items.map((item, index) => (
-                        <button key={index} type="button" onClick={() => setSelected(index)} className={`${rowClass} ${SINGLE_COLUMN} ${rowButtonClass}`}>
-                            <span className={cellClass}><strong>{item.item || "—"}</strong></span>
-                        </button>
-                    ))}
-                </div>
-
-                {editMode && (
-                    <button type="button" onClick={addItem} className={`${buttonClass} justify-self-start`}>
-                        <Plus size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Aggiungi equipaggiamento
-                    </button>
-                )}
+                <PanelHeading title="Equipaggiamento" action={<AddButton onClick={addItem}/>}/>
+                <ClickableTable
+                    rows={sheet.equipment.items}
+                    onOpen={setSelected}
+                    emptyLabel="Nessun equipaggiamento"
+                    hideHeader
+                    columns={[{header: "Equipaggiamento", render: (item) => item.item || "—"}]}
+                />
 
                 {selected !== null && sheet.equipment.items[selected] && (
                     <EquipmentModal index={selected} onClose={() => setSelected(null)}/>
                 )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 bg-cpr-red px-3.5 py-2 text-white shadow-[0_0_18px_rgb(215_38_46/0.5)]">
+            <label className="flex items-center justify-between gap-3 bg-cpr-red px-3.5 py-2 text-white shadow-[0_0_18px_rgb(215_38_46/0.5)]">
                 <span className="font-extrabold tracking-widest uppercase">Denaro</span>
-                {editMode ? (
-                    <input
-                        className="w-36 border-0 border-b border-white bg-transparent text-right font-mono text-[1.4rem] text-white focus-visible:outline-none"
-                        type="number"
-                        inputMode="numeric"
-                        aria-label="Denaro"
-                        value={sheet.equipment.money}
-                        onChange={(event) => {
-                            const money = Number(event.target.value) || 0;
-                            update((s) => ({...s, equipment: {...s.equipment, money}}));
-                        }}
-                    />
-                ) : (
-                    <strong className="font-mono text-[1.6rem]">{sheet.equipment.money}</strong>
-                )}
-            </div>
+                <input
+                    className="w-36 border-0 border-b border-white bg-transparent text-right font-mono text-[1.4rem] text-white focus-visible:outline-none"
+                    type="number"
+                    inputMode="numeric"
+                    value={sheet.equipment.money}
+                    onChange={(event) => {
+                        const money = Number(event.target.value) || 0;
+                        update((s) => ({...s, equipment: {...s.equipment, money}}));
+                    }}
+                />
+            </label>
         </section>
     );
 };
 
 const EquipmentModal = ({index, onClose}: {index: number; onClose: () => void}) => {
-    const {sheet, editMode, update} = useSheet();
+    const {sheet, update} = useSheet();
     const item = sheet.equipment.items[index];
 
     const patch = (values: Partial<EquipmentItem>) =>
@@ -242,19 +239,13 @@ const EquipmentModal = ({index, onClose}: {index: number; onClose: () => void}) 
     };
 
     return (
-        <Modal
-            title={item.item || "Equipaggiamento"}
-            onClose={onClose}
-            footer={editMode && <DeleteButton label="Elimina" onClick={remove}/>}
-        >
+        <Modal title={item.item || "Equipaggiamento"} onClose={onClose} footer={<DeleteButton label="Elimina" onClick={remove}/>}>
             {item.image && <img className="max-h-60 w-full border border-[#5a1116] object-cover" src={item.image} alt={item.item}/>}
-            <TextField label="Nome" value={item.item} editMode={editMode} onChange={(value) => patch({item: value})}/>
-            <TextField label="Descrizione" value={item.description} multiline editMode={editMode}
-                       onChange={(description) => patch({description})}/>
-            <TextField label="Note" value={item.notes} multiline editMode={editMode}
-                       onChange={(notes) => patch({notes})}/>
-            <TextField label="URL immagine" value={item.image ?? ""} editMode={editMode}
-                       placeholder="https://..." onChange={(image) => patch({image: image || undefined})}/>
+            <TextField label="Nome" value={item.item} onChange={(value) => patch({item: value})}/>
+            <TextField label="Descrizione" value={item.description} multiline onChange={(description) => patch({description})}/>
+            <TextField label="Note" value={item.notes} multiline onChange={(notes) => patch({notes})}/>
+            <TextField label="URL immagine" value={item.image ?? ""} placeholder="https://..."
+                       onChange={(image) => patch({image: image || undefined})}/>
         </Modal>
     );
 };

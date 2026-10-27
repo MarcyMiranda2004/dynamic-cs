@@ -41,6 +41,11 @@ export const cellClass =
 export const panelTitleClass =
     "m-0 border-b border-cpr-red/35 pb-1 text-sm font-extrabold uppercase tracking-widest text-cpr-red";
 
-// I pannelli diventano tratteggiati quando la scheda è in modifica (vedi data-editing su .group/sheet)
+// Bottone piccolo per l'angolo di una sezione (Aggiungi, Modifica)
+export const compactButtonClass =
+    "inline-flex min-h-7 max-sm:min-h-11 shrink-0 cursor-pointer items-center gap-1 border border-cpr-red bg-transparent px-2 py-0.5 " +
+    "text-[0.8em] font-bold tracking-wide uppercase hover:bg-cpr-red hover:text-white focus-visible:bg-cpr-red " +
+    "focus-visible:text-white focus-visible:outline-none aria-pressed:bg-cpr-red aria-pressed:text-white";
+
 export const sectionClass =
-    "grid content-start gap-2 border-2 border-cpr-red bg-cpr-panel p-2.5 group-data-[editing=true]/sheet:border-dashed";
+    "grid content-start gap-2 border-2 border-cpr-red bg-cpr-panel p-2.5";

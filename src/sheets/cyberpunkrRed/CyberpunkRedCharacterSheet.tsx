@@ -1,50 +1,42 @@
 import {useCallback, useMemo, useState} from "react";
-import {buttonClass} from "../../components/common/ui";
 import {SheetContext, type SheetUpdater} from "./SheetContext";
 import {createEmptySheet, withDerivedSkills, type Sheet} from "./sheetState";
 import SheetHeader from "./components/SheetHeader";
 import SkillsPanel from "./components/SkillsPanel";
 import InventoryPanel from "./components/InventoryPanel";
 import BackgroundPanel from "./components/BackgroundPanel";
+import AppearancePanel from "./components/AppearancePanel";
 import CyberwarePanel from "./components/CyberwarePanel";
 import NetrunnerPanel from "./components/NetrunnerPanel";
 
-type TabKey = "skills" | "inventory" | "background" | "cyberware" | "netrunner";
+type TabKey = "skills" | "inventory" | "background" | "appearance" | "cyberware" | "netrunner";
 
 const TABS: {key: TabKey; label: string}[] = [
     {key: "skills", label: "Abilità"},
     {key: "inventory", label: "Inventario"},
     {key: "background", label: "Background"},
+    {key: "appearance", label: "Aspetto"},
     {key: "cyberware", label: "Cyberware"},
     {key: "netrunner", label: "Netrunner"},
 ];
 
 const CyberpunkRedCharacterSheet = () => {
     const [sheet, setSheet] = useState<Sheet>(createEmptySheet);
-    const [editMode, setEditMode] = useState(false);
     const [tab, setTab] = useState<TabKey>("skills");
 
     const update = useCallback<SheetUpdater>((change) => {
         setSheet((previous) => withDerivedSkills({...change(previous), lastUpdateAt: new Date().toISOString()}));
     }, []);
 
-    const contextValue = useMemo(() => ({sheet, editMode, update}), [sheet, editMode, update]);
+    const contextValue = useMemo(() => ({sheet, update}), [sheet, update]);
 
     return (
         <SheetContext.Provider value={contextValue}>
-            <div data-editing={editMode} className="group/sheet mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
+            <div className="mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
                 <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-1.5">
                     <h1 className="m-0 text-[1.1rem] font-extrabold tracking-widest uppercase md:text-[1.5rem]">
                         Cyberpunk <span className="text-cpr-red italic">Red</span>
                     </h1>
-                    <button
-                        type="button"
-                        aria-pressed={editMode}
-                        onClick={() => setEditMode((value) => !value)}
-                        className={`${buttonClass} aria-pressed:bg-cpr-red aria-pressed:text-white`}
-                    >
-                        {editMode ? "Fine modifica" : "Modifica"}
-                    </button>
                 </div>
 
                 <SheetHeader/>
@@ -82,6 +74,7 @@ const CyberpunkRedCharacterSheet = () => {
                     {tab === "skills" && <SkillsPanel/>}
                     {tab === "inventory" && <InventoryPanel/>}
                     {tab === "background" && <BackgroundPanel/>}
+                    {tab === "appearance" && <AppearancePanel/>}
                     {tab === "cyberware" && <CyberwarePanel/>}
                     {tab === "netrunner" && <NetrunnerPanel/>}
                 </div>

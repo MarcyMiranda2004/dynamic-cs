@@ -66,7 +66,7 @@ const CyberwarePanel = () => {
 
         const measure = () => {
             const center = figure.offsetLeft + figure.offsetWidth / 2;
-            stage.style.setProperty("--cw-shift", `${stage.clientWidth * 0.27 - center}px`);
+            stage.style.setProperty("--cw-shift", `${stage.clientWidth * 0.2 - center}px`);
         };
 
         measure();
@@ -143,11 +143,12 @@ const CyberwarePanel = () => {
 
             <ul className="cw-legend">
                 {compact ? (
+                    // Stessi simboli dei quadratini della scena, in miniatura; il significato resta nel title e per i lettori di schermo
                     <>
-                        <li>cerchio = slot libero</li>
-                        <li>lettera = impianto installato</li>
-                        <li>bordo ambra tratteggiato = slot extra</li>
-                        <li>quadrati scuri = componente base non installato</li>
+                        <li><i className="cw-key cw-key--free" role="img" aria-label="Slot libero" title="Slot libero"/></li>
+                        <li><i className="cw-key cw-key--on" role="img" aria-label="Impianto installato (iniziale del nome)" title="Impianto installato (iniziale del nome)">A</i></li>
+                        <li><i className="cw-key cw-key--free cw-key--extra" role="img" aria-label="Slot extra" title="Slot extra"/></li>
+                        <li><i className="cw-key cw-key--free cw-key--locked" role="img" aria-label="Componente base non installato" title="Componente base non installato"/></li>
                     </>
                 ) : (
                     <>

@@ -4,7 +4,7 @@ import {InlineNumber} from "../../../components/common/EditableField";
 import {buttonClass, dangerButtonClass, inputClass} from "../../../components/common/ui";
 import {SKILL_DEFS, STAT_LABELS, type SkillKey, type SkillValue} from "../CyberpunkRedCharacterSheetSchema";
 import {useSheet} from "../SheetContext";
-import {removeAt, replaceAt} from "../sheetState";
+import {removeAt, replaceAt} from "../../../utils/list";
 
 type SkillGroup = (typeof SKILL_DEFS)[SkillKey]["group"];
 
@@ -29,10 +29,30 @@ const normalize = (text: string) =>
     text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 
 const SkillsPanel = () => {
-    const {sheet, editMode, update} = useSheet();
+    const {update} = useSheet();
     const [group, setGroup] = useState<SkillGroup | "all">("all");
     const [query, setQuery] = useState("");
     const [activeKey, setActiveKey] = useState<SkillKey | null>(null);
+    // Una sola card alla volta è in modifica; si esce con "Fine", Esc o un click fuori dalla card
+    const [editingKey, setEditingKey] = useState<SkillKey | null>(null);
+
+    useEffect(() => {
+        if (!editingKey) return;
+
+        const onPointerDown = (event: PointerEvent) => {
+            if (!(event.target as Element).closest("[data-skill-editing]")) setEditingKey(null);
+        };
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setEditingKey(null);
+        };
+
+        document.addEventListener("pointerdown", onPointerDown);
+        document.addEventListener("keydown", onKeyDown);
+        return () => {
+            document.removeEventListener("pointerdown", onPointerDown);
+            document.removeEventListener("keydown", onKeyDown);
+        };
+    }, [editingKey]);
 
     const matches = query.trim()
         ? SKILL_KEYS.filter((key) => normalize(SKILL_DEFS[key].label).includes(normalize(query)))
@@ -142,104 +162,145 @@ const SkillsPanel = () => {
 
             {/* Griglia delle abilità del gruppo selezionato, come le colonne della scheda */}
             <div key={group} className="grid animate-tab-in content-start gap-2 motion-reduce:animate-none sm:grid-cols-2 2xl:grid-cols-3">
-                {keysInGroup.map((key) => {
-                    const def = SKILL_DEFS[key];
-                    const skill = sheet.skills[key];
-                    const specializations = skill.specializations ?? [];
-                    const highlighted = activeKey === key;
-
-                    return (
-                        <article
-                            key={key}
-                            id={`skill-${key}`}
-                            className={`grid content-start gap-2 border bg-cpr-panel p-2.5 transition-shadow duration-300 ${
-                                highlighted
-                                    ? "border-cpr-glow shadow-[0_0_16px_rgb(255_90_96/0.55)]"
-                                    : "border-cpr-red/35"
-                            }`}
-                        >
-                            <header className="flex items-start justify-between gap-2">
-                                <h4 className="m-0 font-bold">
-                                    {def.label}
-                                    {"multiplier" in def && <span className="ml-1 text-[0.8em] opacity-70">×2</span>}
-                                </h4>
-                                <span className="shrink-0 font-mono text-[0.75em] opacity-70">{STAT_LABELS[def.stat]}</span>
-                            </header>
-
-                            <div className="grid grid-cols-3 gap-2 text-center">
-                                <Mini label="Liv">
-                                    <InlineNumber
-                                        label="Liv"
-                                        value={skill.level}
-                                        editMode={editMode}
-                                        onChange={(level) => setSkill(key, {level})}
-                                    />
-                                </Mini>
-                                <Mini label="Stat">
-                                    <span className="font-mono text-[1.2rem]">{skill.stat}</span>
-                                </Mini>
-                                <Mini label="Base" accent>
-                                    <strong className="font-mono text-[1.4rem] text-cpr-red">{skill.base}</strong>
-                                </Mini>
-                            </div>
-
-                            {"slots" in def && (specializations.length > 0 || editMode) && (
-                                <div className="grid gap-1.5 border-t border-cpr-red/25 pt-2">
-                                    {specializations.map((spec, index) =>
-                                        editMode ? (
-                                            <div key={index} className="flex items-center gap-1.5">
-                                                <input
-                                                    className={`${inputClass} flex-1`}
-                                                    value={spec}
-                                                    aria-label={`Specializzazione ${index + 1} di ${def.label}`}
-                                                    onChange={(event) =>
-                                                        setSkill(key, {
-                                                            specializations: replaceAt(specializations, index, event.target.value),
-                                                        })
-                                                    }
-                                                />
-                                                <button
-                                                    type="button"
-                                                    aria-label="Rimuovi specializzazione"
-                                                    onClick={() =>
-                                                        setSkill(key, {specializations: removeAt(specializations, index)})
-                                                    }
-                                                    className={`${buttonClass} ${dangerButtonClass} grid min-w-11 place-items-center px-0`}
-                                                >
-                                                    <X size={16} aria-hidden="true"/>
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <p key={index} className="m-0 text-[0.9em] opacity-85">
-                                                ↳ {spec || "—"}
-                                            </p>
-                                        )
-                                    )}
-
-                                    {editMode && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setSkill(key, {specializations: [...specializations, ""]})}
-                                            className={`${buttonClass} justify-self-start`}
-                                        >
-                                            <Plus size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Specializzazione
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        </article>
-                    );
-                })}
+                {keysInGroup.map((key) => (
+                    <SkillCard
+                        key={key}
+                        skillKey={key}
+                        highlighted={activeKey === key}
+                        editing={editingKey === key}
+                        onEdit={() => setEditingKey(key)}
+                        onDone={() => setEditingKey(null)}
+                        onChange={(patch) => setSkill(key, patch)}
+                    />
+                ))}
             </div>
         </div>
     );
 };
 export default SkillsPanel;
 
+interface SkillCardProps {
+    skillKey: SkillKey;
+    highlighted: boolean;
+    editing: boolean;
+    onEdit: () => void;
+    onDone: () => void;
+    onChange: (patch: Partial<SkillValue>) => void;
+}
+
+// Card di un'abilità: un click la porta in modifica direttamente a schermo, senza modale.
+// Perdendo il focus la modifica si chiude (i valori sono già salvati). Lettura e modifica occupano lo stesso spazio.
+const SkillCard = ({skillKey, highlighted, editing, onEdit, onDone, onChange}: SkillCardProps) => {
+    const {sheet} = useSheet();
+    const def = SKILL_DEFS[skillKey];
+    const skill = sheet.skills[skillKey];
+    const specializations = skill.specializations ?? [];
+    const hasSlots = "slots" in def;
+
+    const frameClass = `grid content-start gap-2 border bg-cpr-panel p-2.5 text-left text-inherit transition-shadow duration-300 ${
+        highlighted ? "border-cpr-glow shadow-[0_0_16px_rgb(255_90_96/0.55)]" : "border-cpr-red/35"
+    }`;
+
+    const header = (
+        <span className="flex items-start justify-between gap-2">
+            <h4 className="m-0 font-bold">
+                {def.label}
+                {"multiplier" in def && <span className="ml-1 text-[0.8em] opacity-70">×2</span>}
+            </h4>
+            <span className="shrink-0 font-mono text-[0.75em] opacity-70">{STAT_LABELS[def.stat]}</span>
+        </span>
+    );
+
+    const statCells = (levelCell: ReactNode) => (
+        <div className="grid grid-cols-3 gap-2 text-center">
+            <Mini label="Liv">{levelCell}</Mini>
+            <Mini label="Stat"><span className="font-mono text-[1.2rem]">{skill.stat}</span></Mini>
+            <Mini label="Base" accent>
+                <strong className="font-mono text-[1.4rem] text-cpr-red">{skill.base}</strong>
+            </Mini>
+        </div>
+    );
+
+    if (!editing) {
+        return (
+            <button
+                type="button"
+                id={`skill-${skillKey}`}
+                onClick={onEdit}
+                aria-label={`${def.label}: modifica`}
+                className={`${frameClass} w-full cursor-pointer hover:border-cpr-red focus-visible:border-cpr-glow focus-visible:outline-none`}
+            >
+                {header}
+                {statCells(<span className="font-mono text-[1.2rem]">{skill.level}</span>)}
+
+                {hasSlots && (
+                    <span className="grid gap-1.5 border-t border-cpr-red/25 pt-2">
+                        {specializations.map((spec, index) => (
+                            <span key={index} className="flex min-h-9 items-center text-[0.9em] opacity-85">↳ {spec || "—"}</span>
+                        ))}
+                        <span className="flex min-h-9 items-center gap-1 text-[0.85em] opacity-45">
+                            <Plus size={14} aria-hidden="true"/> Specializzazione
+                        </span>
+                    </span>
+                )}
+            </button>
+        );
+    }
+
+    return (
+        <article
+            id={`skill-${skillKey}`}
+            data-skill-editing
+            className={`${frameClass} border-cpr-glow`}
+            onBlur={(event) => {
+                // Il focus passa a un elemento fuori dalla card: si chiude. I click su aree non focalizzabili li gestisce il pannello
+                if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) onDone();
+            }}
+        >
+            {header}
+            {statCells(<InlineNumber label="Liv" value={skill.level} autoFocus centered onChange={(level) => onChange({level})}/>)}
+
+            {hasSlots && (
+                <div className="grid gap-1.5 border-t border-cpr-red/25 pt-2">
+                    {specializations.map((spec, index) => (
+                        <div key={index} className="flex min-h-9 items-center gap-1.5">
+                            <span aria-hidden="true">↳</span>
+                            <input
+                                className={`${inputClass} flex-1`}
+                                value={spec}
+                                aria-label={`Specializzazione ${index + 1} di ${def.label}`}
+                                onChange={(event) =>
+                                    onChange({specializations: replaceAt(specializations, index, event.target.value)})
+                                }
+                            />
+                            <button
+                                type="button"
+                                aria-label="Rimuovi specializzazione"
+                                onClick={() => onChange({specializations: removeAt(specializations, index)})}
+                                className={`${buttonClass} ${dangerButtonClass} grid min-w-9 place-items-center px-0`}
+                            >
+                                <X size={16} aria-hidden="true"/>
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={() => onChange({specializations: [...specializations, ""]})}
+                        className="flex min-h-9 cursor-pointer items-center gap-1 border-0 bg-transparent p-0 text-left text-[0.85em] font-bold hover:text-cpr-red focus-visible:text-cpr-red focus-visible:outline-none"
+                    >
+                        <Plus size={14} aria-hidden="true"/> Specializzazione
+                    </button>
+                </div>
+            )}
+        </article>
+    );
+};
+
 // Cella piccola della card abilità: etichetta sopra, valore sotto
 const Mini = ({label, accent = false, children}: {label: string; accent?: boolean; children: ReactNode}) => (
     <div className={`grid gap-1 border px-1 py-1.5 ${accent ? "border-cpr-red/60" : "border-cpr-red/25"}`}>
         <span className="text-[0.65em] font-extrabold tracking-widest uppercase opacity-70">{label}</span>
-        <div className="flex min-h-7 items-center justify-center">{children}</div>
+        <div className="flex min-h-9 items-center justify-center">{children}</div>
     </div>
 );
