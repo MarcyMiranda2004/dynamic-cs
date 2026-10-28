@@ -1,15 +1,14 @@
 import {useCallback, useMemo, useState} from "react";
 import UiThemeProvider from "../../components/common/UiThemeProvider";
-import {SheetContext, type SheetUpdater} from "./SheetContext";
-import {CPR_UI_THEME} from "./uiTheme";
-import {createEmptySheet, withDerivedSkills, type Sheet} from "./sheetState";
-import SheetHeader from "./components/SheetHeader";
-import SkillsPanel from "./components/SkillsPanel";
-import InventoryPanel from "./components/InventoryPanel";
-import BackgroundPanel from "./components/BackgroundPanel";
-import AppearancePanel from "./components/AppearancePanel";
-import CyberwarePanel from "./components/CyberwarePanel";
-import NetrunnerPanel from "./components/NetrunnerPanel";
+import {SheetContext, type SheetUpdater} from "./utils/cyberpunkRedSheetContext";
+import {createEmptySheet, withDerivedSkills, type Sheet} from "./utils/cyberpunkRedSheetState";
+import SheetHeader from "./components/cyberpunkRedSheetHeader";
+import SkillsPanel from "./components/cyberpunkRedSkillsPanel";
+import InventoryPanel from "./components/cyberpunkRedInventoryPanel";
+import BackgroundPanel from "./components/cyberpunkRedBackgroundPanel";
+import AppearancePanel from "./components/cyberpunkRedAppearancePanel";
+import CyberwarePanel from "./components/cyberpunkRedCyberwarePanel";
+import NetrunnerPanel from "./components/cyberpunkRedNetrunnerPanel";
 
 type TabKey = "skills" | "inventory" | "background" | "appearance" | "cyberware" | "netrunner";
 
@@ -34,7 +33,7 @@ const CyberpunkRedCharacterSheet = () => {
 
     return (
         <SheetContext.Provider value={contextValue}>
-            <UiThemeProvider theme={CPR_UI_THEME}>
+            <UiThemeProvider theme="ui-theme-cpr">
                 <div className="mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
                     <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-1.5">
                         <h1 className="m-0 text-[1.1rem] font-extrabold tracking-widest uppercase md:text-[1.5rem]">
@@ -47,7 +46,7 @@ const CyberpunkRedCharacterSheet = () => {
                     <nav
                         role="tablist"
                         aria-label="Sezioni della scheda"
-                        className="sticky top-0 z-10 flex snap-x overflow-x-auto border-b-2 border-cpr-red/35 bg-(--bg) [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        className="sticky top-0 z-10 flex snap-x overflow-x-auto border-b-2 border-cpr-red/35 bg-(--bg) scrollbar-cpr"
                     >
                         {TABS.map(({key, label}) => (
                             <button

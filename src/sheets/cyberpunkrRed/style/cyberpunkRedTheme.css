@@ -1,0 +1,43 @@
+/*
+ * Tema della scheda Cyberpunk Red per i componenti comuni (ex uiTheme.ts di questa scheda).
+ * UiThemeProvider applica la classe ui-theme-cpr alla scheda; il modale la riceve dal contesto,
+ * perché sta in document.body. Tutto ciò che è specifico di questo tema sta sotto questa classe.
+ */
+
+.ui-theme-cpr {
+  --color-ui-accent: var(--color-cpr-red);
+  --color-ui-accent-glow: var(--color-cpr-glow);
+  --color-ui-accent-deep: var(--color-cpr-red-deep);
+  --color-ui-accent-fg: #fff;
+  --color-ui-surface: var(--color-cpr-panel);
+  --color-ui-overlay: var(--color-cpr-ink);
+  --color-ui-overlay-fg: var(--color-cpr-ink-fg);
+  --color-ui-overlay-line: #5a1116;
+};
+
+@layer components {
+  /* Pannello del modale: font monospazio, bordo tagliato agli angoli, scanline e accensione del monitor */
+  .ui-theme-cpr .ui-modal-panel {
+    @apply font-mono animate-modal-in shadow-[0_0_0_1px_#5a1116,0_0_24px_rgb(215_38_46/0.35)]
+      [clip-path:polygon(16px_0,100%_0,100%_calc(100%-16px),calc(100%-16px)_100%,0_100%,0_16px)]
+      motion-reduce:animate-none;
+  }
+
+  .ui-theme-cpr .ui-modal-panel::before {
+    @apply pointer-events-none absolute inset-0 content-[''];
+    background: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.03) 0 1px, transparent 1px 3px);
+  }
+
+  .ui-theme-cpr .ui-modal-title {
+    @apply [text-shadow:0_0_8px_rgb(255_90_96/0.6)];
+  }
+
+  .ui-theme-cpr .ui-modal-title::before {
+    content: "> ";
+  }
+
+  /* Ogni riga di contenuto del modale entra come una riga di terminale */
+  .ui-theme-cpr .ui-modal-line {
+    @apply animate-term-line motion-reduce:animate-none;
+  }
+};

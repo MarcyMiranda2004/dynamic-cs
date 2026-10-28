@@ -1,0 +1,127 @@
+/*
+ * Token globali: tipografia e colori di base, tema chiaro e scuro, scala dei grigi e colori delle schede.
+ * Ogni parte è divisa in #region: generico (valido per tutta l'app) oppure per scheda.
+ */
+
+/* #region Generico: tipografia e tema chiaro */
+:root {
+  --text: #3b383d;
+  --text-h: #08060d;
+  --bg: #FAFAFA;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  /* --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5); */
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+/* #endregion */
+
+/* #region Generico: tema scuro */
+/* Il tema scuro è attivato da ThemeToggle / script in index.html */
+:root[data-theme="dark"] {
+  --text: #e6e9ef;
+  --text-h: #f3f4f6;
+  /* --bg: #19191a; */
+  --bg: #121315;
+  --border: #2e303a;
+  --code-bg: #1f2028;
+  /* --accent: #c084fc;
+  --accent-bg: rgba(192, 132, 252, 0.15);
+  --accent-border: rgba(192, 132, 252, 0.5); */
+  --social-bg: rgba(47, 48, 58, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --gray-50: #222327;
+  --gray-100: #2a2b30;
+  --gray-200: #35373d;
+  --gray-300: #43464d;
+  --gray-400: #5a5f67;
+  --gray-500: #7d848d;
+  --gray-600: #a3aab3;
+  --gray-700: #c5cbd2;
+  --gray-800: #e0e4e9;
+  --gray-900: #f3f4f6;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] #social .button-icon {
+  filter: invert(1) brightness(2);
+}
+/* #endregion */
+
+/* #region Generico: scala dei grigi (tema chiaro) */
+:root {
+  --gray-50: #F4F7FA;
+  --gray-100: #eef1f4;
+  --gray-200: #dee2e6;
+  --gray-300: #CCCCCC;
+  --gray-400: #adb5bd;
+  --gray-500: #868e96;
+  --gray-600: #495057;
+  --gray-700: #333333;
+  --gray-800: #212529;
+  --gray-900: #1a1a1a;
+}
+/* #endregion */
+
+@theme {
+  /* #region Generico: grigi */
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+
+  /*
+   * Token dei componenti comuni (src/components/common). I valori reali li fornisce ogni scheda con UiThemeProvider;
+   * questi sono solo i valori neutri di riserva.
+   */
+  --color-ui-accent: var(--accent);
+  --color-ui-accent-glow: var(--accent);
+  --color-ui-accent-deep: var(--accent);
+  --color-ui-accent-fg: #fff;
+  --color-ui-surface: color-mix(in srgb, var(--bg) 94%, var(--accent) 6%);
+  --color-ui-overlay: #1b1b1f;
+  --color-ui-overlay-fg: #f3f4f6;
+  --color-ui-overlay-line: color-mix(in srgb, var(--accent) 40%, black);
+  /* #endregion */
+
+  /* #region Scheda Cyberpunk Red */
+  --color-cpr-red: #d7262e;
+  --color-cpr-red-deep: #7a1116;
+  --color-cpr-glow: #ff5a60;
+  --color-cpr-ink: #0d0a0b;
+  --color-cpr-ink-fg: #f3dede;
+  --color-cpr-panel: color-mix(in srgb, var(--bg) 92%, var(--color-cpr-red) 8%);
+  /* #endregion */
+
+  /* #region Scheda Call of Cthulhu */
+  /* Nessun token ancora: la cartella della scheda è vuota */
+  /* #endregion */
+}

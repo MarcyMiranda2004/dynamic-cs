@@ -1,0 +1,31 @@
+/* Classi di struttura della pagina e contenitori. */
+
+/* #region Generico: struttura della pagina */
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+html {
+  @apply scrollbar-ui
+}
+
+body {
+  margin: 0;
+}
+/* #endregion */
+
+/* #region Generico: contenitori */
+@utility dcs-container {
+  @apply container mx-auto p-4
+}
+
+@utility dcs-main-container {
+  @apply dcs-container min-h-[100vh]
+}
+/* #endregion */

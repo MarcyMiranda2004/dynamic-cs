@@ -1,9 +1,9 @@
 import {useEffect, useState} from 'react'
-import {Moon, Sun} from 'lucide-react'
+import {MoonIcon, SunIcon} from 'lucide-react'
 
-type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark';
 
-const STORAGE_KEY = 'theme'
+const STORAGE_KEY = 'theme';
 
 const ThemeToggle = () => {
     const [theme, setTheme] = useState<Theme>(() =>
@@ -11,16 +11,16 @@ const ThemeToggle = () => {
     )
 
     useEffect(() => {
-        document.documentElement.dataset.theme = theme
+        document.documentElement.dataset.theme = theme;
         try {
-            localStorage.setItem(STORAGE_KEY, theme)
+            localStorage.setItem(STORAGE_KEY, theme);
         } catch {
             // storage non disponibile: il tema resta valido per la sessione
         }
-    }, [theme])
+    }, [theme]);
 
-    const next: Theme = theme === 'dark' ? 'light' : 'dark'
-    const Icon = next === 'dark' ? Moon : Sun
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    const Icon = next === 'dark' ? MoonIcon : SunIcon;
 
     return (
         <button
@@ -31,6 +31,6 @@ const ThemeToggle = () => {
             <Icon size={16} aria-hidden="true"/>
             {next === 'dark' ? 'Tema scuro' : 'Tema chiaro'}
         </button>
-    )
-}
-export default ThemeToggle
+    );
+};
+export default ThemeToggle;

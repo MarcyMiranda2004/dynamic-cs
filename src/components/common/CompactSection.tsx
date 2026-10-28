@@ -1,25 +1,24 @@
 import {useState, type ReactNode} from 'react'
-import {ChevronRight} from 'lucide-react'
+import {ChevronRightIcon} from 'lucide-react'
 
 interface CompactSectionProps {
-    title: string
-    children: ReactNode
-    // Senza open/onToggle la sezione gestisce lo stato da sola
-    open?: boolean
-    onToggle?: (open: boolean) => void
-    defaultOpen?: boolean
-    meta?: string
-}
+    title: string;
+    children: ReactNode;
+    open?: boolean;
+    onToggle?: (open: boolean) => void;
+    defaultOpen?: boolean;
+    meta?: string;
+};
 
 const CompactSection = ({title, children, open, onToggle, defaultOpen = false, meta}: CompactSectionProps) => {
-    const [localOpen, setLocalOpen] = useState(defaultOpen)
-    const isOpen = open ?? localOpen
+    const [localOpen, setLocalOpen] = useState(defaultOpen);
+    const isOpen = open ?? localOpen;
 
     const toggle = () => {
-        const next = !isOpen
-        if (open === undefined) setLocalOpen(next)
-        onToggle?.(next)
-    }
+        const next = !isOpen;
+        if (open === undefined) setLocalOpen(next);
+        onToggle?.(next);
+    };
 
     return (
         <section className="group/section border border-cpr-red/45 bg-cpr-panel" data-open={isOpen}>
@@ -31,14 +30,13 @@ const CompactSection = ({title, children, open, onToggle, defaultOpen = false, m
             >
                 <span className="min-w-0 flex-1 font-bold tracking-widest uppercase">{title}</span>
                 {meta && <span className="shrink-0 font-mono text-[0.8em] opacity-70">{meta}</span>}
-                <ChevronRight
+                <ChevronRightIcon
                     size={14}
                     aria-hidden="true"
                     className="shrink-0 transition-transform duration-250 group-data-[open=true]/section:rotate-90 motion-reduce:transition-none"
                 />
             </button>
 
-            {/* Apertura e chiusura animate con grid-template-rows; inert impedisce il focus sul contenuto chiuso */}
             <div
                 inert={!isOpen}
                 className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 group-data-[open=true]/section:grid-rows-[1fr] motion-reduce:transition-none"
@@ -48,6 +46,6 @@ const CompactSection = ({title, children, open, onToggle, defaultOpen = false, m
                 </div>
             </div>
         </section>
-    )
-}
-export default CompactSection
+    );
+};
+export default CompactSection;

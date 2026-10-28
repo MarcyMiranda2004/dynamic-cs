@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import {fieldLabelClass, inputClass} from './ui'
 
 // Dato semplice che si modifica direttamente a schermo, come su una scheda cartacea:
 // un click trasforma il valore in un input; Invio, Esc o un click fuori lo chiudono.
@@ -22,7 +21,9 @@ interface ClickValueProps {
 }
 
 const ClickValue = ({value, inputType, onCommit, ariaLabel, placeholder, centered = false, className = ''}: ClickValueProps) => {
-    const [editing, setEditing] = useState(false)
+    // Bozza del testo mentre si modifica: null = non in modifica
+    const [draft, setDraft] = useState<string | null>(null)
+    const editing = draft !== null
     const align = centered ? 'text-center' : 'text-left'
 
     // Il bottone resta sempre nel layout (invisibile in modifica) e l'input gli si sovrappone: la scatola
@@ -31,7 +32,7 @@ const ClickValue = ({value, inputType, onCommit, ariaLabel, placeholder, centere
         <div className="relative w-full min-w-0">
             <button
                 type="button"
-                onClick={() => setEditing(true)}
+                onClick={() => setDraft(String(value))}
                 aria-label={`${ariaLabel}: modifica`}
                 aria-hidden={editing}
                 tabIndex={editing ? -1 : 0}
@@ -44,15 +45,18 @@ const ClickValue = ({value, inputType, onCommit, ariaLabel, placeholder, centere
             {editing && (
                 <input
                     autoFocus
-                    className={`${inputClass} ${align} ${inputType === 'number' ? NO_SPINNER : ''} absolute inset-0 h-full ${className}`}
+                    className={`inputClass ${align} ${inputType === 'number' ? NO_SPINNER : ''} absolute inset-0 h-full ${className}`}
                     type={inputType}
                     inputMode={inputType === 'number' ? 'numeric' : undefined}
                     aria-label={ariaLabel}
                     placeholder={placeholder}
-                    value={value}
+                    value={draft}
                     onFocus={(event) => event.target.select()}
-                    onChange={(event) => onCommit(event.target.value)}
-                    onBlur={() => setEditing(false)}
+                    onChange={(event) => {
+                        setDraft(event.target.value)
+                        onCommit(event.target.value)
+                    }}
+                    onBlur={() => setDraft(null)}
                     onKeyDown={(event) => {
                         if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur()
                     }}
@@ -90,14 +94,14 @@ export const ClickNumber = ({value, onChange, ...props}: ClickNumberProps) => (
 // Versioni con etichetta sopra, per le griglie di campi (anagrafica, salute...)
 export const InlineTextField = ({label, ...props}: Omit<ClickTextProps, 'ariaLabel'> & {label: string}) => (
     <div className="grid min-w-0 content-start gap-1">
-        <span className={fieldLabelClass}>{label}</span>
+        <span className="fieldLabelClass">{label}</span>
         <ClickText ariaLabel={label} {...props}/>
     </div>
 )
 
 export const InlineNumberField = ({label, ...props}: Omit<ClickNumberProps, 'ariaLabel'> & {label: string}) => (
     <div className="grid min-w-0 content-start gap-1">
-        <span className={fieldLabelClass}>{label}</span>
+        <span className="fieldLabelClass">{label}</span>
         <ClickNumber ariaLabel={label} {...props}/>
     </div>
 )

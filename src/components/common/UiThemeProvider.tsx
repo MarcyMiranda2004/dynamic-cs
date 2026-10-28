@@ -1,17 +1,17 @@
 import type {ReactNode} from 'react'
-import {UiThemeContext, uiColorVars, type UiTheme} from './uiTheme'
+import {UiThemeContext} from './uiTheme'
 
 interface UiThemeProviderProps {
-    theme: UiTheme
-    children: ReactNode
-}
+    theme: string;
+    children: ReactNode;
+};
 
-// Racchiude una scheda e le fornisce colori e stile dei componenti comuni
+// Racchiude una scheda: la classe del tema imposta i token ui-* per tutti i componenti comuni al suo interno
 const UiThemeProvider = ({theme, children}: UiThemeProviderProps) => (
     <UiThemeContext value={theme}>
-        <div className="contents" style={uiColorVars(theme)}>
+        <div className={`contents ${theme}`}>
             {children}
         </div>
     </UiThemeContext>
-)
-export default UiThemeProvider
+);
+export default UiThemeProvider;

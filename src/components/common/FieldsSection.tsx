@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Plus, X} from "lucide-react";
+import {PlusIcon, XIcon} from "lucide-react";
 import DeleteButton from "./DeleteButton";
 import DetailField from "./DetailField";
 import Modal from "./Modal";
@@ -7,12 +7,8 @@ import PreviewField from "./PreviewField";
 import {AddButton, EditButton} from "./SectionButtons";
 import {TextField} from "./EditableField";
 import Tile from "./Tile";
-import {buttonClass, dangerButtonClass, inputClass, rowButtonClass} from "./ui";
 import type {LabeledField} from "../../types/sheet";
 import {removeAt, replaceAt} from "../../utils/list";
-
-// Sezioni a campi riusabili da qualsiasi scheda (background, aspetto...). Ogni campo si apre da solo in un modale;
-// il bottone "Modifica" in alto a destra apre un modale con tutta la sezione, in griglia a due colonne.
 
 export interface SectionField {
     label: string;
@@ -24,9 +20,7 @@ interface FieldsSectionProps {
     title: string;
     fields: SectionField[];
     className?: string;
-    // Colonne delle anteprime nella card
     columnsClassName?: string;
-    // Righe di anteprima per campo prima del troncamento
     clampClassName?: string;
 }
 
@@ -99,7 +93,7 @@ export const DynamicFieldsSection = ({title, fields, onChange, className, column
                 {fields.map((field, index) => (
                     <button key={index} type="button" onClick={() => setOpen({kind: "field", index})}
                             aria-label={`${field.label}: apri e modifica`}
-                            className={`${rowButtonClass} grid min-w-0 content-start py-0.5 text-inherit`}>
+                            className="rowButtonClass grid min-w-0 content-start py-0.5 text-inherit">
                         <PreviewField label={field.label} value={field.value}/>
                     </button>
                 ))}
@@ -112,8 +106,8 @@ export const DynamicFieldsSection = ({title, fields, onChange, className, column
                     onClose={() => setOpen(null)}
                     footer={
                         <button type="button" onClick={() => onChange([...fields, {label: "Nuovo campo", value: ""}])}
-                                className={buttonClass}>
-                            <Plus size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Campo
+                                className="buttonClass">
+                            <PlusIcon size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Campo
                         </button>
                     }
                 >
@@ -122,7 +116,7 @@ export const DynamicFieldsSection = ({title, fields, onChange, className, column
                             <div key={index} className="grid content-start gap-2 border border-dashed border-ui-overlay-line p-2.5">
                                 <div className="flex items-center gap-2">
                                     <input
-                                        className={`${inputClass} flex-1 font-bold uppercase`}
+                                        className="inputClass flex-1 font-bold uppercase"
                                         aria-label="Nome campo"
                                         value={field.label}
                                         onChange={(event) => patch(index, {label: event.target.value})}
@@ -131,9 +125,9 @@ export const DynamicFieldsSection = ({title, fields, onChange, className, column
                                         type="button"
                                         aria-label="Rimuovi campo"
                                         onClick={() => onChange(removeAt(fields, index))}
-                                        className={`${buttonClass} ${dangerButtonClass} grid min-w-11 place-items-center px-0`}
+                                        className="buttonClass dangerButtonClass grid min-w-11 place-items-center px-0"
                                     >
-                                        <X size={16} aria-hidden="true"/>
+                                        <XIcon size={16} aria-hidden="true"/>
                                     </button>
                                 </div>
                                 <TextField label="Valore" value={field.value} multiline

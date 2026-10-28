@@ -1,0 +1,996 @@
+/*
+ * Scheda cyberware in stile HUD: silhouette al centro, categorie intorno e pannello di dettaglio a destra.
+ * La scena segue il tema: chiara di default, scura con data-theme="dark" (vedi ThemeToggle).
+ * Colori dai token cpr-* di index.css (con valori di riserva).
+ */
+.cw {
+    --cw-red: var(--color-cpr-red, #d7262e);
+    --cw-deep: var(--color-cpr-red-deep, #7a1116);
+
+    /* Tema chiaro: carta rosata, testo scuro, rosso e ambra più profondi per restare leggibili */
+    --cw-glow: #b3141c;
+    --cw-fg: #2b1a1d;
+    --cw-strong: #14090b;
+    --cw-amber: #a8650f;
+    --cw-bg: radial-gradient(ellipse at 45% 38%, #f3e7e4 0%, #ddcdcb 75%);
+    --cw-surface: rgb(255 250 249 / 0.9);
+    --cw-panel-bg: rgb(255 251 250 / 0.97);
+    --cw-head-bg: #6b1117;
+    --cw-head-fg: #fff;
+    --cw-on-glow: #fff;
+    --cw-sel-stroke: #5a0b10;
+    --cw-text-glow: none;
+    --cw-scan: rgb(0 0 0 / 0.03);
+
+    --cw-red-8: color-mix(in srgb, var(--cw-red) 8%, transparent);
+    --cw-red-14: color-mix(in srgb, var(--cw-red) 14%, transparent);
+    --cw-red-22: color-mix(in srgb, var(--cw-red) 22%, transparent);
+    --cw-red-30: color-mix(in srgb, var(--cw-red) 30%, transparent);
+    --cw-red-50: color-mix(in srgb, var(--cw-red) 50%, transparent);
+    --cw-red-60: color-mix(in srgb, var(--cw-red) 60%, transparent);
+    --cw-glow-16: color-mix(in srgb, var(--cw-glow) 16%, transparent);
+    --cw-glow-40: color-mix(in srgb, var(--cw-glow) 40%, transparent);
+    --cw-glow-60: color-mix(in srgb, var(--cw-glow) 60%, transparent);
+
+    --cw-pad: 18px;
+    --cw-row: 20px;
+    --cw-cell: 30px;
+    --cw-gap: 4px;
+
+    position: relative;
+    isolation: isolate;
+    min-height: 690px;
+    padding: var(--cw-pad) 2.5%;
+    overflow: hidden;
+    border: 1px solid var(--cw-deep);
+    background: var(--cw-bg);
+    color: var(--cw-fg);
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: normal;
+    text-align: left;
+}
+
+/* Tema scuro: più chiaro di un nero pieno, con i riflessi rossi originali */
+:root[data-theme="dark"] .cw {
+    --cw-glow: var(--color-cpr-glow, #ff5a60);
+    --cw-fg: var(--color-cpr-ink-fg, #f3dede);
+    --cw-strong: #fff;
+    --cw-amber: #ffb454;
+    --cw-bg: radial-gradient(ellipse at 45% 38%, #3a1c25 0%, #1f1625 72%);
+    --cw-surface: rgb(32 21 27 / 0.88);
+    --cw-panel-bg: rgb(30 20 26 / 0.95);
+    --cw-head-bg: #170d11;
+    --cw-head-fg: #fff;
+    --cw-on-glow: #050304;
+    --cw-sel-stroke: #ffb0b3;
+    --cw-text-glow: 0 0 8px var(--cw-glow);
+    --cw-scan: rgb(0 0 0 / 0.14);
+}
+
+.cw *,
+.cw *::before,
+.cw *::after {
+    box-sizing: border-box;
+}
+
+/* Righe di scansione sopra la scena */
+.cw::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, var(--cw-scan) 0 1px, transparent 1px 3px);
+}
+
+.cw button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.cw button:disabled {
+    cursor: not-allowed;
+}
+
+/* Il bottone che copre il titolo di una card non ha un aspetto proprio: lo eredita dalla barra del titolo */
+.cw .cw-title-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    font-weight: inherit;
+}
+
+.cw .cw-title-button:focus-visible,
+.cw .cw-table-row:focus-visible,
+.cw .cw-cell:focus-visible,
+.cw .cw-row--item:focus-visible,
+.cw .cw-link:focus-visible,
+.cw .cw-add:focus-visible,
+.cw .cw-button:focus-visible {
+    outline: 2px solid var(--cw-glow);
+    outline-offset: 1px;
+}
+
+/* --- Interruttore della modalità compatta --- */
+.cw .cw-mode {
+    position: absolute;
+    top: var(--cw-pad);
+    right: 2.5%;
+    z-index: 6;
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    cursor: pointer;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.cw[data-state="open"] .cw-mode {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0s 0.3s;
+}
+
+.cw .cw-mode input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cw .cw-switch {
+    position: relative;
+    width: 36px;
+    height: 18px;
+    border: 1px solid var(--cw-red);
+    background: var(--cw-red-8);
+    transition: background 0.2s;
+}
+
+.cw .cw-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background: var(--cw-glow);
+    transition: transform 0.2s;
+}
+
+.cw .cw-mode input:checked + .cw-switch {
+    background: color-mix(in srgb, var(--cw-red) 38%, transparent);
+}
+
+.cw .cw-mode input:checked + .cw-switch::after {
+    transform: translateX(18px);
+}
+
+.cw .cw-mode input:focus-visible + .cw-switch {
+    outline: 2px solid var(--cw-glow);
+    outline-offset: 2px;
+}
+
+/* --- Griglia: colonna a sinistra | corpo | colonna a destra | colonna laterale --- */
+.cw .cw-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(230px, 23%, 280px) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: repeat(4, auto);
+    align-content: space-between;
+    column-gap: 14px;
+    row-gap: 12px;
+    min-height: calc(690px - 2 * var(--cw-pad));
+}
+
+.cw .cw-groups {
+    display: contents;
+}
+
+/* --- Silhouette: al centro; aperta una categoria scivola a sinistra (--cw-shift è calcolato in JS) --- */
+.cw .cw-figure {
+    position: relative;
+    z-index: 2;
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 329 / 758;
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cw[data-state="open"] .cw-figure {
+    transform: translateX(var(--cw-shift, 0px)) scale(0.92);
+}
+
+.cw .cw-figure svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--cw-glow) 35%, transparent));
+}
+
+.cw .cw-outline {
+    stroke: var(--cw-glow);
+    stroke-opacity: 0.75;
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+}
+
+/* Il corpo resta acceso; con una categoria aperta si attenuano solo le altre zone */
+.cw .cw-zone {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 1.5;
+    cursor: pointer;
+    outline: none;
+    transition: fill 0.3s, stroke 0.3s;
+}
+
+.cw .cw-zone[data-has="true"] {
+    fill: var(--cw-red-22);
+    stroke: var(--cw-red-60);
+}
+
+.cw .cw-zone[data-hover="true"],
+.cw .cw-zone:focus-visible {
+    fill: var(--cw-glow-40);
+    stroke: var(--cw-glow);
+}
+
+.cw[data-state="open"] .cw-zone:not([data-selected="true"]) {
+    fill: transparent;
+    stroke: transparent;
+}
+
+.cw[data-state="open"] .cw-zone[data-has="true"]:not([data-selected="true"]) {
+    fill: color-mix(in srgb, var(--cw-red) 7%, transparent);
+    stroke: color-mix(in srgb, var(--cw-red) 25%, transparent);
+}
+
+.cw[data-state="open"] .cw-zone[data-hover="true"]:not([data-selected="true"]) {
+    fill: var(--cw-glow-16);
+    stroke: var(--cw-glow-60);
+}
+
+.cw .cw-zone[data-selected="true"] {
+    fill: color-mix(in srgb, var(--cw-glow) 70%, transparent);
+    stroke: var(--cw-sel-stroke);
+    filter: drop-shadow(0 0 6px var(--cw-glow));
+}
+
+/* --- Card delle categorie: posizione e dissolvenza comuni alle due modalità --- */
+.cw .cw-group {
+    position: relative;
+    z-index: 3;
+    align-self: center;
+    width: 100%;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.5s ease, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.cw .cw-group[data-side="left"] {
+    grid-column: 1;
+    justify-self: end;
+}
+
+.cw .cw-group[data-side="right"] {
+    grid-column: 3;
+    justify-self: start;
+}
+
+.cw .cw-group[data-side="aside"] {
+    grid-column: 4;
+    justify-self: start;
+}
+
+.cw .cw-group[data-row="1"] { grid-row: 1; }
+.cw .cw-group[data-row="2"] { grid-row: 2; }
+.cw .cw-group[data-row="3"] { grid-row: 3; }
+.cw .cw-group[data-row="4"] { grid-row: 4; }
+
+.cw[data-state="open"] .cw-group {
+    opacity: 0;
+    transform: scale(0.97);
+    pointer-events: none;
+}
+
+.cw .cw-count {
+    opacity: 0.7;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.cw .cw-count b {
+    color: var(--cw-amber);
+}
+
+/* --- Modalità compatta: titolo, contatore e un quadratino per slot --- */
+.cw .cw-group--compact {
+    display: grid;
+    gap: 5px;
+    max-width: 250px;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+}
+
+.cw .cw-group--compact[data-side="left"] {
+    justify-items: end;
+    text-align: right;
+}
+
+.cw .cw-group--compact:hover,
+.cw .cw-group--compact[data-highlighted="true"] {
+    border-color: color-mix(in srgb, var(--cw-glow) 50%, transparent);
+    background: color-mix(in srgb, var(--cw-red) 9%, transparent);
+}
+
+.cw .cw-group-title {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+    align-items: baseline;
+    color: var(--cw-glow);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.cw .cw-group-title .cw-title-button {
+    color: inherit;
+    white-space: nowrap;
+}
+
+.cw .cw-group-title .cw-count {
+    color: var(--cw-fg);
+}
+
+.cw .cw-group--compact[data-side="left"] .cw-group-title {
+    justify-content: flex-end;
+}
+
+.cw .cw-cells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cw-gap);
+}
+
+.cw .cw-group--compact[data-side="left"] .cw-cells {
+    justify-content: flex-end;
+}
+
+.cw .cw-cell {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    width: calc(var(--span, 1) * var(--cw-cell) + (var(--span, 1) - 1) * var(--cw-gap));
+    height: var(--cw-cell);
+    padding: 0;
+    border: 1px solid var(--cw-red-60);
+    background: color-mix(in srgb, var(--cw-red) 5%, transparent);
+    color: var(--cw-strong);
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+/* Immagine dell'impianto: riempie il quadratino e ne segue il bordo; largo 2 slot resta quadrata e tagliata */
+.cw .cw-cell-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cw .cw-cell:not(.cw-cell--on)::after {
+    content: "";
+    width: 42%;
+    height: 42%;
+    border: 1.5px solid color-mix(in srgb, var(--cw-red) 70%, transparent);
+    border-radius: 50%;
+}
+
+.cw .cw-cell--on {
+    border-color: var(--cw-glow);
+    background: var(--cw-red-30);
+    box-shadow: inset 0 0 8px color-mix(in srgb, var(--cw-glow) 35%, transparent);
+    text-shadow: var(--cw-text-glow);
+}
+
+.cw .cw-cell--on:hover {
+    border-color: var(--cw-strong);
+    background: color-mix(in srgb, var(--cw-glow) 45%, transparent);
+}
+
+.cw .cw-cell--extra {
+    border-style: dashed;
+    border-color: var(--cw-amber);
+}
+
+.cw .cw-cell--extra:not(.cw-cell--on)::after {
+    border-color: var(--cw-amber);
+}
+
+.cw .cw-cell--plus {
+    color: var(--cw-amber);
+    font-weight: 400;
+}
+
+.cw .cw-cell--plus::after {
+    display: none;
+}
+
+.cw .cw-group--compact[data-locked="true"] .cw-cells {
+    opacity: 0.3;
+}
+
+/* --- Modalità elenco: mini-tabella con barra del titolo e le sole righe occupate --- */
+.cw .cw-group--table {
+    max-width: 236px;
+    border: 2px solid var(--cw-red);
+    background: var(--cw-surface);
+}
+
+.cw .cw-group--table:hover,
+.cw .cw-group--table[data-highlighted="true"] {
+    border-color: var(--cw-glow);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--cw-glow) 45%, transparent);
+}
+
+.cw .cw-table-head,
+.cw .cw-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 22px;
+    padding: 3px 7px;
+    border-bottom: 2px solid var(--cw-red);
+    background: var(--cw-head-bg);
+    color: var(--cw-head-fg);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.cw .cw-group--empty .cw-table-head {
+    border-bottom: 0;
+}
+
+.cw .cw-table-title {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.cw .cw-table-head .cw-count,
+.cw .cw-panel-head .cw-count {
+    margin-left: auto;
+}
+
+.cw .cw-check {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--cw-glow);
+    color: var(--cw-on-glow);
+}
+
+.cw .cw-check[data-on="true"] {
+    background: var(--cw-glow);
+}
+
+.cw .cw-table-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+    min-height: var(--cw-row);
+    padding: 2px 7px;
+    border: 0;
+    border-bottom: 1px solid var(--cw-red-50);
+    background: none;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.cw .cw-table-row:last-child {
+    border-bottom: 0;
+}
+
+.cw .cw-table-row[data-extra="true"] {
+    box-shadow: inset 3px 0 0 var(--cw-amber);
+}
+
+.cw .cw-table-row:hover {
+    background: color-mix(in srgb, var(--cw-glow) 20%, transparent);
+}
+
+.cw .cw-table-row small {
+    flex: none;
+    color: var(--cw-amber);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+}
+
+.cw .cw-group--table[data-locked="true"] .cw-table-row,
+.cw .cw-group--table[data-locked="true"] .cw-table-head {
+    opacity: 0.4;
+}
+
+/* --- Pannello: lista degli slot, poi dettaglio dell'impianto (uguale nelle due modalità) --- */
+.cw .cw-panel {
+    position: absolute;
+    top: var(--cw-pad);
+    left: 36%;
+    z-index: 4;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    width: min(680px, 62%);
+    max-height: calc(100% - 2 * var(--cw-pad));
+    border: 2px solid var(--cw-red);
+    background: var(--cw-panel-bg);
+    box-shadow: 0 0 24px var(--cw-red-22);
+    /* In primo piano si legge e si scrive: testo e righe più grandi della vista d'insieme */
+    font-size: 14px;
+    line-height: 20px;
+    opacity: 0;
+    transform: translateX(30px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cw[data-state="open"] .cw-panel {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 0.2s;
+}
+
+.cw .cw-panel-head {
+    gap: 10px;
+    min-height: 46px;
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+.cw .cw-panel-title {
+    margin: 0;
+    min-width: 0;
+    font-size: inherit;
+    letter-spacing: inherit;
+    overflow-wrap: anywhere;
+}
+
+.cw .cw-panel-check {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--cw-glow);
+    cursor: pointer;
+}
+
+.cw .cw-panel-body {
+    min-height: 0;
+    overflow: auto;
+    animation: cw-swap 0.3s ease both;
+}
+
+@keyframes cw-swap {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: none; }
+}
+
+.cw .cw-button {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    padding: 3px 8px;
+    border: 1px solid var(--cw-deep);
+    background: transparent;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.cw .cw-panel .cw-button {
+    min-height: 34px;
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
+/* Nella barra del pannello il bottone sta a destra; dopo il contatore (che spinge già a destra) non serve altro margine */
+.cw .cw-panel-head .cw-button {
+    margin-left: auto;
+}
+
+.cw .cw-panel-head .cw-count + .cw-button {
+    margin-left: 0;
+}
+
+.cw .cw-button:hover:not(:disabled) {
+    border-color: var(--cw-glow);
+    color: var(--cw-glow);
+}
+
+.cw .cw-button:disabled {
+    opacity: 0.35;
+}
+
+.cw .cw-button--danger:hover:not(:disabled) {
+    background: var(--cw-red-22);
+}
+
+.cw .cw-notice,
+.cw .cw-meta {
+    margin: 0;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--cw-red-50);
+}
+
+.cw .cw-notice {
+    opacity: 0.85;
+}
+
+.cw .cw-meta {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.cw .cw-rows[data-locked="true"] {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.cw .cw-row {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    min-height: 44px;
+    padding: 6px 14px;
+    border: 0;
+    border-bottom: 1px solid var(--cw-red-50);
+    background: none;
+    text-align: left;
+}
+
+.cw .cw-row[data-extra="true"] {
+    box-shadow: inset 3px 0 0 var(--cw-amber);
+}
+
+.cw .cw-row--head {
+    min-height: 28px;
+    border-bottom-color: var(--cw-red-50);
+    background: var(--cw-red-14);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.cw .cw-row--item {
+    cursor: pointer;
+}
+
+.cw .cw-row--item:hover {
+    background: var(--cw-red-14);
+}
+
+.cw .cw-row b {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.cw .cw-slot-number {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    opacity: 0.65;
+}
+
+.cw .cw-free {
+    font-style: italic;
+    opacity: 0.5;
+}
+
+.cw .cw-date {
+    opacity: 0.75;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.cw .cw-date i {
+    margin-left: 6px;
+    color: var(--cw-glow);
+    font-style: normal;
+}
+
+.cw .cw-row-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.cw .cw-tag {
+    margin-left: 8px;
+    padding: 0 6px;
+    border: 1px solid var(--cw-deep);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: 1px;
+}
+
+.cw .cw-tag--extra {
+    border-color: var(--cw-amber);
+    color: var(--cw-amber);
+}
+
+.cw .cw-link {
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    font-size: 13px;
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.cw .cw-link:hover {
+    color: var(--cw-glow);
+    opacity: 1;
+}
+
+.cw .cw-add {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px;
+    border: 0;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.cw .cw-add:hover:not(:disabled) {
+    background: var(--cw-red-8);
+    color: var(--cw-glow);
+}
+
+.cw .cw-add:disabled {
+    opacity: 0.35;
+}
+
+/* Dettaglio: i campi sono i TextField comuni, qui solo la spaziatura e il passo degli slot */
+.cw .cw-fields {
+    display: grid;
+    gap: 18px;
+    padding: 16px 14px;
+}
+
+.cw .cw-fields input,
+.cw .cw-fields textarea {
+    min-height: 40px;
+    font-size: 16px;
+}
+
+.cw .cw-fields textarea {
+    min-height: 110px;
+}
+
+.cw .cw-fields span {
+    font-size: 12px;
+}
+
+.cw .cw-stepper {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.cw .cw-stepper strong {
+    min-width: 1.5em;
+    font-size: 18px;
+    text-align: center;
+}
+
+.cw .cw-item-image {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border: 1px solid var(--cw-deep);
+}
+
+.cw .cw-panel-foot {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 14px;
+    border-top: 1px solid var(--cw-red-50);
+}
+
+/* Legenda sotto la scena, sul colore della pagina */
+.cw-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    text-align: left;
+    opacity: 0.8;
+}
+
+.cw-legend b {
+    color: #b8741a;
+}
+
+/* Simboli della legenda in modalità compatta: copie in miniatura dei quadratini della scena */
+.cw-legend {
+    --key-glow: #b3141c;
+    --key-amber: #a8650f;
+}
+
+:root[data-theme="dark"] .cw-legend {
+    --key-glow: #ff5a60;
+    --key-amber: #ffb454;
+}
+
+.cw-legend .cw-key {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid color-mix(in srgb, var(--color-cpr-red, #d7262e) 60%, transparent);
+    background: color-mix(in srgb, var(--color-cpr-red, #d7262e) 5%, transparent);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.cw-legend .cw-key--free::after {
+    content: "";
+    width: 42%;
+    height: 42%;
+    border: 1.5px solid color-mix(in srgb, var(--color-cpr-red, #d7262e) 70%, transparent);
+    border-radius: 50%;
+}
+
+.cw-legend .cw-key--on {
+    border-color: var(--key-glow);
+    background: color-mix(in srgb, var(--color-cpr-red, #d7262e) 30%, transparent);
+}
+
+.cw-legend .cw-key--extra {
+    border-style: dashed;
+    border-color: var(--key-amber);
+}
+
+.cw-legend .cw-key--extra::after {
+    border-color: var(--key-amber);
+}
+
+.cw-legend .cw-key--locked {
+    opacity: 0.3;
+}
+
+/* --- Schermi stretti: corpo in alto e categorie in colonna; aperta una categoria, il pannello prende il posto della scena --- */
+@media (max-width: 1023px) {
+    .cw {
+        min-height: 0;
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .cw .cw-mode {
+        position: static;
+        justify-content: flex-end;
+        margin-bottom: 8px;
+    }
+
+    .cw .cw-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: none;
+        align-content: start;
+        min-height: 0;
+    }
+
+    .cw .cw-figure {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        max-width: 200px;
+    }
+
+    .cw .cw-group,
+    .cw .cw-group[data-side],
+    .cw .cw-group[data-row] {
+        grid-column: auto;
+        grid-row: auto;
+        justify-self: stretch;
+        max-width: none;
+    }
+
+    .cw .cw-table-head {
+        flex-wrap: wrap;
+    }
+
+    /* Le card sono larghe metà schermo: il titolo può andare a capo invece di uscire dalla card */
+    .cw .cw-group-title .cw-title-button {
+        min-width: 0;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    .cw .cw-group--compact[data-side] {
+        justify-items: start;
+        text-align: left;
+    }
+
+    .cw .cw-group--compact[data-side] .cw-cells,
+    .cw .cw-group--compact[data-side] .cw-group-title {
+        justify-content: flex-start;
+    }
+
+    .cw[data-state="open"] .cw-layout,
+    .cw[data-state="open"] .cw-mode {
+        display: none;
+    }
+
+    .cw .cw-panel {
+        position: static;
+        display: none;
+        width: auto;
+        max-height: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    .cw[data-state="open"] .cw-panel {
+        display: grid;
+    }
+
+    .cw .cw-fields input,
+    .cw .cw-fields textarea {
+        font-size: 16px;
+    }
+
+    .cw .cw-button,
+    .cw .cw-link {
+        min-height: 36px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cw *,
+    .cw *::before,
+    .cw *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
