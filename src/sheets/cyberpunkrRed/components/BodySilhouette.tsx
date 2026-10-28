@@ -23,10 +23,9 @@ const RIGHT_LEG: Point[] = [
     [180, 620], [180, 600], [180, 550], [160, 480], [160, 480], [165, 390],
 ];
 
-// Il busto: braccia e gambe sono disegnate dopo, quindi vincono sul click dove si sovrappongono
-const TORSO: Point[] = [[100, 98], [231, 98], [231, 392], [100, 392]];
-
 const mirror = (points: Point[]): Point[] => points.map(([x, y]) => [MIRROR_X - x, y]);
+const TORSO_LEFT: Point[] = [[100, 105], [98, 390]];
+const TORSO: Point[] = [...TORSO_LEFT, ...mirror(TORSO_LEFT).reverse()];
 const toPoints = (points: Point[]) => points.map(([x, y]) => `${x},${y}`).join(" ");
 
 // Forme non poligonali: cervello, orecchie e occhi
@@ -38,6 +37,7 @@ const mirrorX = (shape: {cx: number}) => ({...shape, cx: MIRROR_X - shape.cx});
 
 const CLIP_ID = "cpr-body-clip";
 const GLASS_ID = "cpr-body-glass";
+
 // Il path è in unità 10× con asse Y invertito: stessa trasformazione per la figura e per il ritaglio
 const BODY_TRANSFORM = "translate(0,758) scale(0.1,-0.1)";
 

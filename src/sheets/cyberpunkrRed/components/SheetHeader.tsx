@@ -14,11 +14,6 @@ const STAT_KEYS = Object.keys(STAT_LABELS) as StatKey[];
 
 type HeaderModal = "portrait" | "reputation" | "identity" | "notes" | "stats" | "health";
 
-// Riepilogo a quattro colonne:
-// a sinistra ritratto sopra e reputazione sotto; accanto anagrafica sopra e note sotto;
-// a destra statistiche e salute su tutta l'altezza.
-// I dati semplici (numeri, anagrafica) si modificano a schermo con un click, come su una scheda;
-// i testi lunghi si aprono in un modale. "Modifica" in alto a destra apre l'intera sezione in un modale.
 const SheetHeader = () => {
     const {sheet, update} = useSheet();
     const {character, health, stats} = sheet;
@@ -60,10 +55,17 @@ const SheetHeader = () => {
 
                 <section className={sectionClass} aria-label="Reputazione">
                     <PanelHeading level="h2" title="Reputazione" action={<EditButton onClick={() => setOpen("reputation")}/>}/>
-                    <InlineNumberField label="Reputazione" value={character.reputation.points}
-                                       onChange={(points) => patchCharacter({reputation: {...character.reputation, points}})}/>
-                    <DetailField label="Motivi della reputazione" value={character.reputation.reasons}
-                                 onChange={(reasons) => patchCharacter({reputation: {...character.reputation, reasons}})}/>
+                    <InlineNumberField
+                        label="Reputazione"
+                        value={character.reputation.points}
+                        onChange={(points) => patchCharacter({reputation: {...character.reputation, points}})}
+                    />
+
+                    <DetailField
+                        label="Motivi della reputazione"
+                        value={character.reputation.reasons}
+                        onChange={(reasons) => patchCharacter({reputation: {...character.reputation, reasons}})}
+                    />
                 </section>
             </div>
 
@@ -71,26 +73,57 @@ const SheetHeader = () => {
                 <PanelHeading level="h2" title="Anagrafica" action={<EditButton onClick={() => setOpen("identity")}/>}/>
 
                 <div className="grid grid-cols-2 gap-2">
-                    <InlineTextField label="Nome personaggio" value={character.tag}
-                                     onChange={(tag) => patchCharacter({tag})}/>
-                    <InlineTextField label="Nome giocatore" value={character.playerName}
-                                     onChange={(playerName) => patchCharacter({playerName})}/>
-                    <InlineTextField label="Alias" value={character.alias}
-                                     onChange={(alias) => patchCharacter({alias})}/>
-                    <InlineTextField label="Ruolo" value={character.role}
-                                     onChange={(role) => patchCharacter({role})}/>
-                    <InlineTextField label="Capacità di ruolo" value={character.roleAbility.name}
-                                     onChange={(name) => patchCharacter({roleAbility: {...character.roleAbility, name}})}/>
-                    <InlineNumberField label="Rango capacità" value={character.roleAbility.rank}
-                                       onChange={(rank) => patchCharacter({roleAbility: {...character.roleAbility, rank}})}/>
-                    <InlineNumberField label="Punti miglioramento" value={character.improvementPoints}
-                                       onChange={(improvementPoints) => patchCharacter({improvementPoints})}/>
+                    <InlineTextField
+                        label="Nome personaggio"
+                        value={character.tag}
+                        onChange={(tag) => patchCharacter({tag})}
+                    />
+
+                    <InlineTextField
+                        label="Nome giocatore"
+                        value={character.playerName}
+                        onChange={(playerName) => patchCharacter({playerName})}
+                    />
+
+                    <InlineTextField
+                        label="Alias"
+                        value={character.alias}
+                        onChange={(alias) => patchCharacter({alias})}
+                    />
+
+                    <InlineTextField
+                        label="Ruolo"
+                        value={character.role}
+                        onChange={(role) => patchCharacter({role})}
+                    />
+
+                    <InlineTextField
+                        label="Capacità di ruolo"
+                        value={character.roleAbility.name}
+                        onChange={(name) => patchCharacter({roleAbility: {...character.roleAbility, name}})}
+                    />
+
+                    <InlineNumberField
+                        label="Rango capacità"
+                        value={character.roleAbility.rank}
+                        onChange={(rank) => patchCharacter({roleAbility: {...character.roleAbility, rank}})}
+                    />
+
+                    <InlineNumberField
+                        label="Punti miglioramento"
+                        value={character.improvementPoints}
+                        onChange={(improvementPoints) => patchCharacter({improvementPoints})}
+                    />
                 </div>
             </section>
 
             <section className={`${sectionClass} xl:col-start-2 xl:row-start-2`} aria-label="Note">
                 <PanelHeading level="h2" title="Note" action={<EditButton onClick={() => setOpen("notes")}/>}/>
-                <DetailField label="Note" value={character.notes} onChange={(notes) => patchCharacter({notes})}/>
+                <DetailField
+                    label="Note"
+                    value={character.notes}
+                    onChange={(notes) => patchCharacter({notes})}
+                />
             </section>
 
             <section
@@ -132,24 +165,56 @@ const SheetHeader = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                    <InlineNumberField label="PF attuali" value={health.currentHitPoints}
-                                       onChange={(currentHitPoints) => patchHealth({currentHitPoints})}/>
-                    <InlineNumberField label="PF massimi" value={health.maxHitPoints}
-                                       onChange={(maxHitPoints) => patchHealth({maxHitPoints})}/>
-                    <InlineNumberField label="Ferito gravemente" value={health.seriouslyWounded}
-                                       onChange={(seriouslyWounded) => patchHealth({seriouslyWounded})}/>
-                    <InlineNumberField label="Tiro della morte" value={health.deathSave}
-                                       onChange={(deathSave) => patchHealth({deathSave})}/>
-                    <InlineNumberField label="Umanità" value={health.currentHumanity}
-                                       onChange={(currentHumanity) => patchHealth({currentHumanity})}/>
-                    <InlineNumberField label="Umanità massima" value={health.maxHumanity}
-                                       onChange={(maxHumanity) => patchHealth({maxHumanity})}/>
+                    <InlineNumberField
+                        label="PF attuali"
+                        value={health.currentHitPoints}
+                        onChange={(currentHitPoints) => patchHealth({currentHitPoints})}
+                    />
+
+                    <InlineNumberField
+                        label="PF massimi"
+                        value={health.maxHitPoints}
+                        onChange={(maxHitPoints) => patchHealth({maxHitPoints})}
+                    />
+
+                    <InlineNumberField
+                        label="Ferito gravemente"
+                        value={health.seriouslyWounded}
+                        onChange={(seriouslyWounded) => patchHealth({seriouslyWounded})}
+                    />
+
+                    <InlineNumberField
+                        label="Tiro della morte"
+                        value={health.deathSave}
+                        onChange={(deathSave) => patchHealth({deathSave})}
+                    />
+
+                    <InlineNumberField
+                        label="Umanità"
+                        value={health.currentHumanity}
+                        onChange={(currentHumanity) => patchHealth({currentHumanity})}
+                    />
+
+                    <InlineNumberField
+                        label="Umanità massima"
+                        value={health.maxHumanity}
+                        onChange={(maxHumanity) => patchHealth({maxHumanity})}
+                    />
                 </div>
 
-                <DetailField label="Ferite critiche" value={health.criticalInjuries}
-                             onChange={(criticalInjuries) => patchHealth({criticalInjuries})}/>
-                <DetailField label="Dipendenze" value={health.dependencies}
-                             onChange={(dependencies) => patchHealth({dependencies})}/>
+                <div className="space-y-2">
+                    <DetailField
+                        label="Ferite critiche"
+                        value={health.criticalInjuries}
+                        onChange={(criticalInjuries) => patchHealth({criticalInjuries})}
+                    />
+
+                    <DetailField
+                        label="Dipendenze"
+                        value={health.dependencies}
+                        onChange={(dependencies) => patchHealth({dependencies})}
+                    />
+                </div>
             </section>
 
             {open && <HeaderModalView kind={open} onClose={() => setOpen(null)}/>}
@@ -180,18 +245,31 @@ const HeaderModalView = ({kind, onClose}: {kind: HeaderModal; onClose: () => voi
                             className="max-h-72 w-full border border-[#5a1116] object-cover object-top"
                         />
                     )}
-                    <TextField label="URL ritratto" value={character.portraitUrl} placeholder="https://..."
-                               onChange={(portraitUrl) => patchCharacter({portraitUrl})}/>
+
+                    <TextField
+                        label="URL ritratto"
+                        value={character.portraitUrl}
+                        placeholder="https://..."
+                        onChange={(portraitUrl) => patchCharacter({portraitUrl})}
+                    />
                 </Modal>
             );
 
         case "reputation":
             return (
                 <Modal title="Reputazione" onClose={onClose}>
-                    <NumberField label="Reputazione" value={character.reputation.points}
-                                 onChange={(points) => patchCharacter({reputation: {...character.reputation, points}})}/>
-                    <TextField label="Motivi della reputazione" value={character.reputation.reasons} multiline
-                               onChange={(reasons) => patchCharacter({reputation: {...character.reputation, reasons}})}/>
+                    <NumberField
+                        label="Reputazione"
+                        value={character.reputation.points}
+                        onChange={(points) => patchCharacter({reputation: {...character.reputation, points}})}
+                    />
+
+                    <TextField
+                        label="Motivi della reputazione"
+                        value={character.reputation.reasons}
+                        multiline
+                        onChange={(reasons) => patchCharacter({reputation: {...character.reputation, reasons}})}
+                    />
                 </Modal>
             );
 
@@ -199,20 +277,47 @@ const HeaderModalView = ({kind, onClose}: {kind: HeaderModal; onClose: () => voi
             return (
                 <Modal title="Anagrafica" wide onClose={onClose}>
                     <div className="grid gap-3 sm:grid-cols-2">
-                        <TextField label="Nome personaggio" value={character.tag}
-                                   onChange={(tag) => patchCharacter({tag})}/>
-                        <TextField label="Nome giocatore" value={character.playerName}
-                                   onChange={(playerName) => patchCharacter({playerName})}/>
-                        <TextField label="Alias" value={character.alias}
-                                   onChange={(alias) => patchCharacter({alias})}/>
-                        <TextField label="Ruolo" value={character.role}
-                                   onChange={(role) => patchCharacter({role})}/>
-                        <TextField label="Capacità di ruolo" value={character.roleAbility.name}
-                                   onChange={(name) => patchCharacter({roleAbility: {...character.roleAbility, name}})}/>
-                        <NumberField label="Rango capacità" value={character.roleAbility.rank}
-                                     onChange={(rank) => patchCharacter({roleAbility: {...character.roleAbility, rank}})}/>
-                        <NumberField label="Punti miglioramento" value={character.improvementPoints}
-                                     onChange={(improvementPoints) => patchCharacter({improvementPoints})}/>
+                        <TextField
+                            label="Nome personaggio"
+                            value={character.tag}
+                            onChange={(tag) => patchCharacter({tag})}
+                        />
+
+                        <TextField
+                            label="Nome giocatore"
+                            value={character.playerName}
+                            onChange={(playerName) => patchCharacter({playerName})}
+                        />
+
+                        <TextField
+                            label="Alias"
+                            value={character.alias}
+                            onChange={(alias) => patchCharacter({alias})}
+                        />
+
+                        <TextField
+                            label="Ruolo"
+                            value={character.role}
+                            onChange={(role) => patchCharacter({role})}
+                        />
+
+                        <TextField
+                            label="Capacità di ruolo"
+                            value={character.roleAbility.name}
+                            onChange={(name) => patchCharacter({roleAbility: {...character.roleAbility, name}})}
+                        />
+
+                        <NumberField
+                            label="Rango capacità"
+                            value={character.roleAbility.rank}
+                            onChange={(rank) => patchCharacter({roleAbility: {...character.roleAbility, rank}})}
+                        />
+
+                        <NumberField
+                            label="Punti miglioramento"
+                            value={character.improvementPoints}
+                            onChange={(improvementPoints) => patchCharacter({improvementPoints})}
+                        />
                     </div>
                 </Modal>
             );
@@ -220,8 +325,12 @@ const HeaderModalView = ({kind, onClose}: {kind: HeaderModal; onClose: () => voi
         case "notes":
             return (
                 <Modal title="Note" onClose={onClose}>
-                    <TextField label="Note" value={character.notes} multiline
-                               onChange={(notes) => patchCharacter({notes})}/>
+                    <TextField
+                        label="Note"
+                        value={character.notes}
+                        multiline
+                        onChange={(notes) => patchCharacter({notes})}
+                    />
                 </Modal>
             );
 
@@ -245,22 +354,55 @@ const HeaderModalView = ({kind, onClose}: {kind: HeaderModal; onClose: () => voi
             return (
                 <Modal title="Salute" wide onClose={onClose}>
                     <div className="grid gap-3 sm:grid-cols-2">
-                        <NumberField label="PF attuali" value={health.currentHitPoints}
-                                     onChange={(currentHitPoints) => patchHealth({currentHitPoints})}/>
-                        <NumberField label="PF massimi" value={health.maxHitPoints}
-                                     onChange={(maxHitPoints) => patchHealth({maxHitPoints})}/>
-                        <NumberField label="Ferito gravemente" value={health.seriouslyWounded}
-                                     onChange={(seriouslyWounded) => patchHealth({seriouslyWounded})}/>
-                        <NumberField label="Tiro della morte" value={health.deathSave}
-                                     onChange={(deathSave) => patchHealth({deathSave})}/>
-                        <NumberField label="Umanità" value={health.currentHumanity}
-                                     onChange={(currentHumanity) => patchHealth({currentHumanity})}/>
-                        <NumberField label="Umanità massima" value={health.maxHumanity}
-                                     onChange={(maxHumanity) => patchHealth({maxHumanity})}/>
-                        <TextField label="Ferite critiche" value={health.criticalInjuries} multiline
-                                   onChange={(criticalInjuries) => patchHealth({criticalInjuries})}/>
-                        <TextField label="Dipendenze" value={health.dependencies} multiline
-                                   onChange={(dependencies) => patchHealth({dependencies})}/>
+                        <NumberField
+                            label="PF attuali"
+                            value={health.currentHitPoints}
+                            onChange={(currentHitPoints) => patchHealth({currentHitPoints})}
+                        />
+
+                        <NumberField
+                            label="PF massimi"
+                            value={health.maxHitPoints}
+                            onChange={(maxHitPoints) => patchHealth({maxHitPoints})}
+                        />
+
+                        <NumberField
+                            label="Ferito gravemente"
+                            value={health.seriouslyWounded}
+                            onChange={(seriouslyWounded) => patchHealth({seriouslyWounded})}
+                        />
+
+                        <NumberField
+                            label="Tiro della morte"
+                            value={health.deathSave}
+                            onChange={(deathSave) => patchHealth({deathSave})}
+                        />
+
+                        <NumberField
+                            label="Umanità"
+                            value={health.currentHumanity}
+                            onChange={(currentHumanity) => patchHealth({currentHumanity})}
+                        />
+
+                        <NumberField
+                            label="Umanità massima"
+                            value={health.maxHumanity}
+                            onChange={(maxHumanity) => patchHealth({maxHumanity})}
+                        />
+
+                        <TextField
+                            label="Ferite critiche"
+                            value={health.criticalInjuries}
+                            multiline
+                            onChange={(criticalInjuries) => patchHealth({criticalInjuries})}
+                        />
+
+                        <TextField
+                            label="Dipendenze"
+                            value={health.dependencies}
+                            multiline
+                            onChange={(dependencies) => patchHealth({dependencies})}
+                        />
                     </div>
                 </Modal>
             );

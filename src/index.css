@@ -110,6 +110,19 @@ body {
   --color-cpr-ink-fg: #f3dede;
   --color-cpr-panel: color-mix(in srgb, var(--bg) 92%, var(--color-cpr-red) 8%);
 
+  /*
+   * Token dei componenti comuni (src/components/common). I valori reali li fornisce ogni scheda con UiThemeProvider;
+   * questi sono solo i valori neutri di riserva.
+   */
+  --color-ui-accent: var(--accent);
+  --color-ui-accent-glow: var(--accent);
+  --color-ui-accent-deep: var(--accent);
+  --color-ui-accent-fg: #fff;
+  --color-ui-surface: color-mix(in srgb, var(--bg) 94%, var(--accent) 6%);
+  --color-ui-overlay: #1b1b1f;
+  --color-ui-overlay-fg: #f3f4f6;
+  --color-ui-overlay-line: color-mix(in srgb, var(--accent) 40%, black);
+
   /* Animazioni */
   --animate-fade-in: cpr-fade-in 0.18s ease both;
   --animate-fade-out: cpr-fade-out 0.18s ease both;

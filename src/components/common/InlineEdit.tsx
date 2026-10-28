@@ -25,36 +25,40 @@ const ClickValue = ({value, inputType, onCommit, ariaLabel, placeholder, centere
     const [editing, setEditing] = useState(false)
     const align = centered ? 'text-center' : 'text-left'
 
-    if (editing) {
-        return (
-            <input
-                autoFocus
-                className={`${inputClass} ${align} ${inputType === 'number' ? NO_SPINNER : ''} ${className}`}
-                type={inputType}
-                inputMode={inputType === 'number' ? 'numeric' : undefined}
-                aria-label={ariaLabel}
-                placeholder={placeholder}
-                value={value}
-                onFocus={(event) => event.target.select()}
-                onChange={(event) => onCommit(event.target.value)}
-                onBlur={() => setEditing(false)}
-                onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur()
-                }}
-            />
-        )
-    }
-
+    // Il bottone resta sempre nel layout (invisibile in modifica) e l'input gli si sovrappone: la scatola
+    // è per forza la stessa nei due stati, qualunque sia il font o il comportamento dell'input del browser
     return (
-        <button
-            type="button"
-            onClick={() => setEditing(true)}
-            aria-label={`${ariaLabel}: modifica`}
-            title={String(value)}
-            className={`min-h-9 max-sm:min-h-11 w-full min-w-0 cursor-text overflow-hidden border-0 border-b border-transparent bg-transparent px-1 py-1.5 text-ellipsis whitespace-nowrap text-inherit hover:bg-cpr-red/10 focus-visible:bg-cpr-red/10 focus-visible:outline-none ${align} ${className}`}
-        >
-            {value === '' ? '—' : value}
-        </button>
+        <div className="relative w-full min-w-0">
+            <button
+                type="button"
+                onClick={() => setEditing(true)}
+                aria-label={`${ariaLabel}: modifica`}
+                aria-hidden={editing}
+                tabIndex={editing ? -1 : 0}
+                title={String(value)}
+                className={`block min-h-9 max-sm:min-h-11 w-full min-w-0 cursor-text overflow-hidden border-0 border-b border-transparent bg-transparent px-1 py-1.5 text-ellipsis whitespace-nowrap text-inherit hover:bg-ui-accent/10 focus-visible:bg-ui-accent/10 focus-visible:outline-none ${align} ${className} ${editing ? 'invisible' : ''}`}
+            >
+                {value === '' ? '—' : value}
+            </button>
+
+            {editing && (
+                <input
+                    autoFocus
+                    className={`${inputClass} ${align} ${inputType === 'number' ? NO_SPINNER : ''} absolute inset-0 h-full ${className}`}
+                    type={inputType}
+                    inputMode={inputType === 'number' ? 'numeric' : undefined}
+                    aria-label={ariaLabel}
+                    placeholder={placeholder}
+                    value={value}
+                    onFocus={(event) => event.target.select()}
+                    onChange={(event) => onCommit(event.target.value)}
+                    onBlur={() => setEditing(false)}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur()
+                    }}
+                />
+            )}
+        </div>
     )
 }
 

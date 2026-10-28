@@ -119,7 +119,7 @@ export const DynamicFieldsSection = ({title, fields, onChange, className, column
                 >
                     <div className="grid gap-3 sm:grid-cols-2">
                         {fields.map((field, index) => (
-                            <div key={index} className="grid content-start gap-2 border border-dashed border-[#5a1116] p-2.5">
+                            <div key={index} className="grid content-start gap-2 border border-dashed border-ui-overlay-line p-2.5">
                                 <div className="flex items-center gap-2">
                                     <input
                                         className={`${inputClass} flex-1 font-bold uppercase`}

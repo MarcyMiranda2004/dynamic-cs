@@ -46,7 +46,6 @@ const writeCompact = (compact: boolean) => {
 const CyberwarePanel = () => {
     const {sheet} = useSheet();
     const [compact, setCompact] = useState(readCompact);
-    // Il pannello resta montato per animare la chiusura: view ricorda l'ultima categoria aperta
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState<{key: CyberwareKey; item: number | null}>({key: "neuralLink", item: null});
     const [hovered, setHovered] = useState<CyberwareKey | null>(null);
@@ -58,7 +57,6 @@ const CyberwarePanel = () => {
         setIsOpen(true);
     };
 
-    // Aperta una categoria, la silhouette scivola a sinistra: la distanza dipende dalla larghezza della scena
     useEffect(() => {
         const stage = stageRef.current;
         const figure = figureRef.current;
@@ -75,7 +73,6 @@ const CyberwarePanel = () => {
         return () => observer.disconnect();
     }, []);
 
-    // Esc torna indietro di un livello: dal dettaglio alla lista, dalla lista al corpo
     useEffect(() => {
         if (!isOpen) return;
 
@@ -113,7 +110,6 @@ const CyberwarePanel = () => {
                         />
                     </div>
 
-                    {/* Aperta una categoria le card si dissolvono e non sono più raggiungibili con la tastiera */}
                     <div className="cw-groups" inert={isOpen}>
                         {GROUP_KEYS.map((key) => (
                             <CyberwareGroupCard
@@ -143,7 +139,6 @@ const CyberwarePanel = () => {
 
             <ul className="cw-legend">
                 {compact ? (
-                    // Stessi simboli dei quadratini della scena, in miniatura; il significato resta nel title e per i lettori di schermo
                     <>
                         <li><i className="cw-key cw-key--free" role="img" aria-label="Slot libero" title="Slot libero"/></li>
                         <li><i className="cw-key cw-key--on" role="img" aria-label="Impianto installato (iniziale del nome)" title="Impianto installato (iniziale del nome)">A</i></li>

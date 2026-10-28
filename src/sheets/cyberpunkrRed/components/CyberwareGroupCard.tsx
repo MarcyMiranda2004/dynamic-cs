@@ -29,8 +29,7 @@ interface CyberwareGroupCardProps {
     onHover: (hovered: boolean) => void;
 }
 
-// Una categoria nella vista totale: mini-tabella con i soli impianti installati, oppure un quadratino per slot.
-// Cliccare ovunque sulla card apre la lista; cliccare un impianto ne apre direttamente il dettaglio.
+// Gruppo-tabella dei cyberware
 const CyberwareGroupCard = ({group, compact, side, row, highlighted, onOpen, onOpenItem, onHover}: CyberwareGroupCardProps) => {
     const label = CYBERWARE_LABELS[group.key];
     const slots = layoutCells(group.cells, group.base);

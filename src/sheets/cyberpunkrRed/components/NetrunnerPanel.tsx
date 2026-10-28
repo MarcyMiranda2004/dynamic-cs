@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Check, Eraser, Plus} from "lucide-react";
+import {Check, Copy, Eraser, Plus} from "lucide-react";
 import DeleteButton from "../../../components/common/DeleteButton";
 import Modal from "../../../components/common/Modal";
 import {NumberField, TextField} from "../../../components/common/EditableField";
@@ -44,6 +44,21 @@ const NetrunnerPanel = () => {
         setOpenIndex(deck.length);
     };
 
+    // Il programma si può avere in più copie: va nel primo slot libero, o in uno slot nuovo se il deck è pieno
+    const duplicateProgram = (index: number) => {
+        const program = deck[index].program;
+        if (!program) return;
+
+        const freeIndex = deck.findIndex((slot) => !slot.program);
+        if (freeIndex >= 0) {
+            setDeck(replaceAt(deck, freeIndex, {...deck[freeIndex], program: {...program}}));
+            setOpenIndex(freeIndex);
+        } else {
+            setDeck([...deck, {slot: deck.length + 1, program: {...program}}]);
+            setOpenIndex(deck.length);
+        }
+    };
+
     return (
         <section aria-label="Deck netrunner" className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {deck.map((slot, index) => (
@@ -67,8 +82,10 @@ const NetrunnerPanel = () => {
 
             {openIndex !== null && deck[openIndex] && (
                 <ProgramModal
+                    key={openIndex}
                     index={openIndex}
                     onClose={() => setOpenIndex(null)}
+                    onDuplicate={() => duplicateProgram(openIndex)}
                     onRemoveSlot={() => {
                         setDeck(renumber(removeAt(deck, openIndex)));
                         setOpenIndex(null);
@@ -147,10 +164,11 @@ interface ProgramModalProps {
     index: number;
     onClose: () => void;
     onRemoveSlot: () => void;
+    onDuplicate: () => void;
 }
 
 // Slot libero: bozza da installare con "Installa". Slot occupato: dettaglio modificabile, ogni cambio è subito salvato
-const ProgramModal = ({index, onClose, onRemoveSlot}: ProgramModalProps) => {
+const ProgramModal = ({index, onClose, onRemoveSlot, onDuplicate}: ProgramModalProps) => {
     const {sheet, update} = useSheet();
     const slot = sheet.netrunner.deck[index];
     const [draft, setDraft] = useState<Program>(BLANK_PROGRAM);
@@ -198,6 +216,9 @@ const ProgramModal = ({index, onClose, onRemoveSlot}: ProgramModalProps) => {
             footer={
                 <>
                     <DeleteButton label="Rimuovi slot" onClick={onRemoveSlot}/>
+                    <button type="button" onClick={onDuplicate} className={buttonClass}>
+                        <Copy size={16} aria-hidden="true" className="inline-block align-text-bottom"/> Duplica
+                    </button>
                     <button
                         type="button"
                         onClick={() => {

@@ -1,7 +1,5 @@
 import {cellClass, fieldLabelClass, inputClass} from './ui'
 
-// Campi sempre modificabili: vivono nei modali e nei pannelli di dettaglio
-
 interface TextFieldProps {
     label: string
     value: string
@@ -51,7 +49,6 @@ export const NumberField = ({label, value, onChange}: NumberFieldProps) => (
     </label>
 )
 
-// Versione compatta per le celle di tabella: in mobile mostra l'etichetta accanto al valore
 interface InlineNumberProps {
     label: string
     value: number

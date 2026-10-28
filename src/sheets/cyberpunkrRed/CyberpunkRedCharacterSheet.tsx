@@ -1,5 +1,7 @@
 import {useCallback, useMemo, useState} from "react";
+import UiThemeProvider from "../../components/common/UiThemeProvider";
 import {SheetContext, type SheetUpdater} from "./SheetContext";
+import {CPR_UI_THEME} from "./uiTheme";
 import {createEmptySheet, withDerivedSkills, type Sheet} from "./sheetState";
 import SheetHeader from "./components/SheetHeader";
 import SkillsPanel from "./components/SkillsPanel";
@@ -32,53 +34,55 @@ const CyberpunkRedCharacterSheet = () => {
 
     return (
         <SheetContext.Provider value={contextValue}>
-            <div className="mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
-                <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-1.5">
-                    <h1 className="m-0 text-[1.1rem] font-extrabold tracking-widest uppercase md:text-[1.5rem]">
-                        Cyberpunk <span className="text-cpr-red italic">Red</span>
-                    </h1>
+            <UiThemeProvider theme={CPR_UI_THEME}>
+                <div className="mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
+                    <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-1.5">
+                        <h1 className="m-0 text-[1.1rem] font-extrabold tracking-widest uppercase md:text-[1.5rem]">
+                            Cyberpunk <span className="text-cpr-red italic">Red</span>
+                        </h1>
+                    </div>
+
+                    <SheetHeader/>
+
+                    <nav
+                        role="tablist"
+                        aria-label="Sezioni della scheda"
+                        className="sticky top-0 z-10 flex snap-x overflow-x-auto border-b-2 border-cpr-red/35 bg-(--bg) [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    >
+                        {TABS.map(({key, label}) => (
+                            <button
+                                key={key}
+                                type="button"
+                                role="tab"
+                                id={`cpr-tab-${key}`}
+                                aria-selected={tab === key}
+                                aria-controls="cpr-tabpanel"
+                                onClick={() => setTab(key)}
+                                className={`min-h-9 shrink-0 snap-start cursor-pointer border-0 border-b-[3px] bg-transparent px-3.5 font-bold tracking-wide uppercase hover:text-cpr-red max-sm:min-h-11 max-sm:px-3 ${
+                                    tab === key ? "border-cpr-red text-cpr-red" : "border-transparent"
+                                }`}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </nav>
+
+                    <div
+                        key={tab}
+                        id="cpr-tabpanel"
+                        role="tabpanel"
+                        aria-labelledby={`cpr-tab-${tab}`}
+                        className="min-w-0 animate-tab-in motion-reduce:animate-none"
+                    >
+                        {tab === "skills" && <SkillsPanel/>}
+                        {tab === "inventory" && <InventoryPanel/>}
+                        {tab === "background" && <BackgroundPanel/>}
+                        {tab === "appearance" && <AppearancePanel/>}
+                        {tab === "cyberware" && <CyberwarePanel/>}
+                        {tab === "netrunner" && <NetrunnerPanel/>}
+                    </div>
                 </div>
-
-                <SheetHeader/>
-
-                <nav
-                    role="tablist"
-                    aria-label="Sezioni della scheda"
-                    className="sticky top-0 z-10 flex snap-x overflow-x-auto border-b-2 border-cpr-red/35 bg-(--bg) [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                >
-                    {TABS.map(({key, label}) => (
-                        <button
-                            key={key}
-                            type="button"
-                            role="tab"
-                            id={`cpr-tab-${key}`}
-                            aria-selected={tab === key}
-                            aria-controls="cpr-tabpanel"
-                            onClick={() => setTab(key)}
-                            className={`min-h-9 shrink-0 snap-start cursor-pointer border-0 border-b-[3px] bg-transparent px-3.5 font-bold tracking-wide uppercase hover:text-cpr-red max-sm:min-h-11 max-sm:px-3 ${
-                                tab === key ? "border-cpr-red text-cpr-red" : "border-transparent"
-                            }`}
-                        >
-                            {label}
-                        </button>
-                    ))}
-                </nav>
-
-                <div
-                    key={tab}
-                    id="cpr-tabpanel"
-                    role="tabpanel"
-                    aria-labelledby={`cpr-tab-${tab}`}
-                    className="min-w-0 animate-tab-in motion-reduce:animate-none"
-                >
-                    {tab === "skills" && <SkillsPanel/>}
-                    {tab === "inventory" && <InventoryPanel/>}
-                    {tab === "background" && <BackgroundPanel/>}
-                    {tab === "appearance" && <AppearancePanel/>}
-                    {tab === "cyberware" && <CyberwarePanel/>}
-                    {tab === "netrunner" && <NetrunnerPanel/>}
-                </div>
-            </div>
+            </UiThemeProvider>
         </SheetContext.Provider>
     );
 };
