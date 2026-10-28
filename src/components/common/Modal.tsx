@@ -77,7 +77,7 @@ const Modal = ({title, onClose, children, footer, viewKey, wide = false}: ModalP
                     </button>
                 </header>
 
-                <div key={viewKey} className="scrollbar-ui grid min-h-0 gap-3 overflow-y-auto p-3.5">
+                <div key={viewKey} className="scrollbar-ui ui-modal-body grid min-h-0 gap-3 overflow-y-auto p-3.5">
                     {Children.toArray(children).map((child, index) => (
                         <div
                             key={index}

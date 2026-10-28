@@ -1,7 +1,3 @@
-/*
- * Slot del deck come chip di memoria: corpo con due angoli smussati, targhetta metallica con il numero di slot,
- * LED di stato e pin dorati sul lato. Il chip installato è sempre scuro (è hardware); la presa vuota segue il tema.
- */
 .chip {
     --chip-cut: 14px;
     --chip-edge: var(--color-cpr-red, #d7262e);
@@ -138,7 +134,7 @@
 }
 
 .chip--empty .chip-inner {
-    background: color-mix(in srgb, var(--bg, #e4e1da) 90%, var(--color-cpr-red, #d7262e) 10%);
+    background: color-mix(in srgb, var(--color-cpr-paper, #14161a) 90%, var(--color-cpr-red, #d7262e) 10%);
     box-shadow: inset 0 0 14px rgb(0 0 0 / 0.12);
 }
 

@@ -8,7 +8,7 @@ const HomePage = () => {
     return (
         <div className="dcs-container">
             <div>
-                <h1 className="text-2xl font-semibold">Benvenuto in Dynamic CS</h1>
+                <h1 className="text-2xl font-semibold">Benvenuto in Dynamic <span className="text-app-accent">CS</span></h1>
                 <span className="text-sm">scegli la tua scheda per iniziare</span>
             </div>
 

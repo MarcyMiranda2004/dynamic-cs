@@ -25,27 +25,43 @@
 }
 /* #endregion */
 
-/* #region Scheda Cyberpunk Red: rosso scuro sul fondo nero della scheda */
+/* #region Scheda Cyberpunk Red: barra squadrata da terminale, con righe di scansione e fermi quadrati */
 @utility scrollbar-cpr {
   &::-webkit-scrollbar {
-    @apply h-2 w-2 bg-cpr-ink;
+    @apply h-2.5 w-2.5 bg-cpr-track;
   }
 
   &::-webkit-scrollbar-track {
-    @apply bg-cpr-ink;
+    @apply bg-cpr-track;
+    background-image: repeating-linear-gradient(0deg, var(--color-cpr-track-line) 0 1px, transparent 1px 3px);
   }
 
   &::-webkit-scrollbar-thumb {
-    @apply border border-cpr-ink bg-cpr-red-deep;
+    @apply border-2 border-cpr-track bg-cpr-thumb;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    @apply bg-cpr-red;
+    @apply bg-cpr-thumb-hover;
+  }
+
+  /* Estremità quadrate, senza freccia: restano due blocchi pieni in fondo e in cima */
+  &::-webkit-scrollbar-button {
+    @apply h-2.5 w-2.5 bg-cpr-red-deep;
+  }
+
+  &::-webkit-scrollbar-corner {
+    @apply bg-cpr-track;
   }
 
   @supports not selector(::-webkit-scrollbar) {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-cpr-red-deep) var(--color-cpr-ink);
+    scrollbar-color: var(--color-cpr-thumb) var(--color-cpr-track);
   }
+}
+/* #endregion */
+
+/* #region Scheda Cyberpunk Red: barra della pagina mentre la scheda è aperta */
+html:has(.cpr-sheet) {
+  @apply scrollbar-cpr;
 }
 /* #endregion */

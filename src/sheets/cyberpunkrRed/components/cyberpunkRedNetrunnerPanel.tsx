@@ -256,7 +256,7 @@ const ProgramForm = ({program, onChange}: {program: Program; onChange: (program:
                 <label className="grid min-w-0 gap-1">
                     <span className="fieldLabelClass">Classe</span>
                     <select
-                        className="inputClass [&_option]:bg-cpr-ink [&_option]:text-cpr-ink-fg"
+                        className="inputClass [&_option]:bg-cpr-overlay [&_option]:text-cpr-overlay-fg"
                         value={program.class}
                         onChange={(event) => onChange(withClass(program, event.target.value as ProgramClass))}
                     >
@@ -270,7 +270,7 @@ const ProgramForm = ({program, onChange}: {program: Program; onChange: (program:
                     <label className="grid min-w-0 gap-1">
                         <span className="fieldLabelClass">Bersaglio</span>
                         <select
-                            className="inputClass [&_option]:bg-cpr-ink [&_option]:text-cpr-ink-fg"
+                            className="inputClass [&_option]:bg-cpr-overlay [&_option]:text-cpr-overlay-fg"
                             value={program.target}
                             onChange={(event) => onChange({...program, target: event.target.value as OffensiveTarget})}
                         >

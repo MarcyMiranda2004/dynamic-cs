@@ -245,7 +245,7 @@ const HeaderModalView = ({kind, onClose}: {kind: HeaderModal; onClose: () => voi
                         <img
                             src={character.portraitUrl}
                             alt="Anteprima del ritratto"
-                            className="max-h-72 w-full border border-[#5a1116] object-cover object-top"
+                            className="max-h-72 w-full border border-ui-overlay-line object-cover object-top"
                         />
                     )}
 

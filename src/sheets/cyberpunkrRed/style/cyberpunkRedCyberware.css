@@ -7,15 +7,15 @@
     --cw-red: var(--color-cpr-red, #d7262e);
     --cw-deep: var(--color-cpr-red-deep, #7a1116);
 
-    /* Tema chiaro: carta rosata, testo scuro, rosso e ambra più profondi per restare leggibili */
+    /* Tema chiaro: fondo quasi bianco con solo un velo di rosso, testo scuro, rosso e ambra più profondi per restare leggibili */
     --cw-glow: #b3141c;
     --cw-fg: #2b1a1d;
     --cw-strong: #14090b;
     --cw-amber: #a8650f;
-    --cw-bg: radial-gradient(ellipse at 45% 38%, #f3e7e4 0%, #ddcdcb 75%);
+    --cw-bg: radial-gradient(ellipse at 45% 38%, #ffffff 0%, #f7f4f4 75%);
     --cw-surface: rgb(255 250 249 / 0.9);
     --cw-panel-bg: rgb(255 251 250 / 0.97);
-    --cw-head-bg: #6b1117;
+    --cw-head-bg: var(--color-cpr-red, #d7262e);
     --cw-head-fg: #fff;
     --cw-on-glow: #fff;
     --cw-sel-stroke: #5a0b10;
@@ -34,7 +34,7 @@
 
     --cw-pad: 18px;
     --cw-row: 20px;
-    --cw-cell: 30px;
+    --cw-cell: 34px;
     --cw-gap: 4px;
 
     position: relative;
@@ -318,7 +318,10 @@
 .cw .cw-group--compact {
     display: grid;
     gap: 5px;
-    max-width: 250px;
+    /* Larghezza di 7 slot affiancati più il padding: così una categoria da 7 sta su una riga */
+    max-width: calc(7 * var(--cw-cell) + 6 * var(--cw-gap) + 12px);
+    /* Se la colonna è più stretta i quadratini si restringono invece di andare a capo */
+    container-type: inline-size;
     padding: 4px 6px;
     border: 1px solid transparent;
 }
@@ -360,6 +363,8 @@
 }
 
 .cw .cw-cells {
+    /* Lato del quadratino: 34px, ridotto solo se 7 quadratini con i gap non entrano nella larghezza della categoria */
+    --cw-cell-size: min(var(--cw-cell), calc((100cqw - 6 * var(--cw-gap)) / 7));
     display: flex;
     flex-wrap: wrap;
     gap: var(--cw-gap);
@@ -374,13 +379,13 @@
     overflow: hidden;
     display: grid;
     place-items: center;
-    width: calc(var(--span, 1) * var(--cw-cell) + (var(--span, 1) - 1) * var(--cw-gap));
-    height: var(--cw-cell);
+    width: calc(var(--span, 1) * var(--cw-cell-size) + (var(--span, 1) - 1) * var(--cw-gap));
+    height: var(--cw-cell-size);
     padding: 0;
     border: 1px solid var(--cw-red-60);
     background: color-mix(in srgb, var(--cw-red) 5%, transparent);
     color: var(--cw-strong);
-    font-size: 13px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 700;
 }
@@ -616,7 +621,6 @@
     font-size: 13px;
 }
 
-/* Nella barra del pannello il bottone sta a destra; dopo il contatore (che spinge già a destra) non serve altro margine */
 .cw .cw-panel-head .cw-button {
     margin-left: auto;
 }
@@ -711,6 +715,11 @@
 .cw .cw-free {
     font-style: italic;
     opacity: 0.5;
+}
+
+/* Sulla carta bianca lo slot libero al 50% è troppo tenue: il tema scuro resta com'è */
+:root:not([data-theme="dark"]) .cw .cw-free {
+    opacity: 0.75;
 }
 
 .cw .cw-date {

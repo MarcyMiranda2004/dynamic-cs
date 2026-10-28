@@ -34,7 +34,7 @@ const CyberpunkRedCharacterSheet = () => {
     return (
         <SheetContext.Provider value={contextValue}>
             <UiThemeProvider theme="ui-theme-cpr">
-                <div className="mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
+                <div className="cpr-sheet mx-auto grid w-full max-w-450 gap-3 p-2 pb-14 text-left text-(--text-h) max-sm:p-2 max-sm:pb-12">
                     <div className="flex items-center justify-between gap-3 border-b-2 border-cpr-red pb-1.5">
                         <h1 className="m-0 text-[1.1rem] font-extrabold tracking-widest uppercase md:text-[1.5rem]">
                             Cyberpunk <span className="text-cpr-red italic">Red</span>

@@ -1,18 +1,13 @@
-/*
- * Token globali: tipografia e colori di base, tema chiaro e scuro, scala dei grigi e colori delle schede.
- * Ogni parte è divisa in #region: generico (valido per tutta l'app) oppure per scheda.
- */
-
 /* #region Generico: tipografia e tema chiaro */
 :root {
   --text: #3b383d;
   --text-h: #08060d;
-  --bg: #FAFAFA;
+  --bg: #ededed;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  /* --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5); */
+  --accent: #991439;
+  --accent-bg: #99143a78;
+  --accent-border: #99143a3a;
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -41,8 +36,7 @@
 :root[data-theme="dark"] {
   --text: #e6e9ef;
   --text-h: #f3f4f6;
-  /* --bg: #19191a; */
-  --bg: #121315;
+  --bg: #14161a;
   --border: #2e303a;
   --code-bg: #1f2028;
   /* --accent: #c084fc;
@@ -99,6 +93,14 @@
   --color-gray-900: var(--gray-900);
 
   /*
+   * Colore primario dell'app: vale per le zone neutre (home, navigazione, pulsanti di sistema).
+   * Le schede non lo usano: ognuna ha i propri colori (es. CPR_UI_THEME), e il tema dei componenti comuni è sotto.
+   */
+  --color-app-accent: var(--accent);
+  --color-app-accent-bg: var(--accent-bg);
+  --color-app-accent-border: var(--accent-border);
+
+  /*
    * Token dei componenti comuni (src/components/common). I valori reali li fornisce ogni scheda con UiThemeProvider;
    * questi sono solo i valori neutri di riserva.
    */
@@ -110,8 +112,14 @@
   --color-ui-overlay: #1b1b1f;
   --color-ui-overlay-fg: #f3f4f6;
   --color-ui-overlay-line: color-mix(in srgb, var(--accent) 40%, black);
+  --color-ui-head: var(--color-ui-accent);
+  --color-ui-head-fg: #fff;
   /* #endregion */
 
+  /*
+   * Scheda Cyberpunk Red. I valori qui sono quelli del tema scuro (invariati);
+   * il tema chiaro li sovrascrive più sotto, in :root:not([data-theme="dark"]).
+   */
   /* #region Scheda Cyberpunk Red */
   --color-cpr-red: #d7262e;
   --color-cpr-red-deep: #7a1116;
@@ -119,9 +127,44 @@
   --color-cpr-ink: #0d0a0b;
   --color-cpr-ink-fg: #f3dede;
   --color-cpr-panel: color-mix(in srgb, var(--bg) 92%, var(--color-cpr-red) 8%);
+  --color-cpr-paper: var(--bg);
+  --color-cpr-head: var(--color-cpr-red);
+  --color-cpr-head-fg: #fff;
+  --color-cpr-overlay: var(--color-cpr-ink);
+  --color-cpr-overlay-fg: var(--color-cpr-ink-fg);
+  --color-cpr-line: #5a1116;
+  --color-cpr-scan: rgb(255 255 255 / 0.03);
+  --color-cpr-track: var(--color-cpr-ink);
+  --color-cpr-track-line: rgb(215 38 46 / 0.22);
+  --color-cpr-thumb: var(--color-cpr-red-deep);
+  --color-cpr-thumb-hover: var(--color-cpr-red);
   /* #endregion */
 
   /* #region Scheda Call of Cthulhu */
   /* Nessun token ancora: la cartella della scheda è vuota */
   /* #endregion */
 }
+
+/*
+ * Scheda Cyberpunk Red, tema chiaro: carta bianca, rosso invariato, intestazioni nere come nella scheda cartacea.
+ * Solo in light: il tema scuro usa i valori di @theme sopra, quindi resta com'è.
+ */
+/* #region Scheda Cyberpunk Red: tema chiaro */
+:root:not([data-theme="dark"]) {
+  --color-cpr-glow: #c3161f;
+  --color-cpr-ink: #1a1415;
+  --color-cpr-panel: #ffffff;
+  --color-cpr-paper: #faf7f7;
+  --color-cpr-head: #d7262e;
+  --color-cpr-head-fg: #ffffff;
+  --color-cpr-overlay: #ffffff;
+  --color-cpr-overlay-fg: #2b1d1f;
+  --color-cpr-line: #e9b3b7;
+  --color-cpr-scan: rgb(215 38 46 / 0.04);
+  --color-cpr-track: #f4eeee;
+  --color-cpr-track-line: rgb(215 38 46 / 0.14);
+  --color-cpr-thumb: #d7262e;
+  --color-cpr-thumb-hover: #c3161f;
+  --cpr-title-shadow: none;
+}
+/* #endregion */

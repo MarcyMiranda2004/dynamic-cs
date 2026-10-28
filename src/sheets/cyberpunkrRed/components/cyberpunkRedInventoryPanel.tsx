@@ -253,7 +253,7 @@ const EquipmentModal = ({index, onClose}: {index: number; onClose: () => void}) 
 
     return (
         <Modal title={item.item || "Equipaggiamento"} onClose={onClose} footer={<DeleteButton label="Elimina" onClick={remove}/>}>
-            {item.image && <img className="max-h-60 w-full border border-[#5a1116] object-cover" src={item.image} alt={item.item}/>}
+            {item.image && <img className="max-h-60 w-full border border-ui-overlay-line object-cover" src={item.image} alt={item.item}/>}
 
             <TextField 
                 label="Nome" 
