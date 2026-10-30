@@ -31,13 +31,16 @@
     @apply h-2.5 w-2.5 bg-cpr-track;
   }
 
+  /* scrollbar-ui mette un raggio pieno sulle stesse barre (modali e pagina) e Chrome non lo sovrascrive sempre: !important lo azzera */
   &::-webkit-scrollbar-track {
     @apply bg-cpr-track;
+    border-radius: 0 !important;
     background-image: repeating-linear-gradient(0deg, var(--color-cpr-track-line) 0 1px, transparent 1px 3px);
   }
 
   &::-webkit-scrollbar-thumb {
     @apply border-2 border-cpr-track bg-cpr-thumb;
+    border-radius: 0 !important;
   }
 
   &::-webkit-scrollbar-thumb:hover {

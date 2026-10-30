@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react'
-import {UiThemeContext} from './uiTheme'
+import {UiThemeContext} from '@/components/common/uiTheme'
 
 interface UiThemeProviderProps {
     theme: string;

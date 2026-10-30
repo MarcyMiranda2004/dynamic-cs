@@ -1,8 +1,8 @@
 import {useState} from "react";
 import {CheckIcon, CopyIcon, EraserIcon, PlusIcon} from "lucide-react";
-import DeleteButton from "../../../components/common/DeleteButton";
-import Modal from "../../../components/common/Modal";
-import {NumberField, TextField} from "../../../components/common/EditableField";
+import DeleteButton from "@/components/common/DeleteButton";
+import Modal from "@/components/common/Modal";
+import {NumberField, TextField} from "@/components/common/EditableField";
 import {
     OFFENSIVE_TARGET_LABELS,
     PROGRAM_CLASS_LABELS,
@@ -10,10 +10,10 @@ import {
     type OffensiveTarget,
     type Program,
     type ProgramClass,
-} from "../utils/cyberpunkRedProgram";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import "../style/cyberpunkRedNetrunner.css";
-import {removeAt, replaceAt} from "../../../utils/list";
+} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedProgram";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import "@/sheets/cyberpunkrRed/style/cyberpunkRedNetrunner.css";
+import {removeAt, replaceAt} from "@/utils/list";
 
 const BLANK_PROGRAM: Program = {name: "", att: 0, def: 0, rez: 0, damage: "", effect: "", class: "boost"};
 

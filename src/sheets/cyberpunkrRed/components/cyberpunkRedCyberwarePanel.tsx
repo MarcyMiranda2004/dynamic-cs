@@ -1,10 +1,10 @@
 import {useEffect, useRef, useState} from "react";
-import {getCyberwareGroup, type CyberwareKey} from "../utils/cyberpunkRedCyberware";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import BodySilhouette from "./cyberpunkRedBodySilhouette";
-import CyberwareDetail from "./cyberpunkRedCyberwareDetail";
-import CyberwareGroupCard, {type CyberwareSide} from "./cyberpunkRedCyberwareGroupCard";
-import "../style/cyberpunkRedCyberware.css";
+import {getCyberwareGroup, type CyberwareKey} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import BodySilhouette from "@/sheets/cyberpunkrRed/components/cyberpunkRedBodySilhouette";
+import CyberwareDetail from "@/sheets/cyberpunkrRed/components/cyberpunkRedCyberwareDetail";
+import CyberwareGroupCard, {type CyberwareSide} from "@/sheets/cyberpunkrRed/components/cyberpunkRedCyberwareGroupCard";
+import "@/sheets/cyberpunkrRed/style/cyberpunkRedCyberware.css";
 
 // Posizione delle categorie nella vista totale, come sulla scheda cartacea: colonna a sinistra e a destra
 // del corpo, e colonna laterale per i cyberware senza componente base. L'ordine è anche quello su schermi stretti.

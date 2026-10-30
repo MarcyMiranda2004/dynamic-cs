@@ -1,7 +1,7 @@
 import {Children, useCallback, useEffect, useRef, useState, type ReactNode} from 'react'
 import {createPortal} from 'react-dom'
 import {XIcon} from 'lucide-react'
-import {useUiTheme} from './uiTheme'
+import {useUiTheme} from '@/components/common/uiTheme'
 
 const CLOSE_DELAY_MS = 180;
 

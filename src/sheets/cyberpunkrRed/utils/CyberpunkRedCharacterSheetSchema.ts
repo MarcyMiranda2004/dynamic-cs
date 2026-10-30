@@ -1,6 +1,6 @@
-import type {BaseSheet, LabeledField} from "../../../types/sheet";
-import type {CyberwareSection} from "./cyberpunkRedCyberware";
-import type {NetrunnerSection} from "./cyberpunkRedProgram";
+import type {BaseSheet, LabeledField} from "@/types/sheet";
+import type {CyberwareSection} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import type {NetrunnerSection} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedProgram";
 
 // #region Statistiche
 export interface Stats {

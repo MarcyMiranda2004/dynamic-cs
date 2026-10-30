@@ -1,5 +1,5 @@
 import {ArrowLeftIcon, EraserIcon, MinusIcon, PlusIcon} from "lucide-react";
-import {TextField} from "../../../components/common/EditableField";
+import {TextField} from "@/components/common/EditableField";
 import {
     MAX_ITEM_SPAN,
     clearItem,
@@ -10,11 +10,11 @@ import {
     type CyberwareCell,
     type CyberwareItem,
     type CyberwareKey,
-} from "../utils/cyberpunkRedCyberware";
-import {CYBERWARE_LABELS} from "../utils/cyberpunkRedCyberwareLabels";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import {removeAt, replaceAt} from "../../../utils/list";
-import {SlotCount} from "./cyberpunkRedCyberwareGroupCard";
+} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import {CYBERWARE_LABELS} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberwareLabels";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import {removeAt, replaceAt} from "@/utils/list";
+import {SlotCount} from "@/sheets/cyberpunkrRed/components/cyberpunkRedCyberwareGroupCard";
 
 const pad = (value: number) => String(value).padStart(2, "0");
 

@@ -1,5 +1,5 @@
 import {createContext, useContext} from "react";
-import type {Sheet} from "./cyberpunkRedSheetState";
+import type {Sheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetState";
 
 // Ogni modifica passa da qui: le abilità derivate vengono ricalcolate in un solo punto
 export type SheetUpdater = (change: (sheet: Sheet) => Sheet) => void;

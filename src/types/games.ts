@@ -1,9 +1,9 @@
-import CyberpunkRedCardCover from "../assets/cyberpunk/CyberpunkRedCardCover.jpg";
-import CallOfChtulhu from "../assets/call-of-chulhu/CallOfChtulhu7eCoverCard.jpg";
-import SeventhSea from "../assets/7th-sea/7thSea3eCoverCard.jpg";
-import DungeonsAndDragons from "../assets/dungeond-and-dragons/DungeonsAndDragons5eCoverCard.jpg";
-import Pathfinder from "../assets/pathfinder/Pathfinder2eCoverCard.jpg";
-import VampireTheMasquerade from "../assets/vampire-the-masquerde/VampireTheMasquerade6eCoverCard.jpg";
+import CyberpunkRedCardCover from "@/assets/cyberpunk/CyberpunkRedCardCover.jpg";
+import CallOfChtulhu from "@/assets/call-of-chulhu/CallOfChtulhu7eCoverCard.jpg";
+import SeventhSea from "@/assets/7th-sea/7thSea3eCoverCard.jpg";
+import DungeonsAndDragons from "@/assets/dungeond-and-dragons/DungeonsAndDragons5eCoverCard.jpg";
+import Pathfinder from "@/assets/pathfinder/Pathfinder2eCoverCard.jpg";
+import VampireTheMasquerade from "@/assets/vampire-the-masquerde/VampireTheMasquerade6eCoverCard.jpg";
 
 export interface GameProps {
     key: string;

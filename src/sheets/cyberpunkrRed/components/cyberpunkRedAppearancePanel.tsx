@@ -1,6 +1,6 @@
-import type {LabeledField} from "../../../types/sheet";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import {DynamicFieldsSection, FieldsSection} from "../../../components/common/FieldsSection";
+import type {LabeledField} from "@/types/sheet";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import {DynamicFieldsSection, FieldsSection} from "@/components/common/FieldsSection";
 
 // Aspetto del personaggio: moda a campi estendibili (sopra, sotto, giacca...) e descrizione fisica
 const AppearancePanel = () => {

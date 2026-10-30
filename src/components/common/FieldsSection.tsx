@@ -1,14 +1,14 @@
 import {useState} from "react";
 import {PlusIcon, XIcon} from "lucide-react";
-import DeleteButton from "./DeleteButton";
-import DetailField from "./DetailField";
-import Modal from "./Modal";
-import PreviewField from "./PreviewField";
-import {AddButton, EditButton} from "./SectionButtons";
-import {TextField} from "./EditableField";
-import Tile from "./Tile";
-import type {LabeledField} from "../../types/sheet";
-import {removeAt, replaceAt} from "../../utils/list";
+import DeleteButton from "@/components/common/DeleteButton";
+import DetailField from "@/components/common/DetailField";
+import Modal from "@/components/common/Modal";
+import PreviewField from "@/components/common/PreviewField";
+import {AddButton, EditButton} from "@/components/common/SectionButtons";
+import {TextField} from "@/components/common/EditableField";
+import Tile from "@/components/common/Tile";
+import type {LabeledField} from "@/types/sheet";
+import {removeAt, replaceAt} from "@/utils/list";
 
 export interface SectionField {
     label: string;

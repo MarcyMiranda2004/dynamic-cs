@@ -1,4 +1,4 @@
-import {useNumberDraft} from './useNumberDraft'
+import {useNumberDraft} from '@/components/common/useNumberDraft'
 
 interface TextFieldProps {
     label: string;

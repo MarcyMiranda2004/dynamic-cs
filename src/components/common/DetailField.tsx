@@ -1,7 +1,7 @@
 import {useState} from 'react'
-import Modal from './Modal'
-import PreviewField from './PreviewField'
-import {TextField} from './EditableField'
+import Modal from '@/components/common/Modal'
+import PreviewField from '@/components/common/PreviewField'
+import {TextField} from '@/components/common/EditableField'
 
 interface DetailFieldProps {
     label: string;
