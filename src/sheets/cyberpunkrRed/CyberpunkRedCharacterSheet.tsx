@@ -57,7 +57,7 @@ const CyberpunkRedCharacterSheet = () => {
                                 aria-selected={tab === key}
                                 aria-controls="cpr-tabpanel"
                                 onClick={() => setTab(key)}
-                                className={`min-h-9 shrink-0 snap-start cursor-pointer border-0 border-b-[3px] bg-transparent px-3.5 font-bold tracking-wide uppercase hover:text-cpr-red max-sm:min-h-11 max-sm:px-3 ${
+                                className={`min-h-9 shrink-0 snap-start cursor-pointer border-0 border-b-[3px] bg-transparent px-3.5 font-bold tracking-wide uppercase hover:text-cpr-red max-sm:min-h-[44px] max-sm:px-3 ${
                                     tab === key ? "border-cpr-red text-cpr-red" : "border-transparent"
                                 }`}
                             >

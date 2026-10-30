@@ -1,7 +1,7 @@
 @layer components {
-  /* Su desktop l'altezza dei controlli è più compatta; su mobile resta 44px per il tocco (max-sm:min-h-11) */
+  /* Su desktop l'altezza dei controlli è più compatta; su mobile resta 44px per il tocco (max-sm:min-h-[44px]) */
   .buttonClass {
-    @apply min-h-9 max-sm:min-h-11 cursor-pointer border border-ui-accent bg-transparent px-3 py-1.5 tracking-wide
+    @apply min-h-9 max-sm:min-h-[44px] cursor-pointer border border-ui-accent bg-transparent px-3 py-1.5 tracking-wide
       hover:bg-ui-accent hover:text-ui-accent-fg focus-visible:bg-ui-accent focus-visible:text-ui-accent-fg
       focus-visible:outline-none;
   }
@@ -11,7 +11,7 @@
   }
 
   .inputClass {
-    @apply min-h-9 max-sm:min-h-11 w-full rounded-none border-0 border-b border-current/35 bg-transparent px-1 py-1.5
+    @apply min-h-9 max-sm:min-h-[44px] w-full rounded-none border-0 border-b border-current/35 bg-transparent px-1 py-1.5
       focus-visible:border-ui-accent focus-visible:shadow-[0_1px_0_0_var(--color-ui-accent)] focus-visible:outline-none;
   }
 
@@ -29,7 +29,7 @@
 
   /* Riga a colonne: --cols è definita dalla tabella; in mobile ogni riga diventa una card */
   .rowClass {
-    @apply grid min-h-9 max-sm:min-h-11 grid-cols-[var(--cols,1fr)] items-center gap-2 border-b border-ui-accent/25 px-2.5 py-1
+    @apply grid min-h-9 max-sm:min-h-[44px] grid-cols-[var(--cols,1fr)] items-center gap-2 border-b border-ui-accent/25 px-2.5 py-1
       last:border-b-0 max-sm:grid-cols-[repeat(auto-fit,minmax(96px,1fr))] max-sm:px-3 max-sm:py-2.5
       max-sm:[&>:first-child]:col-span-full;
   }
@@ -57,7 +57,7 @@
 
   /* Bottone piccolo per l'angolo di una sezione (Aggiungi, Modifica) */
   .compactButtonClass {
-    @apply inline-flex min-h-7 max-sm:min-h-11 shrink-0 cursor-pointer items-center gap-1 border border-ui-accent
+    @apply inline-flex min-h-7 max-sm:min-h-[44px] shrink-0 cursor-pointer items-center gap-1 border border-ui-accent
       bg-transparent px-2 py-0.5 text-[0.8em] font-bold tracking-wide uppercase
       hover:bg-ui-accent hover:text-ui-accent-fg focus-visible:bg-ui-accent focus-visible:text-ui-accent-fg
       focus-visible:outline-none aria-pressed:bg-ui-accent aria-pressed:text-ui-accent-fg;

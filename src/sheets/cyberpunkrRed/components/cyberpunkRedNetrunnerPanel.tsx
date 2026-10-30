@@ -160,7 +160,7 @@ const SlotCard = ({slot, onOpen}: {slot: DeckSlot; onOpen: () => void}) => {
 };
 
 const Cell = ({label, value}: {label: string; value: string}) => (
-    <span className="grid gap-0.5 border border-white/15 bg-black/25 px-1 py-1.5">
+    <span className="grid gap-0.5 border border-[var(--neutral-line-light)] bg-[var(--neutral-well)] px-1 py-1.5">
         <span className="text-[0.65em] font-extrabold tracking-widest uppercase opacity-70">{label}</span>
         <strong className="font-mono text-[1.1rem]">{value}</strong>
     </span>

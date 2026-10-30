@@ -85,7 +85,7 @@ const SkillsPanel = () => {
         : SKILL_KEYS.filter((key) => SKILL_DEFS[key].group === group);
 
     return (
-        <div className="grid gap-3 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr]">
+        <div className="grid gap-3 lg:grid-cols-[13.3333rem_1fr] xl:grid-cols-[14.4444rem_1fr]">
             {/* Sidebar: su mobile diventa una riga scorrevole di gruppi */}
             <aside className="grid content-start gap-2 lg:sticky lg:top-14 lg:self-start">
                 <div className="relative">
@@ -122,7 +122,7 @@ const SkillsPanel = () => {
                                 <button
                                     type="button"
                                     onClick={() => pick(key)}
-                                    className={`flex w-full min-h-9 max-sm:min-h-11 cursor-pointer items-center justify-between gap-2 border px-3 text-left ${
+                                    className={`flex w-full min-h-9 max-sm:min-h-[44px] cursor-pointer items-center justify-between gap-2 border px-3 text-left ${
                                         activeKey === key ? "border-cpr-glow bg-cpr-red/20" : "border-cpr-red/35"
                                     }`}
                                 >
@@ -148,7 +148,7 @@ const SkillsPanel = () => {
                                     setGroup(item.key);
                                     setActiveKey(null);
                                 }}
-                                className={`flex min-h-9 max-sm:min-h-11 shrink-0 cursor-pointer items-center justify-between gap-3 border px-3 text-left font-bold tracking-wide uppercase ${
+                                className={`flex min-h-9 max-sm:min-h-[44px] shrink-0 cursor-pointer items-center justify-between gap-3 border px-3 text-left font-bold tracking-wide uppercase ${
                                     selected
                                         ? "border-cpr-red bg-cpr-red text-white"
                                         : "border-cpr-red/35 bg-cpr-panel hover:border-cpr-red"

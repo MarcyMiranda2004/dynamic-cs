@@ -50,7 +50,7 @@ const Modal = ({title, onClose, children, footer, viewKey, wide = false}: ModalP
     return createPortal(
         // Il modale sta in document.body, fuori dalla scheda: riceve colori e stile dal tema tramite il contesto
         <div
-            className={`${theme} fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 ${closing ? 'animate-fade-out' : 'animate-fade-in'}`}
+            className={`${theme} fixed inset-0 z-50 grid place-items-center bg-ui-scrim p-4 ${closing ? 'animate-fade-out' : 'animate-fade-in'}`}
             onMouseDown={(event) => {
                 if (event.target === event.currentTarget) requestClose()
             }}
