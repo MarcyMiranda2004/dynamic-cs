@@ -5,21 +5,20 @@
   --animate-fade-in: cpr-fade-in 0.18s ease both;
   --animate-fade-out: cpr-fade-out 0.18s ease both;
   --animate-tab-in: cpr-tab-in 0.3s ease both;
+  --animate-spot-grow: dcs-spot-grow 0.18s ease both;
 
-  @keyframes cpr-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes cpr-fade-out {
-    from { opacity: 1; }
-    to { opacity: 0; }
-  }
-
-  @keyframes cpr-tab-in {
-    from { opacity: 0; transform: translateY(0.3333rem); }
-    to { opacity: 1; transform: none; }
-  }
+  @keyframes dcs-spot-grow {
+    from {
+      width: 0px;
+      height: 0px;
+      opacity: 0;
+    }
+    to {
+      width: 37.5rem;
+      height: 37.5rem;
+      opacity: 1;
+    }
+  }  
   /* #endregion */
 
   /* #region Scheda Cyberpunk Red: accensione del monitor, righe di terminale, cursore */
@@ -41,6 +40,21 @@
 
   @keyframes cpr-blink {
     50% { opacity: 0; }
+  }
+
+    @keyframes cpr-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes cpr-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes cpr-tab-in {
+    from { opacity: 0; transform: translateY(0.3333rem); }
+    to { opacity: 1; transform: none; }
   }
   /* #endregion */
 }
