@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {gamesSheets, type GameProps} from "@/types/games";
-import CardItems from "@/components/common/CardItems";
+import CardItems from "@/components/common/elements/CardItems";
 
 const HomePage = () => {
     const navigate = useNavigate();

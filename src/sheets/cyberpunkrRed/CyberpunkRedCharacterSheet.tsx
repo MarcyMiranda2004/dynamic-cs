@@ -1,5 +1,5 @@
 import {useCallback, useMemo, useState} from "react";
-import UiThemeProvider from "@/components/common/UiThemeProvider";
+import UiThemeProvider from "@/components/common/theme/UiThemeProvider";
 import {SheetContext, type SheetUpdater} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
 import {createEmptySheet, withDerivedSkills, type Sheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetState";
 import SheetHeader from "@/sheets/cyberpunkrRed/components/cyberpunkRedSheetHeader";

@@ -1,5 +1,5 @@
 import {ArrowLeftIcon, EraserIcon, MinusIcon, PlusIcon} from "lucide-react";
-import {TextField} from "@/components/common/EditableField";
+import {TextField} from "@/components/common/fields/EditableField";
 import {
     MAX_ITEM_SPAN,
     clearItem,

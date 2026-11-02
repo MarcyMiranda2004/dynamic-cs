@@ -1,6 +1,6 @@
 import {useEffect, useState, type ReactNode} from "react";
 import {PlusIcon, SearchIcon, XIcon} from "lucide-react";
-import {InlineNumber} from "@/components/common/EditableField";
+import {InlineNumber} from "@/components/common/fields/EditableField";
 import {SKILL_DEFS, STAT_LABELS, type SkillKey, type SkillValue} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
 import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
 import {removeAt, replaceAt} from "@/utils/list";

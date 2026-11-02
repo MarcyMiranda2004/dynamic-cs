@@ -1,8 +1,8 @@
 import {useState} from "react";
 import {CheckIcon, CopyIcon, EraserIcon, PlusIcon} from "lucide-react";
-import DeleteButton from "@/components/common/DeleteButton";
-import Modal from "@/components/common/Modal";
-import {NumberField, TextField} from "@/components/common/EditableField";
+import DeleteButton from "@/components/common/elements/DeleteButton";
+import Modal from "@/components/common/elements/Modal";
+import {NumberField, TextField} from "@/components/common/fields/EditableField";
 import {
     OFFENSIVE_TARGET_LABELS,
     PROGRAM_CLASS_LABELS,

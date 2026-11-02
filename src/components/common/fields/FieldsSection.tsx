@@ -1,12 +1,12 @@
 import {useState} from "react";
 import {PlusIcon, XIcon} from "lucide-react";
-import DeleteButton from "@/components/common/DeleteButton";
-import DetailField from "@/components/common/DetailField";
-import Modal from "@/components/common/Modal";
-import PreviewField from "@/components/common/PreviewField";
-import {AddButton, EditButton} from "@/components/common/SectionButtons";
-import {TextField} from "@/components/common/EditableField";
-import Tile from "@/components/common/Tile";
+import DeleteButton from "@/components/common/elements/DeleteButton";
+import DetailField from "@/components/common/fields/DetailField";
+import Modal from "@/components/common/elements/Modal";
+import PreviewField from "@/components/common/fields/PreviewField";
+import {AddButton, EditButton} from "@/components/common/elements/SectionButtons";
+import {TextField} from "@/components/common/fields/EditableField";
+import Tile from "@/components/common/elements/Tile";
 import type {LabeledField} from "@/types/sheet";
 import {removeAt, replaceAt} from "@/utils/list";
 
