@@ -17,7 +17,7 @@
   }
 
   @keyframes cpr-tab-in {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(0.3333rem); }
     to { opacity: 1; transform: none; }
   }
   /* #endregion */
@@ -35,7 +35,7 @@
   }
 
   @keyframes cpr-term-line {
-    from { opacity: 0; transform: translateX(-6px); }
+    from { opacity: 0; transform: translateX(-0.3333rem); }
     to { opacity: 1; transform: none; }
   }
 

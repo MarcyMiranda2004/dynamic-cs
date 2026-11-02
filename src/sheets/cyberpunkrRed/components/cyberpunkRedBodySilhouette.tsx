@@ -1,8 +1,8 @@
 import type {KeyboardEvent} from "react";
-import {BODY_PATH, BODY_VIEWBOX} from "../utils/cyberpunkRedBodyOutline";
-import {getCyberwareGroup, type CyberwareKey} from "../utils/cyberpunkRedCyberware";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import {BODY_ZONES, type BodyZoneId} from "../utils/cyberpunkRedBodyZones";
+import {BODY_PATH, BODY_VIEWBOX} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedBodyOutline";
+import {getCyberwareGroup, type CyberwareKey} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import {BODY_ZONES, type BodyZoneId} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedBodyZones";
 
 // Asse di simmetria della figura (x del centro del corpo nel viewBox 329 × 758)
 const MIRROR_X = 331.1;

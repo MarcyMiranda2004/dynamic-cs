@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react'
-import PanelHeading from './PanelHeading'
+import PanelHeading from '@/components/common/PanelHeading'
 
 interface TileProps {
     title?: string;

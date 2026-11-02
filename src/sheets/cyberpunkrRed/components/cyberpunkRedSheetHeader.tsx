@@ -1,13 +1,13 @@
 import {useState} from "react";
 import {UserRoundIcon} from "lucide-react";
-import DetailField from "../../../components/common/DetailField";
-import {ClickNumber, InlineNumberField, InlineTextField} from "../../../components/common/InlineEdit";
-import Modal from "../../../components/common/Modal";
-import PanelHeading from "../../../components/common/PanelHeading";
-import {EditButton} from "../../../components/common/SectionButtons";
-import {NumberField, TextField} from "../../../components/common/EditableField";
-import {STAT_LABELS, type CharacterInfo, type Health, type StatKey} from "../utils/CyberpunkRedCharacterSheetSchema";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
+import DetailField from "@/components/common/DetailField";
+import {ClickNumber, InlineNumberField, InlineTextField} from "@/components/common/InlineEdit";
+import Modal from "@/components/common/Modal";
+import PanelHeading from "@/components/common/PanelHeading";
+import {EditButton} from "@/components/common/SectionButtons";
+import {NumberField, TextField} from "@/components/common/EditableField";
+import {STAT_LABELS, type CharacterInfo, type Health, type StatKey} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
 
 const STAT_KEYS = Object.keys(STAT_LABELS) as StatKey[];
 

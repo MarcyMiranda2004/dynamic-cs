@@ -1,5 +1,5 @@
 import type React from "react"
-import type {GameProps} from "../../types/games"
+import type {GameProps} from "@/types/games"
 
 interface CardItems { 
     gameSheet: GameProps;

@@ -1,7 +1,7 @@
 import type {CSSProperties, MouseEvent} from "react";
 import {CheckIcon} from "lucide-react";
-import {layoutCells, type CyberwareGroup} from "../utils/cyberpunkRedCyberware";
-import {CYBERWARE_LABELS} from "../utils/cyberpunkRedCyberwareLabels";
+import {layoutCells, type CyberwareGroup} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import {CYBERWARE_LABELS} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberwareLabels";
 
 // Contatore degli slot: usati/totali e, in ambra, quanti sono stati aggiunti oltre a quelli delle regole
 export const SlotCount = ({group}: {group: CyberwareGroup}) => {

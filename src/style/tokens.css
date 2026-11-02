@@ -1,13 +1,13 @@
-/* #region Generico: tipografia e tema chiaro */
+/* #region Base Palette */
 :root {
-  --text: #3b383d;
-  --text-h: #08060d;
-  --bg: #ededed;
+  --text: var(--surface-dark);
+  --text-h: #2e303a;
+  --bg: var(--surface-light);
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #991439;
-  --accent-bg: #99143a78;
-  --accent-border: #99143a3a;
+  --accent: var(--dcs-primary);
+  --accent-bg: color-mix(in srgb, var(--dcs-primary) 47%, transparent);
+  --accent-border: color-mix(in srgb, var(--dcs-primary) 23%, transparent);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -15,8 +15,8 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  font: 15px/145% var(--sans);
+  letter-spacing: 0.01rem;
   color-scheme: light;
   color: var(--text);
   background: var(--bg);
@@ -26,25 +26,21 @@
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: 13.33px;
   }
 }
 /* #endregion */
 
-/* #region Generico: tema scuro */
-/* Il tema scuro è attivato da ThemeToggle / script in index.html */
+/* #region Dark Theme Palette */
 :root[data-theme="dark"] {
-  --text: #e6e9ef;
-  --text-h: #f3f4f6;
-  --bg: #14161a;
+  --text: var(--surface-light);
+  --text-h: #e5e4e7;
+  --bg: var(--surface-dark);
   --border: #2e303a;
   --code-bg: #1f2028;
-  /* --accent: #c084fc;
-  --accent-bg: rgba(192, 132, 252, 0.15);
-  --accent-border: rgba(192, 132, 252, 0.5); */
+  --dcs-primary-text: var(--dcs-red-400);
   --social-bg: rgba(47, 48, 58, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   --gray-50: #222327;
   --gray-100: #2a2b30;
   --gray-200: #35373d;
@@ -64,7 +60,7 @@
 }
 /* #endregion */
 
-/* #region Generico: scala dei grigi (tema chiaro) */
+/* #region Grays Light Theme */
 :root {
   --gray-50: #F4F7FA;
   --gray-100: #eef1f4;
@@ -79,8 +75,49 @@
 }
 /* #endregion */
 
+/* #region Neutrals */
+:root {
+  --surface-light: #ededed;
+  --surface-dark: #14161a;
+  --surface-raised: color-mix(in srgb, var(--surface-light) 40%, #ffffff);
+
+  --neutral-white: var(--surface-light);
+  --neutral-black: var(--surface-dark);
+  --neutral-overlay: var(--surface-dark);
+  --neutral-overlay-fg: var(--surface-light);
+  --neutral-scrim: color-mix(in srgb, var(--neutral-black) 60%, transparent);      /* sfondo dei modali */
+  --neutral-well: color-mix(in srgb, var(--neutral-black) 25%, transparent);       /* fondo degli incavi */
+  --neutral-inset: color-mix(in srgb, var(--neutral-black) 12%, transparent);      /* ombra interna */
+  --neutral-glint: color-mix(in srgb, var(--neutral-white) 8%, transparent);       /* filetto chiaro */
+  --neutral-line-light: color-mix(in srgb, var(--neutral-white) 15%, transparent); /* bordo chiaro su scuro */
+  --neutral-scan: color-mix(in srgb, var(--neutral-white) 2.5%, transparent);      /* linee di scansione */
+}
+/* #endregion */
+
+/* #region Red Scale */
+:root {
+  --dcs-red-50: color-mix(in srgb, var(--dcs-red-700) 6%, var(--neutral-white));
+  --dcs-red-100: color-mix(in srgb, var(--dcs-red-700) 12%, var(--neutral-white));
+  --dcs-red-200: color-mix(in srgb, var(--dcs-red-700) 25%, var(--neutral-white));
+  --dcs-red-300: color-mix(in srgb, var(--dcs-red-700) 40%, var(--neutral-white));
+  --dcs-red-400: color-mix(in srgb, var(--dcs-red-700) 60%, var(--neutral-white));
+  --dcs-red-500: color-mix(in srgb, var(--dcs-red-700) 80%, var(--neutral-white));
+  --dcs-red-600: color-mix(in srgb, var(--dcs-red-700) 90%, var(--neutral-white));
+  --dcs-red-700: #991439; /* main app color */
+  --dcs-red-800: color-mix(in srgb, var(--dcs-red-700) 85%, var(--neutral-black));
+  --dcs-red-900: color-mix(in srgb, var(--dcs-red-700) 65%, var(--neutral-black));
+
+  --dcs-primary: var(--dcs-red-700);
+  --dcs-primary-text: var(--dcs-red-700);
+}
+/* #endregion */
+
 @theme {
-  /* #region Generico: grigi */
+  /* #region Base */
+  --color-dcs-red: var(--accent);
+  --color-dcs-red-light: #ff7575;
+  --color-dcs-red-dark: #b32d2d;
+
   --color-gray-50: var(--gray-50);
   --color-gray-100: var(--gray-100);
   --color-gray-200: var(--gray-200);
@@ -92,35 +129,27 @@
   --color-gray-800: var(--gray-800);
   --color-gray-900: var(--gray-900);
 
-  /*
-   * Colore primario dell'app: vale per le zone neutre (home, navigazione, pulsanti di sistema).
-   * Le schede non lo usano: ognuna ha i propri colori (es. CPR_UI_THEME), e il tema dei componenti comuni è sotto.
-   */
-  --color-app-accent: var(--accent);
+  --color-white: var(--neutral-white);
+  --color-black: var(--neutral-black);
+
+  --color-app-accent: var(--dcs-primary);
   --color-app-accent-bg: var(--accent-bg);
   --color-app-accent-border: var(--accent-border);
 
-  /*
-   * Token dei componenti comuni (src/components/common). I valori reali li fornisce ogni scheda con UiThemeProvider;
-   * questi sono solo i valori neutri di riserva.
-   */
-  --color-ui-accent: var(--accent);
-  --color-ui-accent-glow: var(--accent);
-  --color-ui-accent-deep: var(--accent);
-  --color-ui-accent-fg: #fff;
-  --color-ui-surface: color-mix(in srgb, var(--bg) 94%, var(--accent) 6%);
-  --color-ui-overlay: #1b1b1f;
-  --color-ui-overlay-fg: #f3f4f6;
-  --color-ui-overlay-line: color-mix(in srgb, var(--accent) 40%, black);
+  --color-ui-accent: var(--dcs-primary);
+  --color-ui-accent-glow: var(--dcs-primary);
+  --color-ui-accent-deep: var(--dcs-primary);
+  --color-ui-accent-fg: var(--neutral-white);
+  --color-ui-surface: color-mix(in srgb, var(--bg) 94%, var(--dcs-primary) 6%);
+  --color-ui-overlay: var(--neutral-overlay);
+  --color-ui-overlay-fg: var(--neutral-overlay-fg);
+  --color-ui-overlay-line: color-mix(in srgb, var(--dcs-primary) 40%, var(--neutral-black));
+  --color-ui-scrim: var(--neutral-scrim);
   --color-ui-head: var(--color-ui-accent);
-  --color-ui-head-fg: #fff;
+  --color-ui-head-fg: var(--neutral-white);
   /* #endregion */
 
-  /*
-   * Scheda Cyberpunk Red. I valori qui sono quelli del tema scuro (invariati);
-   * il tema chiaro li sovrascrive più sotto, in :root:not([data-theme="dark"]).
-   */
-  /* #region Scheda Cyberpunk Red */
+  /* #region Cyberpunk Red */
   --color-cpr-red: #d7262e;
   --color-cpr-red-deep: #7a1116;
   --color-cpr-glow: #ff5a60;
@@ -129,7 +158,7 @@
   --color-cpr-panel: color-mix(in srgb, var(--bg) 92%, var(--color-cpr-red) 8%);
   --color-cpr-paper: var(--bg);
   --color-cpr-head: var(--color-cpr-red);
-  --color-cpr-head-fg: #fff;
+  --color-cpr-head-fg: var(--neutral-white);
   --color-cpr-overlay: var(--color-cpr-ink);
   --color-cpr-overlay-fg: var(--color-cpr-ink-fg);
   --color-cpr-line: #5a1116;
@@ -140,24 +169,18 @@
   --color-cpr-thumb-hover: var(--color-cpr-red);
   /* #endregion */
 
-  /* #region Scheda Call of Cthulhu */
-  /* Nessun token ancora: la cartella della scheda è vuota */
-  /* #endregion */
 }
 
-/*
- * Scheda Cyberpunk Red, tema chiaro: carta bianca, rosso invariato, intestazioni nere come nella scheda cartacea.
- * Solo in light: il tema scuro usa i valori di @theme sopra, quindi resta com'è.
- */
+/* Cyberpunk Red, light theme */
 /* #region Scheda Cyberpunk Red: tema chiaro */
 :root:not([data-theme="dark"]) {
   --color-cpr-glow: #c3161f;
   --color-cpr-ink: #1a1415;
-  --color-cpr-panel: #ffffff;
+  --color-cpr-panel: var(--surface-raised);
   --color-cpr-paper: #faf7f7;
   --color-cpr-head: #d7262e;
-  --color-cpr-head-fg: #ffffff;
-  --color-cpr-overlay: #ffffff;
+  --color-cpr-head-fg: var(--neutral-white);
+  --color-cpr-overlay: var(--surface-raised);
   --color-cpr-overlay-fg: #2b1d1f;
   --color-cpr-line: #e9b3b7;
   --color-cpr-scan: rgb(215 38 46 / 0.04);

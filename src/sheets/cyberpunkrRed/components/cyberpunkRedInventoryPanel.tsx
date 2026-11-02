@@ -1,15 +1,15 @@
 import {useState} from "react";
 import {CheckIcon, PencilIcon} from "lucide-react";
-import DeleteButton from "../../../components/common/DeleteButton";
-import Modal from "../../../components/common/Modal";
-import ClickableTable from "../../../components/common/ClickableTable";
-import PanelHeading from "../../../components/common/PanelHeading";
-import {AddButton} from "../../../components/common/SectionButtons";
-import {InlineNumber, TextField} from "../../../components/common/EditableField";
-import {useNumberDraft} from "../../../components/common/useNumberDraft";
-import type {Armor, ArmorSlot, EquipmentItem, Weapon} from "../utils/CyberpunkRedCharacterSheetSchema";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import {removeAt, replaceAt} from "../../../utils/list";
+import DeleteButton from "@/components/common/DeleteButton";
+import Modal from "@/components/common/Modal";
+import ClickableTable from "@/components/common/ClickableTable";
+import PanelHeading from "@/components/common/PanelHeading";
+import {AddButton} from "@/components/common/SectionButtons";
+import {InlineNumber, TextField} from "@/components/common/EditableField";
+import {useNumberDraft} from "@/components/common/useNumberDraft";
+import type {Armor, ArmorSlot, EquipmentItem, Weapon} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import {removeAt, replaceAt} from "@/utils/list";
 
 const BLANK_WEAPON: Weapon = {name: "", damage: "", shots: "", rof: "", ammo: "", notes: ""};
 const BLANK_ITEM: EquipmentItem = {item: "", description: "", notes: ""};

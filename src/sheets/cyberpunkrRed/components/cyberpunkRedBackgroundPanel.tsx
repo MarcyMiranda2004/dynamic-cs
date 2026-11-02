@@ -1,16 +1,16 @@
 import {useState} from "react";
-import ClickableTable from "../../../components/common/ClickableTable";
-import DeleteButton from "../../../components/common/DeleteButton";
-import EntryList, {type EntryItem} from "../../../components/common/EntryList";
-import Modal from "../../../components/common/Modal";
-import {AddButton} from "../../../components/common/SectionButtons";
-import {TextField} from "../../../components/common/EditableField";
-import Tile from "../../../components/common/Tile";
-import type {LabeledField} from "../../../types/sheet";
-import type {Background, Enemy, Relation} from "../utils/CyberpunkRedCharacterSheetSchema";
-import {useSheet} from "../utils/cyberpunkRedSheetContext";
-import {removeAt, replaceAt} from "../../../utils/list";
-import {DynamicFieldsSection, FieldsSection} from "../../../components/common/FieldsSection";
+import ClickableTable from "@/components/common/ClickableTable";
+import DeleteButton from "@/components/common/DeleteButton";
+import EntryList, {type EntryItem} from "@/components/common/EntryList";
+import Modal from "@/components/common/Modal";
+import {AddButton} from "@/components/common/SectionButtons";
+import {TextField} from "@/components/common/EditableField";
+import Tile from "@/components/common/Tile";
+import type {LabeledField} from "@/types/sheet";
+import type {Background, Enemy, Relation} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
+import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import {removeAt, replaceAt} from "@/utils/list";
+import {DynamicFieldsSection, FieldsSection} from "@/components/common/FieldsSection";
 
 type TextKey = keyof Pick<
     Background,

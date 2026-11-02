@@ -37,7 +37,7 @@ const ClickValue = ({value, inputType, onCommit, ariaLabel, placeholder, centere
                 aria-hidden={editing}
                 tabIndex={editing ? -1 : 0}
                 title={String(value)}
-                className={`block min-h-9 max-sm:min-h-11 w-full min-w-0 cursor-text overflow-hidden border-0 border-b border-transparent bg-transparent px-1 py-1.5 text-ellipsis whitespace-nowrap text-inherit hover:bg-ui-accent/10 focus-visible:bg-ui-accent/10 focus-visible:outline-none ${align} ${className} ${editing ? 'invisible' : ''}`}
+                className={`block min-h-9 max-sm:min-h-[44px] w-full min-w-0 cursor-text overflow-hidden border-0 border-b border-transparent bg-transparent px-1 py-1.5 text-ellipsis whitespace-nowrap text-inherit hover:bg-ui-accent/10 focus-visible:bg-ui-accent/10 focus-visible:outline-none ${align} ${className} ${editing ? 'invisible' : ''}`}
             >
                 {value === '' ? '—' : value}
             </button>
