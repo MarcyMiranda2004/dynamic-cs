@@ -5,20 +5,31 @@
   --animate-fade-in: cpr-fade-in 0.18s ease both;
   --animate-fade-out: cpr-fade-out 0.18s ease both;
   --animate-tab-in: cpr-tab-in 0.3s ease both;
-  --animate-spot-grow: dcs-spot-grow 0.18s ease both;
+  --animate-spot-grow: dcs-spot-grow 0.5s ease both;
 
   @keyframes dcs-spot-grow {
     from {
-      width: 0px;
-      height: 0px;
+      scale: 0;
       opacity: 0;
     }
     to {
-      width: 37.5rem;
-      height: 37.5rem;
+      scale: 1;
       opacity: 1;
     }
   }  
+  /* #endregion */
+
+  /* #region Login: orbite del logo */
+  --animate-orbit-cw: dcs-orbit-cw 16s linear infinite;
+  --animate-orbit-ccw: dcs-orbit-ccw 24s linear infinite;
+
+  @keyframes dcs-orbit-cw {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes dcs-orbit-ccw {
+    to { transform: rotate(-360deg); }
+  }
   /* #endregion */
 
   /* #region Scheda Cyberpunk Red: accensione del monitor, righe di terminale, cursore */

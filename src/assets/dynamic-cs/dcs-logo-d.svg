@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="D">
+  <style>
+    /* Le orbite ruotano attorno al centro del viewBox (100 100) */
+    .orbit-inner, .orbit-outer {
+      transform-box: view-box;
+      transform-origin: 100px 100px;
+    }
+    .orbit-inner { animation: orbit-cw 14s linear infinite; }
+    .orbit-outer { animation: orbit-ccw 20s linear infinite; }
+
+    @keyframes orbit-cw { to { transform: rotate(360deg); } }
+    @keyframes orbit-ccw { to { transform: rotate(-360deg); } }
+
+    /* Se l'utente ha attivato "riduci movimento", le orbite restano ferme */
+    @media (prefers-reduced-motion: reduce) {
+      .orbit-inner, .orbit-outer { animation: none; }
+    }
+  </style>
+
+  <!-- Orbite concentriche: anelli fissi -->
+  <circle cx="100" cy="100" r="66" fill="none" stroke="#991439" stroke-width="2"/>
+  <circle cx="100" cy="100" r="92" fill="none" stroke="#991439" stroke-width="2"/>
+
+  <!-- Pallini sull'anello interno, senso orario -->
+  <g class="orbit-inner">
+    <circle cx="100" cy="34" r="6.5" fill="#991439"/>
+    <circle cx="100" cy="34" r="6.5" fill="#991439" transform="rotate(120 100 100)"/>
+    <circle cx="100" cy="34" r="6.5" fill="#991439" transform="rotate(240 100 100)"/>
+  </g>
+
+  <!-- Pallini sull'anello esterno, senso antiorario, sfalsati di 60° rispetto all'interno -->
+  <g class="orbit-outer">
+    <circle cx="100" cy="8" r="5.5" fill="#991439" transform="rotate(60 100 100)"/>
+    <circle cx="100" cy="8" r="5.5" fill="#991439" transform="rotate(180 100 100)"/>
+    <circle cx="100" cy="8" r="5.5" fill="#991439" transform="rotate(300 100 100)"/>
+  </g>
+
+  <!-- Lettera D -->
+  <text x="100" y="100" dy="0.35em" text-anchor="middle"
+        font-family="Roboto, sans-serif" font-size="56" font-weight="600" letter-spacing="3" fill="#991439">D</text>
+</svg>
