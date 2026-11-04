@@ -163,9 +163,9 @@
 }
 
 /*
- * Il cambio di card del login resta (il contenuto deve ancora alternarsi), ma quasi istantaneo: senza
- * durata l'animazione non applicherebbe più lo scambio di z-index, e le due card finirebbero sovrapposte.
- * Fuori da @theme, così batte l'utility generata a prescindere dalla specificità.
+ Il cambio di card del login resta (il contenuto deve ancora alternarsi), ma quasi istantaneo: senza
+ durata l'animazione non applicherebbe più lo scambio di z-index, e le due card finirebbero sovrapposte.
+ Fuori da @theme, così batte l'utility generata a prescindere dalla specificità.
  */
 @media (prefers-reduced-motion: reduce) {
   .animate-card-out, .animate-card-in {
