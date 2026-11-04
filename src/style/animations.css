@@ -23,12 +23,104 @@
   --animate-orbit-cw: dcs-orbit-cw 16s linear infinite;
   --animate-orbit-ccw: dcs-orbit-ccw 24s linear infinite;
 
+  /* Comparsa del logo lettera per lettera */
+  --animate-letter-in: dcs-letter-in 0.22s cubic-bezier(.2, .8, .2, 1) both;
+
+  @keyframes dcs-letter-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.4em);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   @keyframes dcs-orbit-cw {
     to { transform: rotate(360deg); }
   }
 
   @keyframes dcs-orbit-ccw {
     to { transform: rotate(-360deg); }
+  }
+
+  /* Animazione delle card i login e registrazione che passano una sotto l'altra*/
+  --animate-card-out: dcs-card-out 0.55s linear both;
+  --animate-card-in: dcs-card-in 0.55s linear both;
+
+  @keyframes dcs-card-out {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      filter: brightness(1);
+      opacity: 1;
+      z-index: 3;
+      animation-timing-function: cubic-bezier(.25, .8, .3, 1);
+    }
+    42% {
+      transform: translate(108%, -10px) scale(1) rotate(3deg);
+      filter: brightness(1);
+      opacity: 1;
+      z-index: 3;
+      animation-timing-function: cubic-bezier(.25, .8, .3, 1);
+    }
+    49.9% {
+      transform: translate(108%, -10px) scale(1) rotate(3deg);
+      filter: brightness(.9);
+      opacity: 1;
+      z-index: 3;
+      animation-timing-function: cubic-bezier(.6, 0, .2, 1);
+    }
+    50% {
+      transform: translate(108%, -6px) scale(.99) rotate(2deg);
+      filter: brightness(.85);
+      opacity: 1;
+      z-index: 1;
+      animation-timing-function: cubic-bezier(.6, 0, .2, 1);
+    }
+    100% {
+      transform: translate(0, 22px) scale(.96) rotate(0deg);
+      filter: brightness(.62);
+      opacity: 0;
+      z-index: 1;
+    }
+  }
+
+  @keyframes dcs-card-in {
+    0% {
+      transform: translate(0, 22px) scale(.96) rotate(0deg);
+      filter: brightness(.62);
+      opacity: 0;
+      z-index: 1;
+      animation-timing-function: cubic-bezier(.25, .8, .3, 1);
+    }
+    8% {
+      transform: translate(0, 22px) scale(.96) rotate(0deg);
+      filter: brightness(.62);
+      opacity: 1;
+      z-index: 1;
+      animation-timing-function: cubic-bezier(.25, .8, .3, 1);
+    }
+    49.9% {
+      transform: translate(0, 12px) scale(.975) rotate(0deg);
+      filter: brightness(.8);
+      opacity: 1;
+      z-index: 1;
+      animation-timing-function: cubic-bezier(.6, 0, .2, 1);
+    }
+    50% {
+      transform: translate(0, 12px) scale(.975) rotate(0deg);
+      filter: brightness(.8);
+      opacity: 1;
+      z-index: 3;
+      animation-timing-function: cubic-bezier(.6, 0, .2, 1);
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      filter: brightness(1);
+      opacity: 1;
+      z-index: 3;
+    }
   }
   /* #endregion */
 
@@ -68,4 +160,15 @@
     to { opacity: 1; transform: none; }
   }
   /* #endregion */
+}
+
+/*
+ * Il cambio di card del login resta (il contenuto deve ancora alternarsi), ma quasi istantaneo: senza
+ * durata l'animazione non applicherebbe più lo scambio di z-index, e le due card finirebbero sovrapposte.
+ * Fuori da @theme, così batte l'utility generata a prescindere dalla specificità.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-out, .animate-card-in {
+    animation-duration: 0.01s;
+  }
 }

@@ -147,6 +147,8 @@
   --color-ui-scrim: var(--neutral-scrim);
   --color-ui-head: var(--color-ui-accent);
   --color-ui-head-fg: var(--neutral-white);
+  
+  --blur-spot: 4.2667rem;
   /* #endregion */
 
   /* #region Cyberpunk Red */
