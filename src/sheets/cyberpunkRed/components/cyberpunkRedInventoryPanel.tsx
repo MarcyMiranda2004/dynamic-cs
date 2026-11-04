@@ -7,8 +7,8 @@ import PanelHeading from "@/components/common/elements/PanelHeading";
 import {AddButton} from "@/components/common/elements/SectionButtons";
 import {InlineNumber, TextField} from "@/components/common/fields/EditableField";
 import {useNumberDraft} from "@/hooks/useNumberDraft";
-import type {Armor, ArmorSlot, EquipmentItem, Weapon} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
-import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import type {Armor, ArmorSlot, EquipmentItem, Weapon} from "@/sheets/cyberpunkRed/utils/CyberpunkRedCharacterSheetSchema";
+import {useSheet} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetContext";
 import {removeAt, replaceAt} from "@/utils/list";
 
 const BLANK_WEAPON: Weapon = {name: "", damage: "", shots: "", rof: "", ammo: "", notes: ""};

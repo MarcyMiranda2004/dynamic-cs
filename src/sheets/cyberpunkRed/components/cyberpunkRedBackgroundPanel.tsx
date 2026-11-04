@@ -7,8 +7,8 @@ import {AddButton} from "@/components/common/elements/SectionButtons";
 import {TextField} from "@/components/common/fields/EditableField";
 import Tile from "@/components/common/elements/Tile";
 import type {LabeledField} from "@/types/sheet";
-import type {Background, Enemy, Relation} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
-import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import type {Background, Enemy, Relation} from "@/sheets/cyberpunkRed/utils/CyberpunkRedCharacterSheetSchema";
+import {useSheet} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetContext";
 import {removeAt, replaceAt} from "@/utils/list";
 import {DynamicFieldsSection, FieldsSection} from "@/components/common/fields/FieldsSection";
 

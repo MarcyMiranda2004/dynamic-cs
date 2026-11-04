@@ -10,9 +10,9 @@ import {
     type OffensiveTarget,
     type Program,
     type ProgramClass,
-} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedProgram";
-import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
-import "@/sheets/cyberpunkrRed/style/cyberpunkRedNetrunner.css";
+} from "@/sheets/cyberpunkRed/utils/cyberpunkRedProgram";
+import {useSheet} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetContext";
+import "@/sheets/cyberpunkRed/style/cyberpunkRedNetrunner.css";
 import {removeAt, replaceAt} from "@/utils/list";
 
 const BLANK_PROGRAM: Program = {name: "", att: 0, def: 0, rez: 0, damage: "", effect: "", class: "boost"};

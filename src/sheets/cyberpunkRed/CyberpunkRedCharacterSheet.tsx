@@ -1,14 +1,14 @@
 import {useCallback, useMemo, useState} from "react";
 import UiThemeProvider from "@/components/common/theme/UiThemeProvider";
-import {SheetContext, type SheetUpdater} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
-import {createEmptySheet, withDerivedSkills, type Sheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetState";
-import SheetHeader from "@/sheets/cyberpunkrRed/components/cyberpunkRedSheetHeader";
-import SkillsPanel from "@/sheets/cyberpunkrRed/components/cyberpunkRedSkillsPanel";
-import InventoryPanel from "@/sheets/cyberpunkrRed/components/cyberpunkRedInventoryPanel";
-import BackgroundPanel from "@/sheets/cyberpunkrRed/components/cyberpunkRedBackgroundPanel";
-import AppearancePanel from "@/sheets/cyberpunkrRed/components/cyberpunkRedAppearancePanel";
-import CyberwarePanel from "@/sheets/cyberpunkrRed/components/cyberpunkRedCyberwarePanel";
-import NetrunnerPanel from "@/sheets/cyberpunkrRed/components/cyberpunkRedNetrunnerPanel";
+import {SheetContext, type SheetUpdater} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetContext";
+import {createEmptySheet, withDerivedSkills, type Sheet} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetState";
+import SheetHeader from "@/sheets/cyberpunkRed/components/cyberpunkRedSheetHeader";
+import SkillsPanel from "@/sheets/cyberpunkRed/components/cyberpunkRedSkillsPanel";
+import InventoryPanel from "@/sheets/cyberpunkRed/components/cyberpunkRedInventoryPanel";
+import BackgroundPanel from "@/sheets/cyberpunkRed/components/cyberpunkRedBackgroundPanel";
+import AppearancePanel from "@/sheets/cyberpunkRed/components/cyberpunkRedAppearancePanel";
+import CyberwarePanel from "@/sheets/cyberpunkRed/components/cyberpunkRedCyberwarePanel";
+import NetrunnerPanel from "@/sheets/cyberpunkRed/components/cyberpunkRedNetrunnerPanel";
 
 type TabKey = "skills" | "inventory" | "background" | "appearance" | "cyberware" | "netrunner";
 

@@ -10,11 +10,11 @@ import {
     type CyberwareCell,
     type CyberwareItem,
     type CyberwareKey,
-} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
-import {CYBERWARE_LABELS} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberwareLabels";
-import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+} from "@/sheets/cyberpunkRed/utils/cyberpunkRedCyberware";
+import {CYBERWARE_LABELS} from "@/sheets/cyberpunkRed/utils/cyberpunkRedCyberwareLabels";
+import {useSheet} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetContext";
 import {removeAt, replaceAt} from "@/utils/list";
-import {SlotCount} from "@/sheets/cyberpunkrRed/components/cyberpunkRedCyberwareGroupCard";
+import {SlotCount} from "@/sheets/cyberpunkRed/components/cyberpunkRedCyberwareGroupCard";
 
 const pad = (value: number) => String(value).padStart(2, "0");
 

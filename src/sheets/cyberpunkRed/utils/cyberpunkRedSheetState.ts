@@ -1,11 +1,11 @@
 import type {LabeledField} from "@/types/sheet";
-import {createEmptyCells} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import {createEmptyCells} from "@/sheets/cyberpunkRed/utils/cyberpunkRedCyberware";
 import {
     SKILL_DEFS,
     type CyberpunkRedCharacterSheetSchema,
     type SkillKey,
     type Skills,
-} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
+} from "@/sheets/cyberpunkRed/utils/CyberpunkRedCharacterSheetSchema";
 
 export type Sheet = CyberpunkRedCharacterSheetSchema;
 

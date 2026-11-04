@@ -1,4 +1,4 @@
-import type {CyberwareKey} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedCyberware";
+import type {CyberwareKey} from "@/sheets/cyberpunkRed/utils/cyberpunkRedCyberware";
 
 export const CYBERWARE_LABELS: Record<CyberwareKey, string> = {
     cyberAudioSystem: "Sistema cyberudito",

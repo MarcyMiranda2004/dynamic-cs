@@ -6,8 +6,8 @@ import Modal from "@/components/common/elements/Modal";
 import PanelHeading from "@/components/common/elements/PanelHeading";
 import {EditButton} from "@/components/common/elements/SectionButtons";
 import {NumberField, TextField} from "@/components/common/fields/EditableField";
-import {STAT_LABELS, type CharacterInfo, type Health, type StatKey} from "@/sheets/cyberpunkrRed/utils/CyberpunkRedCharacterSheetSchema";
-import {useSheet} from "@/sheets/cyberpunkrRed/utils/cyberpunkRedSheetContext";
+import {STAT_LABELS, type CharacterInfo, type Health, type StatKey} from "@/sheets/cyberpunkRed/utils/CyberpunkRedCharacterSheetSchema";
+import {useSheet} from "@/sheets/cyberpunkRed/utils/cyberpunkRedSheetContext";
 
 const STAT_KEYS = Object.keys(STAT_LABELS) as StatKey[];
 
