@@ -14,7 +14,7 @@ function App() {
 
   return (
     <main className='dcs-main-container'>
-      <ThemeToggle />
+      {/* <ThemeToggle /> */}
       <Routes>
         <Route path='*' element={<NotFoundPage />} />
         <Route path='/' element={<HomePage />} />
