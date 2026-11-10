@@ -9,28 +9,38 @@ import SeventhSeaCharacterSheet from '@/sheets/seventhSea/SeventhSeaCharacterShe
 import VampireTheMasqueradeCharacterSheet from '@/sheets/vampireTheMasquerade/VampireTheMasqueradeCharacterSheet'
 import DungeonsAndDragonsCharacterSheet from '@/sheets/dungeonsAndDragons/DungeonsAndDragonsCharacterSheet'
 import PathfinderCharacterSheet from '@/sheets/pathfinder/PathfinderCharacterSheet'
+import {Sidebar} from 'lucide-react'
+import Navbar from './components/elements/Navbar'
 
 function App() {
 
   return (
-    <main className='dcs-main-container'>
-      {/* <ThemeToggle /> */}
-      <Routes>
-        <Route path='*' element={<NotFoundPage />} />
-        <Route path='/' element={<HomePage />} />
+    <>
+      <header>
+        <Navbar />
+      </header>
 
-        <Route path='login' element={<LoginPage />} />
-        
-        <Route path="sheets">
-          <Route path='cyberpunk-red' element={<CyberpunkRedCharacterSheet />} />
-          <Route path='call-of-chtulhu-7e' element={<CallOfCthulhuCharacterSheet />} />
-          <Route path='7th-sea-3e' element={<SeventhSeaCharacterSheet />} />
-          <Route path='vampire-the-masquerade-6e' element={<VampireTheMasqueradeCharacterSheet />} />
-          <Route path='dungeons-and-dragons-5e' element={<DungeonsAndDragonsCharacterSheet />} />
-          <Route path='pathfinder-2e' element={<PathfinderCharacterSheet />} />
-        </Route>
-      </Routes>
-    </main>
+      <main className='dcs-main-container'>
+        <Sidebar />
+
+        {/* <ThemeToggle /> */}
+        <Routes>
+          <Route path='*' element={<NotFoundPage />} />
+          <Route path='/' element={<HomePage />} />
+
+          <Route path='login' element={<LoginPage />} />
+          
+          <Route path="sheets">
+            <Route path='cyberpunk-red' element={<CyberpunkRedCharacterSheet />} />
+            <Route path='call-of-chtulhu-7e' element={<CallOfCthulhuCharacterSheet />} />
+            <Route path='7th-sea-3e' element={<SeventhSeaCharacterSheet />} />
+            <Route path='vampire-the-masquerade-6e' element={<VampireTheMasqueradeCharacterSheet />} />
+            <Route path='dungeons-and-dragons-5e' element={<DungeonsAndDragonsCharacterSheet />} />
+            <Route path='pathfinder-2e' element={<PathfinderCharacterSheet />} />
+          </Route>
+        </Routes>
+      </main>
+    </>
   )
 }
 

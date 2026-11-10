@@ -162,11 +162,47 @@
   /* #endregion */
 }
 
-/*
- Il cambio di card del login resta (il contenuto deve ancora alternarsi), ma quasi istantaneo: senza
- durata l'animazione non applicherebbe più lo scambio di z-index, e le due card finirebbero sovrapposte.
- Fuori da @theme, così batte l'utility generata a prescindere dalla specificità.
+/* #region Transizione login → home (View Transitions API)
+ root: dissolvenza dell'intera pagina (login che sfuma, home che compare)
+ dcs-logo: il logo che dal centro scorre e si rimpicciolisce fino allo slot della sidebar, dove sparisce 
  */
+html[data-vt="login-home"]::view-transition-group(root) {
+  animation-duration: 0.85s;
+  animation-timing-function: ease;
+}
+
+html[data-vt="login-home"]::view-transition-group(dcs-logo) {
+  animation-duration: 1.1s;
+  animation-timing-function: cubic-bezier(.65, 0, .25, 1);
+}
+
+html[data-vt="login-home"]::view-transition-old(dcs-logo) {
+  animation: dcs-logo-vt-out 1.1s linear both;
+  mix-blend-mode: normal;
+}
+
+/* Lo slot di arrivo del logo */
+html[data-vt="login-home"]::view-transition-new(dcs-logo) {
+  animation: none;
+  opacity: 0;
+}
+
+/* sfumatura del logo durante la transizione */
+@keyframes dcs-logo-vt-out {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* dissolvenza senza animazione del logo per i browser che non supportano il View Transition API */
+html[data-vt="login-home-reduced"]::view-transition-group(root) {
+  animation-duration: 0.2s;
+}
+
+html[data-vt="login-home-reduced"]::view-transition-group(dcs-logo) {
+  display: none;
+}
+/* #endregion */
+
 @media (prefers-reduced-motion: reduce) {
   .animate-card-out, .animate-card-in {
     animation-duration: 0.01s;

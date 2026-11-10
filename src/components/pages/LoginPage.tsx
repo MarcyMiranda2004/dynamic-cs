@@ -1,4 +1,9 @@
-import {useState, type CSSProperties} from "react";
+import {useEffect, useRef, useState, type CSSProperties, type FormEvent} from "react";
+import {useNavigate} from "react-router-dom";
+import {LOGO_TRANSITION_NAME, navigateWithLogoFlight, prefersReducedMotion} from "@/utils/viewTransition";
+
+// Quanto resta il logo fermo al centro, dopo l'invio del form, prima di partire verso la home.
+const LEAVE_HOLD_MS = 1100;
 
 const EASE = 'ease-[cubic-bezier(.7,0,.2,1)]';
 const LOGO_SIZE = 'clamp(2.5rem, 11vw, 6rem)';
@@ -14,7 +19,9 @@ const LOGO_WRAPPER_BASE = 'absolute left-1/2 top-[36%] size-0 translate-x-[.685e
 const LOGO_WRAPPER_TRANSITION = `transition-transform duration-600 ${EASE} motion-reduce:transition-none`;
 const LOGO_WRAPPER_OPEN = 'group-data-[open=true]:translate-x-0 group-data-[open=true]:translate-y-[calc(14vh-230px)] sm:group-data-[open=true]:translate-y-[calc(14vh-266px)] group-data-[open=true]:scale-[.625] max-sm:group-data-[open=true]:scale-[.85] group-data-[open=true]:delay-650';
 
-const LOGO_ROW = 'isolate absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-baseline whitespace-nowrap font-semibold leading-none text-(--text)';
+const LOGO_WRAPPER_LEAVING = 'group-data-[open=true]:translate-x-0 group-data-[open=true]:translate-y-[14vh] group-data-[open=true]:scale-100 group-data-[open=true]:delay-150';
+
+const LOGO_ROW ='isolate absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-baseline whitespace-nowrap font-semibold leading-none text-(--text)';
 
 const D_LETTER_BASE = 'inline-block flex-none transition-colors duration-400';
 const D_LETTER_OPEN = 'group-data-[open=true]:text-dcs-red';
@@ -95,18 +102,27 @@ interface AuthCardProps {
     view: View;
     previousView: View | null;
     open: boolean;
+    leaving: boolean;
     onSwitch: (next: View) => void;
     onClose: () => void;
+    onAuthenticated: () => void;
 }
 
 // card di login, registrazione e recupero password
-const AuthCard = ({type, view, previousView, open, onSwitch, onClose}: AuthCardProps) => {
+const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, onAuthenticated}: AuthCardProps) => {
     const {eyebrow, title, submitLabel} = AUTH_CONTENT[type];
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        // Login e registrazione (con login automatico) portano alla home. Il recupero password no: manda solo le istruzioni.
+        // TODO: quando ci sarà Firebase Auth, chiamare onAuthenticated solo a operazione riuscita.
+        if (type !== 'recover') onAuthenticated();
+    };
 
     return (
         <form
-            inert={!open || view !== type}
-            onSubmit={(event) => event.preventDefault()}
+            inert={!open || leaving || view !== type}
+            onSubmit={handleSubmit}
             style={CARD_BACKGROUND}
             className={`${CARD} ${cardClass(type, view, previousView)}`}
         >
@@ -174,13 +190,26 @@ const AuthCard = ({type, view, previousView, open, onSwitch, onClose}: AuthCardP
 const LoginPage = () => {
     const [open, setOpen] = useState(false);
     const [view, setView] = useState<View>('login');
-    // Tiene traccia della vista lasciata dall'ultimo cambio: solo lei e la vista attuale animano,
-    // le altre card restano ferme nella loro posa di riposo.
     const [previousView, setPreviousView] = useState<View | null>(null);
+    const [leaving, setLeaving] = useState(false);
+    const navigate = useNavigate();
+    const leaveTimer = useRef<number | undefined>(undefined);
+
+    useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
     const switchView = (next: View) => {
         setPreviousView(view);
         setView(next);
+    };
+
+    // Accesso riuscito: la card sparisce, il logo va al centro, poi dissolvenza verso la home con il logo che vola nell'angolo.
+    const handleAuthenticated = () => {
+        if (leaving) return;
+        setLeaving(true);
+        leaveTimer.current = window.setTimeout(
+            () => navigateWithLogoFlight(navigate, '/'),
+            prefersReducedMotion() ? 0 : LEAVE_HOLD_MS,
+        );
     };
 
     return (
@@ -197,11 +226,12 @@ const LoginPage = () => {
             <div className="fixed inset-0 z-40 bg-(--bg)/50">
                 <div
                     style={{fontSize: 'var(--logo)'}}
-                    className={`${LOGO_WRAPPER_BASE} ${LOGO_WRAPPER_TRANSITION} ${LOGO_WRAPPER_OPEN}`}
+                    className={`${LOGO_WRAPPER_BASE} ${LOGO_WRAPPER_TRANSITION} ${leaving ? LOGO_WRAPPER_LEAVING : LOGO_WRAPPER_OPEN}`}
                 >
                     <h1 className="sr-only">Dynamic CS</h1>
 
-                    <div className={LOGO_ROW}>
+                    {/* Il nome di transizione  in uscita */}
+                    <div className={LOGO_ROW} style={{viewTransitionName: leaving ? LOGO_TRANSITION_NAME : undefined}}>
                         <Orbits className="size-[4.6667em] scale-[.625] opacity-0 group-data-[open=true]:scale-100 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-200" />
 
                         <div className={`relative top-[-0.06em] flex items-baseline transition-[top] duration-600 ${EASE} motion-reduce:transition-none group-data-[open=true]:top-0`}>
@@ -241,10 +271,11 @@ const LoginPage = () => {
                     Accedi o Registrati
                 </button>
 
-                <div className={`${CARDS_WRAPPER_BASE} ${CARDS_WRAPPER_TRANSITION} ${CARDS_WRAPPER_REVEAL}`}>
-                    <AuthCard type="login" view={view} previousView={previousView} open={open} onSwitch={switchView} onClose={() => setOpen(false)} />
-                    <AuthCard type="register" view={view} previousView={previousView} open={open} onSwitch={switchView} onClose={() => setOpen(false)} />
-                    <AuthCard type="recover" view={view} previousView={previousView} open={open} onSwitch={switchView} onClose={() => setOpen(false)} />
+                {/* In uscita si toglie il "reveal": il wrapper torna alla posa di base (trasparente e un po' più in basso) con la sua transizione. */}
+                <div className={`${CARDS_WRAPPER_BASE} ${CARDS_WRAPPER_TRANSITION} ${leaving ? '' : CARDS_WRAPPER_REVEAL}`}>
+                    <AuthCard type="login" view={view} previousView={previousView} open={open} leaving={leaving} onSwitch={switchView} onClose={() => setOpen(false)} onAuthenticated={handleAuthenticated} />
+                    <AuthCard type="register" view={view} previousView={previousView} open={open} leaving={leaving} onSwitch={switchView} onClose={() => setOpen(false)} onAuthenticated={handleAuthenticated} />
+                    <AuthCard type="recover" view={view} previousView={previousView} open={open} leaving={leaving} onSwitch={switchView} onClose={() => setOpen(false)} onAuthenticated={handleAuthenticated} />
                 </div>
             </div>
         </div>
