@@ -1,14 +1,12 @@
 import {useNavigate} from "react-router-dom";
 import {gamesSheets, type GameProps} from "@/types/games";
 import CardItems from "@/components/common/elements/CardItems";
-import Sidebar from "@/components/elements/Sidebar";
 
 const HomePage = () => {
     const navigate = useNavigate();
 
     return (
         <div className="dcs-container">
-            <Sidebar />
             <div>
                 <h1 className="text-2xl font-semibold">Benvenuto in Dynamic <span className="text-app-accent">CS</span></h1>
                 <span className="text-sm">scegli la tua scheda per iniziare</span>

@@ -1,20 +1,85 @@
 import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
+import {FileSpreadsheetIcon, HomeIcon, UsersIcon} from "lucide-react";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+
+interface SidebarButton {
+    id: string;
+    label: string;
+    icon: React.ReactElement;
+    destination: string;
+    disabled?: boolean;
+};
+
+// vertical = colonna della sidebar desktop, horizontal = barra in basso su mobile
+const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'}) => {
+    const navigate = useNavigate();
+    const [activeButton, setActiveButton] = useState<string>("home")
+    
+    const buttons: SidebarButton[] = [
+        {
+            id: "home",
+            label: "Home",
+            icon: <HomeIcon size={14} />,
+            destination: "/"
+        },
+        {
+            id: "characters",
+            label: "Personaggi",
+            icon: <UsersIcon size={14} />,
+            destination: "/characters"
+        },
+        {
+            id: "sheets",
+            label: "Schede",
+            icon: <FileSpreadsheetIcon size={14} />,
+            destination: "/sheets"
+        },
+    ];
+    return (
+        <div className={orientation === 'vertical' ? 'flex flex-col gap-4 w-14' : 'flex w-full justify-around gap-2'}>
+            {buttons.map((button: SidebarButton) => (
+                <button
+                    key={button.id}
+                    onClick={() => {
+                        navigate(button.destination);
+                        setActiveButton(button.id);
+                    }}
+                    aria-label={button.label}
+                    disabled={button.disabled ?? false}
+                    className={`flex flex-col items-center text-sm rounded-lg transition-all duration-200 cursor-pointer ${
+                        activeButton === button.id ? "shadow-sm shadow-dcs-red" : "hover:shadow-sm shadow-dcs-red"
+                    }`}
+                >
+                    {button.icon}
+                    {button.label}
+                </button>
+            ))}
+        </div>
+    );
+};
 
 const Sidebar = () => {
     return (
-        <aside>
-            <div
-                // slot di atterraggio del logo per l'animazione in transizione login => home
-                {...{[LOGO_SLOT_ATTRIBUTE]: ''}}
-                aria-hidden="true"
-                className="pointer-events-none fixed left-4 top-3 h-7 w-14"
-                style={{viewTransitionName: LOGO_TRANSITION_NAME}}
-            />
+        <>
+            {/* Desktop: aside direttamente figlio di shell  */}
+            <aside className="dcs-sidebar-container-desktop" aria-label="Navigazione principale">
+                {/* slot di atterraggio del logo per l'animazione in transizione login => home */}
+                <div
+                    {...{[LOGO_SLOT_ATTRIBUTE]: ''}}
+                    aria-hidden="true"
+                    className="h-7 w-14"
+                    style={{viewTransitionName: LOGO_TRANSITION_NAME}}
+                />
 
-            <div>
-                
-            </div>
-        </aside>
+                <SidebarContent orientation="vertical" />
+            </aside>
+
+            {/* Mobile: barra fissa in basso */}
+            <nav className="dcs-sidebar-container-mobile" aria-label="Navigazione principale">
+                <SidebarContent orientation="horizontal" />
+            </nav>
+        </>
     );
 };
 export default Sidebar;
