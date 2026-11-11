@@ -1,9 +1,96 @@
+import type {ActionLinkButton} from "@/types/global-types";
+import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
+import {ChevronRightIcon, SettingsIcon, UserIcon} from "lucide-react";
+import {useEffect, useRef, useState} from "react";
+import {useNavigate} from "react-router-dom";
+
+const LandingSpot = () => (
+    <div
+        {...{[LOGO_SLOT_ATTRIBUTE]: ''}}
+        aria-hidden="true"
+        className="h-7 w-14"
+        style={{viewTransitionName: LOGO_TRANSITION_NAME}}
+    />
+);
+
+const UserMenu = () => {
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // chiude il menu quando si clicca (o si tocca) fuori dallo stesso
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handlePointerDown = (event: PointerEvent) => {
+            if (!menuRef.current?.contains(event.target as Node)) setIsOpen(false);
+        };
+
+        document.addEventListener("pointerdown", handlePointerDown);
+        return () => document.removeEventListener("pointerdown", handlePointerDown);
+    }, [isOpen]);
+
+    const buttons: ActionLinkButton[] = [
+        {
+            id: "profile",
+            label: "Profilo",
+            icon: <UserIcon size={14} />,
+            destination: "/profile"
+        },
+        {
+            id: "settings",
+            label: "Impostazioni",
+            icon: <SettingsIcon size={14} />,
+            destination: "/settings"
+        }
+    ];
+
+    return (
+        <div
+            ref={menuRef}
+            onClick={() => setIsOpen(!isOpen)}
+            className={`relative flex items-center justify-between w-fit p-1 rounded-full border transition-all duration-200 cursor-pointer hover:border border-(--accent-border)
+                ${isOpen ? "border-(--accent)" : "border-(--border)"}
+            `}
+        >
+            <div className="flex items-center gap-2">
+                {/* Img profilo dell'utente */}
+                {/* <img src="" size={} className="" /> */}
+                <span className="flex items-center rounded-full p-2 border border-(--accent-border) bg-(--accent-bg)">
+                    <UserIcon size={18} />
+                </span>
+
+                {/* Username dell'utente */}
+                <p>Username</p>
+            </div>
+
+            <ChevronRightIcon size={14} className={`transition-all duration-200 mx-2 ${isOpen ? "rotate-90" : ""}`} />
+
+            {/* menu in absolute */}
+            <div className={`dcs-menu-absolute ${isOpen ? "dcs-menu-open" : "dcs-menu-close"}`}>
+                {buttons.map((button: ActionLinkButton) => (
+                    <button
+                        key={button.id}
+                        onClick={() => navigate(button.destination)}
+                        className="flex items-center gap-2 text-sm hover:bg-(--bg) transition-colors duration-200 cursor-pointer"
+                    >
+                        {button?.icon}
+                        {button.label}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 const Navbar = () => {
     
     return (
-        <nav>
+        <nav className="flex items-center justify-between p-4">
+            {/* slot di atterraggio del logo per l'animazione in transizione login => home */}
+            <LandingSpot />
 
+            <UserMenu />
         </nav>
     );
 };
