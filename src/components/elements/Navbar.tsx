@@ -1,16 +1,16 @@
+import DcsLogo from "@/components/elements/DcsLogo";
 import type {ActionLinkButton} from "@/types/global-types";
 import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
 import {ChevronRightIcon, SettingsIcon, UserIcon} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+// Logo nella navbar e slot di atterraggio dell'animazione in transizione login => home
+// Il riquadro ha la misura delle orbite (4.6667em), il nome di transizione sta sul logo al centro
 const LandingSpot = () => (
-    <div
-        {...{[LOGO_SLOT_ATTRIBUTE]: ''}}
-        aria-hidden="true"
-        className="h-7 w-14"
-        style={{viewTransitionName: LOGO_TRANSITION_NAME}}
-    />
+    <div role="img" aria-label="Dynamic CS" className="grid size-[4.6667em] place-items-center text-xs">
+        <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} />
+    </div>
 );
 
 const UserMenu = () => {

@@ -49,13 +49,8 @@ body {
   @apply rounded-lg shadow-lg bg-(--bg)/50 border border-(--border)  overflow-hidden overflow-y-auto transition-[max-height,opacity,transform] duration-200 p-2;
 };
 
-@utility dcs-menu-absolute {
-  @apply dcs-menu-base absolute -bottom-15 z-50 w-full mt-1 max-h-fit;        
-};
-
-@utility dcs-menu-fixed {
-  @apply dcs-menu-base fixed z-100000 max-h-fit;
-};
+@utility dcs-menu-absolute { @apply dcs-menu-base absolute -bottom-15 z-50 w-full mt-1 max-h-fit; };
+@utility dcs-menu-fixed { @apply dcs-menu-base fixed z-100000 max-h-fit; };
 
 @utility dcs-menu-open  { @apply max-h-1000 opacity-100 visible translate-y-0; };
 @utility dcs-menu-close { @apply max-h-0 opacity-0 invisible -translate-y-4 pointer-events-none; };
