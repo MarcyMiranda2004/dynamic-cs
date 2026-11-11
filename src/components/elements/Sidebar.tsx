@@ -47,8 +47,8 @@ const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'})
                     }}
                     aria-label={button.label}
                     disabled={button.disabled ?? false}
-                    className={`flex flex-col items-center text-sm rounded-lg transition-all duration-200 cursor-pointer ${
-                        activeButton === button.id ? "shadow-sm shadow-dcs-red" : "hover:shadow-sm shadow-dcs-red"
+                    className={`flex flex-col items-center text-[10px] font-semibold rounded-lg transition-all duration-200 cursor-pointer p-2 ${
+                        activeButton === button.id ? "shadow-[0_0_10px_2px] shadow-dcs-red  bg-(--bg)/25 font-bold" : "hover:shadow-sm shadow-dcs-red"
                     }`}
                 >
                     {button.icon}
