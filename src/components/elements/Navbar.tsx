@@ -6,19 +6,27 @@ import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 // Logo nella navbar e slot di atterraggio dell'animazione in transizione login => home
-// Il riquadro ha la misura delle orbite (4.6667em), il nome di transizione sta sul logo al centro
-const LandingSpot = () => (
-    <div role="img" aria-label="Dynamic CS" className="grid size-[4.6667em] place-items-center text-xs">
-        <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} />
-    </div>
-);
+const LandingSpot = ({ destination }: { destination: string }) => {
+    const navigate = useNavigate();
+    
+    return (
+        <div 
+            role="img" 
+            aria-label="Dynamic CS" 
+            className="grid size-[4.70em] place-items-center text-xs cursor-pointer"
+            onClick={() => navigate(`${destination ?? ""}`)}
+        >
+            <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} />
+        </div>
+    )
+};
 
 const UserMenu = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const menuRef = useRef<HTMLDivElement>(null);
 
-    // chiude il menu quando si clicca (o si tocca) fuori dallo stesso
+    // chiude il menu se clicco al di fuori
     useEffect(() => {
         if (!isOpen) return;
 
@@ -34,45 +42,48 @@ const UserMenu = () => {
         {
             id: "profile",
             label: "Profilo",
-            icon: <UserIcon size={14} />,
+            icon: <UserIcon size={16} />,
             destination: "/profile"
         },
         {
             id: "settings",
             label: "Impostazioni",
-            icon: <SettingsIcon size={14} />,
+            icon: <SettingsIcon size={16} />,
             destination: "/settings"
         }
     ];
 
     return (
-        <div
-            ref={menuRef}
-            onClick={() => setIsOpen(!isOpen)}
-            className={`relative flex items-center justify-between w-fit p-1 rounded-full border transition-all duration-200 cursor-pointer hover:border border-(--accent-border)
-                ${isOpen ? "border-(--accent)" : "border-(--border)"}
-            `}
-        >
-            <div className="flex items-center gap-2">
-                {/* Img profilo dell'utente */}
-                {/* <img src="" size={} className="" /> */}
-                <span className="flex items-center rounded-full p-2 border border-(--accent-border) bg-(--accent-bg)">
-                    <UserIcon size={18} />
-                </span>
+        <div ref={menuRef} className="relative w-fit">
+            <div
+                data-open={isOpen}
+                onClick={() => setIsOpen(!isOpen)}
+                className="dcs-menu-trigger"
+            >
+                <div className="flex items-center gap-2">
+                    {/* Img profilo dell'utente */}
+                    {/* <img src="" size={} className="" /> */}
+                    <span className="flex items-center rounded-full p-2 border border-(--accent-border) bg-(--accent-bg)">
+                        <UserIcon size={18} />
+                    </span>
 
-                {/* Username dell'utente */}
-                <p>Username</p>
+                    {/* Username dell'utente */}
+                    <p>Username</p>
+                </div>
+
+                <ChevronRightIcon size={14} className={`mx-2 ${isOpen ? "rotate-90" : ""}`} />
             </div>
 
-            <ChevronRightIcon size={14} className={`transition-all duration-200 mx-2 ${isOpen ? "rotate-90" : ""}`} />
-
-            {/* menu in absolute */}
-            <div className={`dcs-menu-absolute ${isOpen ? "dcs-menu-open" : "dcs-menu-close"}`}>
+            {/* menu: fratello del trigger e non suo figlio, così il trigger (z più alta) lo copre. Un clic su una voce lo chiude */}
+            <div
+                onClick={() => setIsOpen(false)}
+                className={`dcs-menu-under ${isOpen ? "dcs-menu-open" : "dcs-menu-close"} space-y-2`}
+            >
                 {buttons.map((button: ActionLinkButton) => (
                     <button
                         key={button.id}
                         onClick={() => navigate(button.destination)}
-                        className="flex items-center gap-2 text-sm hover:bg-(--bg) transition-colors duration-200 cursor-pointer"
+                        className="dcs-menu-item"
                     >
                         {button?.icon}
                         {button.label}
@@ -84,12 +95,12 @@ const UserMenu = () => {
 };
 
 const Navbar = () => {
-    
     return (
-        <nav className="flex items-center justify-between p-4">
+        <nav className="flex items-center justify-between py-4 px-8">
             {/* slot di atterraggio del logo per l'animazione in transizione login => home */}
-            <LandingSpot />
+            <LandingSpot destination="/" />
 
+            {/* menu utente */}
             <UserMenu />
         </nav>
     );

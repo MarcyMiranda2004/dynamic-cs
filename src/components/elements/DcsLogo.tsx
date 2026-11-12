@@ -1,10 +1,18 @@
 import type {ComponentProps} from "react";
 
-// Logo DCS: sigla con due orbite. Le misure sono in em, quindi si ridimensiona cambiando il font-size.
-// Stessa struttura e geometria del logo del login a transizione finita: nel volo login => home
-// il logo si riduce in modo uniforme fino a coincidere con questo.
-const DcsLogo = ({className = '', ...props}: ComponentProps<'span'>) => (
-    <span {...props} className={`relative isolate inline-block whitespace-nowrap font-semibold leading-none text-dcs-red ${className}`}>
+const SIZES = {
+    sm: 'text-sm',
+    md: 'text-3xl',
+    lg: 'text-7xl',
+};
+
+interface DcsLogoProps extends ComponentProps<'span'> {
+    label?: string;
+    size?: keyof typeof SIZES;
+}
+
+const DcsLogo = ({className = '', label, size = 'sm', ...props}: DcsLogoProps) => (
+    <span {...props} className={`relative isolate inline-block whitespace-nowrap font-semibold leading-none text-dcs-red ${SIZES[size]} ${className}`}>
         <svg
             viewBox="-52 -52 204 204"
             aria-hidden="true"
@@ -28,7 +36,7 @@ const DcsLogo = ({className = '', ...props}: ComponentProps<'span'>) => (
                 <circle cx="50" cy="-45" r="5" transform="rotate(300 50 50)" className="fill-dcs-red opacity-80" />
             </g>
         </svg>
-        DCS
+        {label ?? "DCS"}
     </span>
 );
 export default DcsLogo;

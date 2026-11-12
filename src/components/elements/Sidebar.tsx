@@ -3,8 +3,6 @@ import {FileSpreadsheetIcon, HomeIcon, UsersIcon} from "lucide-react";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-
-
 // vertical = colonna della sidebar desktop, horizontal = barra in basso su mobile
 const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'}) => {
     const navigate = useNavigate();
@@ -14,13 +12,13 @@ const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'})
         {
             id: "home",
             label: "Home",
-            icon: <HomeIcon size={14} />,
+            icon: <HomeIcon size={16} />,
             destination: "/"
         },
         {
             id: "characters",
             label: "Personaggi",
-            icon: <UsersIcon size={14} />,
+            icon: <UsersIcon size={16} />,
             destination: "/characters"
         },
         {
@@ -31,7 +29,11 @@ const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'})
         },
     ];
     return (
-        <div className={orientation === 'vertical' ? 'flex flex-col gap-4 w-18' : 'flex w-full justify-around gap-2'}>
+        <div className={
+            orientation === 'vertical' 
+                ? 'sticky top-4 flex flex-col gap-4 w-fit' 
+                : 'flex w-full justify-around gap-2'
+        }>
             {buttons.map((button: ActionLinkButton) => (
                 <button
                     key={button.id}
@@ -41,9 +43,8 @@ const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'})
                     }}
                     aria-label={button.label}
                     disabled={button?.disabled ?? false}
-                    className={`flex flex-col items-center text-[10px] font-semibold rounded-lg transition-all duration-200 cursor-pointer p-2 ${
-                        activeButton === button.id ? "shadow-[0_0_10px_2px] shadow-dcs-red  font-bold" : "hover:shadow-sm shadow-dcs-red"
-                    }`}
+                    aria-current={activeButton === button.id ? "page" : undefined}
+                    className="dcs-nav-button"
                 >
                     {button?.icon}
                     {button.label}

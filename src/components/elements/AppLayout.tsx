@@ -6,10 +6,10 @@ const SPOT = 'absolute rounded-full blur-spot max-sm:blur-[2.56rem]';
 
 // una macchia per angolo; su mobile sono molto più piccole per non coprire lo schermo
 const SPOTS = [
-    'size-180 -top-60 -left-60 bg-red-700 opacity-25 max-sm:size-70 max-sm:-top-20 max-sm:-left-20',
-    'size-160 -top-55 -right-55 bg-purple-700 opacity-20 max-sm:size-64 max-sm:-top-18 max-sm:-right-18',
-    'size-150 -bottom-50 -right-50 bg-emerald-700 opacity-25 max-sm:size-60 max-sm:-bottom-16 max-sm:-right-16',
-    'size-140 -bottom-45 -left-45 bg-amber-700 opacity-25 max-sm:size-56 max-sm:-bottom-14 max-sm:-left-14',
+    'size-180 -top-60 -left-60 bg-red-500 opacity-10 max-sm:size-70 max-sm:-top-20 max-sm:-left-20',
+    'size-160 -top-55 -right-55 bg-purple-500 opacity-10 max-sm:size-64 max-sm:-top-18 max-sm:-right-18',
+    'size-150 -bottom-50 -right-50 bg-emerald-500 opacity-10 max-sm:size-60 max-sm:-bottom-16 max-sm:-right-16',
+    'size-140 -bottom-45 -left-45 bg-amber-500 opacity-10 max-sm:size-56 max-sm:-bottom-14 max-sm:-left-14',
 ];
 
 const AppBackground = () => (
@@ -24,15 +24,17 @@ const AppLayout = () => {
         <div className="dcs-app-shell isolate">
             <AppBackground />
 
-            <Sidebar />
+            <header>
+                <Navbar />
+            </header>
 
-            <div className="dcs-app-content">
-                <header>
-                    <Navbar />
-                </header>
+            <div className="dcs-app-body">
+                <Sidebar />
 
-                <main className="dcs-main-container">
-                    <Outlet />
+                <main className="dcs-main-shell">
+                    <div className="cs-main-container">
+                        <Outlet />
+                    </div>
                 </main>
             </div>
         </div>

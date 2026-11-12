@@ -10,12 +10,16 @@ import SeventhSeaCharacterSheet from '@/sheets/seventhSea/SeventhSeaCharacterShe
 import VampireTheMasqueradeCharacterSheet from '@/sheets/vampireTheMasquerade/VampireTheMasqueradeCharacterSheet'
 import DungeonsAndDragonsCharacterSheet from '@/sheets/dungeonsAndDragons/DungeonsAndDragonsCharacterSheet'
 import PathfinderCharacterSheet from '@/sheets/pathfinder/PathfinderCharacterSheet'
+import ProfilePage from './components/pages/ProfilePage'
+import SettingsPage from './components/pages/SettingsPage'
+import SheetsPage from './components/pages/SheetsPage'
+import CharactersPage from './components/pages/CharactersPage'
 
 function App() {
 
   return (
     <>
-      {/* <ThemeToggle /> */}
+      <ThemeToggle />
       <Routes>
         {/* Il login sta fuori dal layout: niente sidebar né navbar */}
         <Route path='login' element={<LoginPage />} />
@@ -23,9 +27,15 @@ function App() {
         {/* Tutte le altre pagine stanno nella shell: sidebar a sinistra, navbar e contenuto a destra */}
         <Route element={<AppLayout />}>
           <Route path='*' element={<NotFoundPage />} />
+
+          <Route path='profile' element={<ProfilePage />} />
+          <Route path='settings' element={<SettingsPage />} />
+
           <Route path='/' element={<HomePage />} />
+          <Route path='characters' element={<CharactersPage />} />
 
           <Route path="sheets">
+            <Route index element={<SheetsPage />} />
             <Route path='cyberpunk-red' element={<CyberpunkRedCharacterSheet />} />
             <Route path='call-of-chtulhu-7e' element={<CallOfCthulhuCharacterSheet />} />
             <Route path='7th-sea-3e' element={<SeventhSeaCharacterSheet />} />

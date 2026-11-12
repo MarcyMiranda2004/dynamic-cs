@@ -112,6 +112,22 @@
 }
 /* #endregion */
 
+/* #region Fake Glass Tokens */
+:root {
+  --fake-glass-lift: 40%; /* quanto bianco si mescola al colore di fondo */
+  --fake-glass-bottom: color-mix(in srgb, white var(--fake-glass-lift), var(--bg));
+  --fake-glass-top: color-mix(in srgb, var(--accent) 24%, var(--fake-glass-bottom));
+  --fake-glass-border: color-mix(in srgb, var(--text) 12%, transparent);  --fake-glass-shadow: rgb(0 0 0 / 0.3);
+  --dcs-neon: #c2174a;
+}
+
+:root[data-theme="dark"] {
+  --fake-glass-lift: 10%;
+  --fake-glass-shadow: rgb(0 0 0 / 0.55);
+  --dcs-neon: #ff5c80;
+}
+/* #endregion */
+
 @theme {
   /* #region Base */
   --color-dcs-red: var(--accent);
