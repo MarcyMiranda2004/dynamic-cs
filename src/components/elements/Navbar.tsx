@@ -1,7 +1,7 @@
 import DcsLogo from "@/components/elements/DcsLogo";
 import type {ActionLinkButton} from "@/types/global-types";
 import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
-import {ChevronRightIcon, SettingsIcon, UserIcon} from "lucide-react";
+import {ChevronRightIcon, LogOutIcon, SettingsIcon, UserIcon} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -25,6 +25,7 @@ const UserMenu = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const menuRef = useRef<HTMLDivElement>(null);
+    const iconSize = 16;
 
     // chiude il menu se clicco al di fuori
     useEffect(() => {
@@ -42,14 +43,20 @@ const UserMenu = () => {
         {
             id: "profile",
             label: "Profilo",
-            icon: <UserIcon size={16} />,
+            icon: <UserIcon size={iconSize} />,
             destination: "/profile"
         },
         {
             id: "settings",
             label: "Impostazioni",
-            icon: <SettingsIcon size={16} />,
+            icon: <SettingsIcon size={iconSize} />,
             destination: "/settings"
+        },
+        {
+            id: "logout",
+            label: "Esci",
+            icon: <LogOutIcon size={iconSize} />,
+            destination: "/login"
         }
     ];
 
@@ -74,7 +81,7 @@ const UserMenu = () => {
                 <ChevronRightIcon size={14} className={`mx-2 ${isOpen ? "rotate-90" : ""}`} />
             </div>
 
-            {/* menu: fratello del trigger e non suo figlio, così il trigger (z più alta) lo copre. Un clic su una voce lo chiude */}
+            {/* menu */}
             <div
                 onClick={() => setIsOpen(false)}
                 className={`dcs-menu-under ${isOpen ? "dcs-menu-open" : "dcs-menu-close"} space-y-2`}

@@ -4,4 +4,5 @@ export interface ActionLinkButton {
     icon?: React.ReactElement;
     destination: string;
     disabled?: boolean;
+    function?: () => void;
 };
