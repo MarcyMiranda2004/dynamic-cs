@@ -1,7 +1,9 @@
-import {useEffect, useRef, useState, type CSSProperties, type FormEvent} from "react";
-import {useNavigate} from "react-router-dom";
+import {useEffect, useRef, useState, type CSSProperties, type SubmitEvent, } from "react";
+import {Navigate, useNavigate} from "react-router-dom";
 import {LOGO_TRANSITION_NAME, navigateWithLogoFlight, prefersReducedMotion} from "@/utils/viewTransition";
-import {login} from "@/config/firebaseConfig";
+import {auth, emailLogin, emailRegister, getAuthErrorMessage, login, passwordReset} from "@/config/firebaseConfig";
+import {EyeIcon, EyeOffIcon} from "lucide-react";
+
 // #region Style 
 const LEAVE_HOLD_MS = 1100;
 
@@ -10,7 +12,7 @@ const LOGO_SIZE = 'clamp(2.5rem, 11vw, 6rem)';
 
 const CARD = 'col-start-1 row-start-1 flex h-[34rem] flex-col self-start rounded-3xl border border-(--text)/12 p-4 text-(--text) shadow-2xl sm:p-6';
 const CARD_BACKGROUND: CSSProperties = {background: 'linear-gradient(to bottom, color-mix(in srgb, var(--accent) 24%, var(--bg)), var(--bg) 75%)'};
-const FIELD_CLASS = 'rounded-xl border border-(--text)/10 bg-(--text)/5 px-4 py-3 text-sm font-normal text-(--text) outline-none placeholder:text-(--text)/40 focus:border-(--accent)';
+const FIELD_CLASS = 'w-full rounded-xl border border-(--text)/10 bg-(--text)/5 px-4 py-3 text-sm font-normal text-(--text) outline-none placeholder:text-(--text)/40 focus:border-(--accent)';
 const FOOTER_LINK_CLASS = 'cursor-pointer transition hover:text-(--text)';
 
 const SPOT_BASE = 'rounded-full blur-spot animate-spot-grow absolute max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:blur-[2.56rem]';
@@ -114,16 +116,52 @@ interface AuthCardProps {
 const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, onAuthenticated}: AuthCardProps) => {
     const {eyebrow, title, submitLabel} = AUTH_CONTENT[type];
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [message, setMessage] = useState<{kind: 'error' | 'success', text: string} | null>(null);
+
+    const switchTo = (next: View) => {
+        setMessage(null);
+        setShowPassword(false);
+        onSwitch(next);
+    };
+
+    const run = async (action: () => Promise<unknown>) => {
+        setSubmitting(true);
+        setMessage(null);
+
+        try {
+            await action();
+            return true;
+        } catch (error) {
+            const text = getAuthErrorMessage(error);
+            if (text) setMessage({kind: 'error', text});
+            return false;
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // Login e registrazione (con login automatico) portano alla home. Il recupero password no: manda solo le istruzioni.
-        // TODO: quando ci sarà Firebase Auth, chiamare onAuthenticated solo a operazione riuscita.
-        if (type !== 'recover') onAuthenticated();
+        if (submitting) return;
+
+        if (type === 'recover') {
+            if (await run(() => passwordReset(email))) {
+                setMessage({kind: 'success', text: "Se l'indirizzo è registrato, riceverai un'email con le istruzioni per reimpostare la password."});
+            }
+            return;
+        }
+
+        const action = type === 'register' ? emailRegister : emailLogin;
+        if (await run(() => action(email, password))) onAuthenticated();
     };
 
     const handleGoogleLogin = async () => {
-        try { await login();} 
-        catch (error) { console.error(`[ERROR] ${error}`); };
+        if (submitting) return;
+        if (await run(login)) onAuthenticated();
     };
 
     return (
@@ -136,33 +174,71 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
             <span className="text-[10px] font-semibold uppercase tracking-[.2em] text-(--text)/60">{eyebrow}</span>
             <h2 className="mt-1 text-3xl font-bold leading-tight">{title}</h2>
 
-            {type === 'register' && (
-                <label className="mt-5 flex flex-col gap-2 text-xs font-semibold">
-                    Username
-                    <input type="text" required placeholder="Username" className={FIELD_CLASS} />
-                </label>
-            )}
-
             <div className={`${type === 'register' ? 'mt-4' : 'mt-5'} flex flex-col gap-2 text-xs font-semibold`}>
                 <label>Email</label>
-                <input type="email" required placeholder="nome@esempio.it" className={FIELD_CLASS} />
+                <input 
+                    type="email"
+                    placeholder="nome@esempio.it"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={FIELD_CLASS}
+                    required 
+                />
             </div>
 
             {type !== 'recover' && (
                 <div className="mt-4 flex flex-col gap-2 text-xs font-semibold">
                     <div className="flex items-center justify-between">
                         <label>Password</label>
+
                         {type === 'login' && (
-                            <button type="button" onClick={() => onSwitch('recover')} className="cursor-pointer transition text-(--text)/60 hover:text-(--text)">
+                            <button 
+                                type="button" 
+                                onClick={() => switchTo('recover')}
+                                className="cursor-pointer transition text-(--text)/60 hover:text-(--text)"
+                            >
                                 password dimenticata ?
                             </button>
                         )}
                     </div>
-                    <input type="password" required placeholder="••••••••" className={FIELD_CLASS} />
+
+                    <div className="relative flex items-center w-full">
+                        <input 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            autoComplete={type === 'register' ? "new-password" : "current-password"}
+                            minLength={type === 'register' ? 6 : undefined}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={`${FIELD_CLASS} pr-11`}
+                            required
+                        />
+
+                        <button
+                            type="button"
+                            aria-label={showPassword ? "Nascondi password" : "Mostra password"}
+                            aria-pressed={showPassword}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer p-2 text-(--text)/60 transition hover:text-(--text)"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => setShowPassword((visible) => !visible)}
+                        >
+                            {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+                        </button>
+                    </div>
                 </div>
             )}
 
-            <button type="submit" className="mt-4 cursor-pointer rounded-xl bg-(--accent) py-3 text-sm font-bold text-white shadow-[0_8px_30px_color-mix(in_srgb,var(--accent)_45%,transparent)] transition hover:brightness-110">
+            {message && (
+                <p
+                    role={message.kind === 'error' ? 'alert' : 'status'}
+                    className={`mt-3 text-xs leading-snug ${message.kind === 'error' ? 'text-red-400' : 'text-emerald-400'}`}
+                >
+                    {message.text}
+                </p>
+            )}
+
+            <button type="submit" disabled={submitting} className="mt-4 cursor-pointer rounded-xl bg-(--accent) py-3 text-sm font-bold text-white shadow-[0_8px_30px_color-mix(in_srgb,var(--accent)_45%,transparent)] transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60">
                 {submitLabel}
             </button>
 
@@ -188,10 +264,10 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
                 {type === 'login' ? (
                     <>
                         <button type="button" onClick={onClose} className={FOOTER_LINK_CLASS}>← Indietro</button>
-                        <button type="button" onClick={() => onSwitch('register')} className={FOOTER_LINK_CLASS}>Registrati →</button>
+                        <button type="button" onClick={() => switchTo('register')} className={FOOTER_LINK_CLASS}>Registrati →</button>
                     </>
                 ) : (
-                    <button type="button" onClick={() => onSwitch('login')} className={FOOTER_LINK_CLASS}>← Accedi</button>
+                    <button type="button" onClick={() => switchTo('login')} className={FOOTER_LINK_CLASS}>← Accedi</button>
                 )}
             </div>
         </form>
@@ -203,8 +279,11 @@ const LoginPage = () => {
     const [view, setView] = useState<View>('login');
     const [previousView, setPreviousView] = useState<View | null>(null);
     const [leaving, setLeaving] = useState(false);
+    
     const navigate = useNavigate();
     const leaveTimer = useRef<number | undefined>(undefined);
+
+   const [alreadySignedIn] = useState(() => auth.currentUser !== null);
 
     useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
@@ -213,7 +292,6 @@ const LoginPage = () => {
         setView(next);
     };
 
-    // Accesso riuscito: la card sparisce, il logo va al centro, poi dissolvenza verso la home con il logo che vola nell'angolo.
     const handleAuthenticated = () => {
         if (leaving) return;
         setLeaving(true);
@@ -222,6 +300,8 @@ const LoginPage = () => {
             prefersReducedMotion() ? 0 : LEAVE_HOLD_MS,
         );
     };
+
+    if (alreadySignedIn) return <Navigate to="/" replace />;
 
     return (
         <div className="group fixed inset-0 overflow-hidden" data-open={open} style={{'--logo': LOGO_SIZE} as CSSProperties}>
@@ -243,7 +323,7 @@ const LoginPage = () => {
 
                     {/* Il nome di transizione  in uscita */}
                     <div className={LOGO_ROW} style={{viewTransitionName: leaving ? LOGO_TRANSITION_NAME : undefined}}>
-                        <Orbits className="size-[4.6667em] scale-[.625] opacity-0 group-data-[open=true]:scale-100 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-200" />
+                        <Orbits className="size-[4.75em] scale-[.625] opacity-0 group-data-[open=true]:scale-100 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-200" />
 
                         <div className={`relative top-[-0.06em] flex items-baseline transition-[top] duration-600 ${EASE} motion-reduce:transition-none group-data-[open=true]:top-0`}>
                             <span aria-hidden="true" className={`${D_LETTER_BASE} ${D_LETTER_OPEN}`}>

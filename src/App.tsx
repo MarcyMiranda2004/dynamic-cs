@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import ThemeToggle from '@/components/common/theme/ThemeToggle'
 import NotFoundPage from './components/pages/NotFoundPage'
 import HomePage from '@/components/pages/HomePage'
@@ -23,8 +23,8 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currenUser) => {
-      setUser(currenUser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       setLoading(false);
     });
 
@@ -34,18 +34,22 @@ function App() {
   return (
     <>
       <ThemeToggle />
-      <Routes>
-        {/* Tutte le altre pagine stanno nella shell: sidebar a sinistra, navbar e contenuto a destra */}
-        {user ? (
-          <Route element={<AppLayout />}>
+
+     {!loading && (
+        <Routes>
+          {/* /login resta sempre raggiungibile: dopo l'accesso la pagina deve restare montata per concludere l'animazione di uscita */}
+          <Route path='login' element={<LoginPage />} />
+
+          {/* Tutte le altre pagine stanno nella shell (sidebar a sinistra, navbar e contenuto a destra) e richiedono l'accesso */}
+          <Route element={user ? <AppLayout /> : <Navigate to='/login' replace />}>
             <Route path='*' element={<NotFoundPage />} />
-          
+
             <Route path='profile' element={<ProfilePage />} />
             <Route path='settings' element={<SettingsPage />} />
-          
+
             <Route path='/' element={<HomePage />} />
             <Route path='characters' element={<CharactersPage />} />
-          
+
             <Route path="sheets">
               <Route index element={<SheetsPage />} />
               <Route path='cyberpunk-red' element={<CyberpunkRedCharacterSheet />} />
@@ -56,12 +60,8 @@ function App() {
               <Route path='pathfinder-2e' element={<PathfinderCharacterSheet />} />
             </Route>
           </Route>
-        ) : (
-          <>
-            <Route path='login' element={<LoginPage />} />
-          </>
-        )}
-      </Routes>
+        </Routes>
+      )}
     </>
   )
 }

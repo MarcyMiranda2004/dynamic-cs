@@ -91,9 +91,9 @@ const UserMenu = () => {
                 {buttons.map((button: ActionLinkButton) => (
                     <button
                         key={button.id}
-                        onClick={() => {
+                        onClick={async () => {
+                           if (button.function) await button.function();
                             navigate(button.destination);
-                            if (button.function) button.function();
                         }}
                         className="dcs-menu-item"
                     >

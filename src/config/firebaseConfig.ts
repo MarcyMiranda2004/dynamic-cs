@@ -1,6 +1,6 @@
-import {initializeApp} from "firebase/app";
+import {FirebaseError, initializeApp} from "firebase/app";
 import {getAnalytics} from "firebase/analytics";
-import {getAuth, GoogleAuthProvider, signInWithPopup, signOut} from 'firebase/auth';
+import {createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut} from 'firebase/auth';
 import {
   initializeFirestore,
   persistentLocalCache,
@@ -33,3 +33,41 @@ export const db = initializeFirestore(app, localCache);
 // login / logout
 export const login = () => signInWithPopup(auth, new GoogleAuthProvider());
 export const logout = () => signOut(auth);
+
+export const emailLogin = (email: string, password: string) =>
+  signInWithEmailAndPassword(auth, email.trim(), password);
+
+export const emailRegister = (email: string, password: string) =>
+  createUserWithEmailAndPassword(auth, email.trim(), password);
+
+export const passwordReset = (email: string) => sendPasswordResetEmail(auth, email.trim());
+
+// messaggi di errore tradotti
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  'auth/invalid-credential': 'Email o password non corretti.',
+  'auth/invalid-login-credentials': 'Email o password non corretti.',
+  'auth/wrong-password': 'Email o password non corretti.',
+  'auth/user-not-found': 'Email o password non corretti.',
+  'auth/invalid-email': "L'indirizzo email non è valido.",
+  'auth/missing-password': 'Inserisci la password.',
+  'auth/email-already-in-use': 'Esiste già un account con questa email.',
+  'auth/weak-password': 'La password deve avere almeno 6 caratteri.',
+  'auth/too-many-requests': 'Troppi tentativi. Riprova tra qualche minuto.',
+  'auth/network-request-failed': 'Connessione assente. Controlla la rete e riprova.',
+  'auth/user-disabled': 'Questo account è stato disattivato.',
+  'auth/popup-blocked': 'Il browser ha bloccato la finestra di Google. Consenti i popup e riprova.',
+  'auth/account-exists-with-different-credential': "Esiste già un account con questa email, ma con un altro metodo di accesso.",
+};
+
+const SILENT_AUTH_ERRORS = ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
+
+export const getAuthErrorMessage = (error: unknown): string | null => {
+  const code = error instanceof FirebaseError ? error.code : (error as {code?: unknown} | null)?.code;
+
+  if (typeof code === 'string') {
+    if (SILENT_AUTH_ERRORS.includes(code)) return null;
+    return AUTH_ERROR_MESSAGES[code] ?? 'Qualcosa è andato storto. Riprova.';
+  }
+
+  return 'Qualcosa è andato storto. Riprova.';
+};
