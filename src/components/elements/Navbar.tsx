@@ -1,4 +1,5 @@
 import DcsLogo from "@/components/elements/DcsLogo";
+import {logout} from "@/config/firebaseConfig";
 import type {ActionLinkButton} from "@/types/global-types";
 import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
 import {ChevronRightIcon, LogOutIcon, SettingsIcon, UserIcon} from "lucide-react";
@@ -16,7 +17,7 @@ const LandingSpot = ({ destination }: { destination: string }) => {
             className="grid size-[4.70em] place-items-center text-xs cursor-pointer"
             onClick={() => navigate(`${destination ?? ""}`)}
         >
-            <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} />
+            <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} className="dcs-logo-neon" />
         </div>
     )
 };
@@ -56,7 +57,8 @@ const UserMenu = () => {
             id: "logout",
             label: "Esci",
             icon: <LogOutIcon size={iconSize} />,
-            destination: "/login"
+            destination: "/login",
+            function: logout,
         }
     ];
 
@@ -89,7 +91,10 @@ const UserMenu = () => {
                 {buttons.map((button: ActionLinkButton) => (
                     <button
                         key={button.id}
-                        onClick={() => navigate(button.destination)}
+                        onClick={() => {
+                            navigate(button.destination);
+                            if (button.function) button.function();
+                        }}
                         className="dcs-menu-item"
                     >
                         {button?.icon}

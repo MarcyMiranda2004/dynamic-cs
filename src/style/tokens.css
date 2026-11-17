@@ -115,7 +115,7 @@
 /* #region Fake Glass Tokens */
 :root {
   --fake-glass-lift: 40%; /* quanto bianco si mescola al colore di fondo */
-  --fake-glass-tint: 16%; /* quanto accent entra nella parte alta della card (più basso = rosso più chiaro) */
+  --fake-glass-tint: 15%; /* quanto accent entra nella parte alta della card (più basso = rosso più chiaro) */
   --fake-glass-bottom: color-mix(in srgb, white var(--fake-glass-lift), var(--bg));
   --fake-glass-top: color-mix(in srgb, var(--accent) var(--fake-glass-tint), var(--fake-glass-bottom));
   --fake-glass-border: color-mix(in srgb, var(--text) 12%, transparent);  --fake-glass-shadow: rgb(0 0 0 / 0.3);
@@ -124,7 +124,7 @@
 
 :root[data-theme="dark"] {
   --fake-glass-lift: 10%;
-  --fake-glass-tint: 24%;
+  --fake-glass-tint: 25%;
   --fake-glass-shadow: rgb(0 0 0 / 0.55);
   --dcs-neon: #ff5c80;
 }
@@ -166,7 +166,7 @@
   --color-ui-head: var(--color-ui-accent);
   --color-ui-head-fg: var(--neutral-white);
   
-  --blur-spot: 4.2667rem;
+  --blur-spot: 4.25rem;
   /* #endregion */
 
   /* #region Cyberpunk Red */

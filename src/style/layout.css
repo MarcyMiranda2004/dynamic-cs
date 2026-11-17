@@ -86,7 +86,7 @@ body {
   &:hover:not([aria-current="page"]) {
     color: var(--text);
     border-color: color-mix(in srgb, var(--fake-glass-border) 60%, transparent);
-    box-shadow: 0 8px 16px -10px var(--fake-glass-shadow);
+    /* box-shadow: 0 8px 16px -10px var(--fake-glass-shadow); */
   }
 
   &:hover:not([aria-current="page"])::before {
@@ -101,13 +101,12 @@ body {
 
   &[aria-current="page"] {
     @apply font-bold text-(--text);
-    border-color: var(--fake-glass-border);
-    box-shadow: 0 8px 18px -12px var(--fake-glass-shadow);
+    box-shadow: 0 2px 18px -12px var(--fake-glass-shadow);
   }
 
   &[aria-current="page"]::before {
     opacity: 1;
-  }
+  };
 
   /* icona neon */
   &[aria-current="page"] > svg {
@@ -116,7 +115,7 @@ body {
     filter:
       drop-shadow(0 0 5px color-mix(in srgb, var(--dcs-neon) 80%, transparent))
       drop-shadow(0 0 12px color-mix(in srgb, var(--dcs-neon) 45%, transparent));
-  }
+  };
 
   /* barretta desktop messa left */
   &::after {
@@ -132,12 +131,12 @@ body {
     opacity: 0;
     transform: translateY(-50%) scaleY(0.2);
     transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+  };
 
   &[aria-current="page"]::after {
     opacity: 1;
     transform: translateY(-50%) scaleY(1);
-  }
+  };
 
   /* barra mobile messa top */
   @media (width < 40rem) {
@@ -148,21 +147,57 @@ body {
       height: 0.25rem;
       border-radius: 0 0 9999px 9999px;
       transform: translateX(-50%) scaleX(0.2);
-    }
+    };
 
     &[aria-current="page"]::after {
       transform: translateX(-50%) scaleX(1);
-    }
-  }
+    };
+  };
 
   @media (prefers-reduced-motion: reduce) {
     &::before,
     &::after,
     & > svg {
       transition: none;
-    }
-  }
+    };
+  };
 }
+/* #endregion */
+
+/* #region Logo: hover neon */
+@utility dcs-logo-neon {
+  transition: color 0.3s ease-out;
+
+  & .dcs-logo-ring,
+  & .dcs-logo-dot,
+  & .dcs-logo-orbit {
+    transition: fill 0.3s ease-out, stroke 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out;
+  };
+
+  @media (hover: hover) {
+    & > svg { pointer-events: auto; };
+
+    &:hover { color: var(--dcs-neon); };
+
+    &:hover .dcs-logo-ring {
+      stroke: color-mix(in srgb, var(--text) 60%, transparent);
+    };
+
+    &:hover .dcs-logo-dot {
+      fill: var(--dcs-neon);
+      opacity: 1;
+    };
+
+    &:hover .dcs-logo-orbit {
+      filter: drop-shadow(0 0 4px var(--dcs-neon)) drop-shadow(0 0 10px color-mix(in srgb, var(--dcs-neon) 55%, transparent));
+    };
+  };
+
+  @media (prefers-reduced-motion: reduce) {
+    &, & * { transition: none; };
+  };
+};
+
 /* #endregion */
 
 /* #region Menu e dropdown */

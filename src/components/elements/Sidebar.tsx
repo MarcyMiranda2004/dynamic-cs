@@ -1,13 +1,12 @@
 import type {ActionLinkButton} from "@/types/global-types";
 import {FileSpreadsheetIcon, HomeIcon, UsersIcon} from "lucide-react";
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 // vertical = colonna della sidebar desktop, horizontal = barra in basso su mobile
 const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'}) => {
     const navigate = useNavigate();
-    const [activeButton, setActiveButton] = useState<string>("home")
-    
+    const location = useLocation();
+
     const buttons: ActionLinkButton[] = [
         {
             id: "home",
@@ -28,28 +27,33 @@ const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'})
             destination: "/sheets"
         },
     ];
+
+    const matchButton = buttons.find((btn: ActionLinkButton) => btn.destination === location.pathname);
+    const activeButtonId = matchButton ? matchButton.id : null
+
     return (
         <div className={
             orientation === 'vertical' 
                 ? 'sticky top-4 flex flex-col gap-4 w-fit' 
                 : 'flex w-full justify-around gap-2'
         }>
-            {buttons.map((button: ActionLinkButton) => (
-                <button
-                    key={button.id}
-                    onClick={() => {
-                        navigate(button.destination);
-                        setActiveButton(button.id);
-                    }}
-                    aria-label={button.label}
-                    disabled={button?.disabled ?? false}
-                    aria-current={activeButton === button.id ? "page" : undefined}
-                    className="dcs-nav-button"
-                >
-                    {button?.icon}
-                    {button.label}
-                </button>
-            ))}
+            {buttons.map((button: ActionLinkButton) => { 
+                const isActive = activeButtonId === button.id;
+
+                return (
+                    <button
+                        key={button.id}
+                        onClick={() =>  navigate(button.destination)}
+                        aria-label={button.label}
+                        disabled={button?.disabled ?? false}
+                        aria-current={isActive ? "page" : undefined}
+                        className="dcs-nav-button"
+                    >
+                        {button?.icon}
+                        {button.label}
+                    </button>
+                );
+            })}
         </div>
     );
 };

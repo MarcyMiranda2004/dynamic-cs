@@ -1,8 +1,8 @@
 import {useEffect, useRef, useState, type CSSProperties, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 import {LOGO_TRANSITION_NAME, navigateWithLogoFlight, prefersReducedMotion} from "@/utils/viewTransition";
-
-// Quanto resta il logo fermo al centro, dopo l'invio del form, prima di partire verso la home.
+import {login} from "@/config/firebaseConfig";
+// #region Style 
 const LEAVE_HOLD_MS = 1100;
 
 const EASE = 'ease-[cubic-bezier(.7,0,.2,1)]';
@@ -42,6 +42,10 @@ const CARDS_WRAPPER_BASE = 'pointer-events-none absolute left-1/2 top-[calc(50%-
 const CARDS_WRAPPER_TRANSITION = 'transition duration-300 motion-reduce:transition-none';
 const CARDS_WRAPPER_REVEAL = 'group-data-[open=true]:pointer-events-auto group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-1100 group-data-[open=true]:duration-400';
 
+const CARD_SETTLED_CLASS = 'z-[1] translate-y-[22px] scale-[.96] brightness-[.62] opacity-0';
+// #endregion
+
+// #region Components 
 type View = 'login' | 'register' | 'recover';
 
 const AUTH_CONTENT: Record<View, {eyebrow: string, title: string, submitLabel: string}> = {
@@ -49,8 +53,6 @@ const AUTH_CONTENT: Record<View, {eyebrow: string, title: string, submitLabel: s
     register: {eyebrow: 'Registrazione', title: 'Crea il tuo archivio', submitLabel: 'Crea account'},
     recover: {eyebrow: 'Recupero password', title: 'Recupera il tuo archivio', submitLabel: 'Invia istruzioni'},
 };
-
-const CARD_SETTLED_CLASS = 'z-[1] translate-y-[22px] scale-[.96] brightness-[.62] opacity-0';
 
 const cardClass = (type: View, view: View, previousView: View | null) => {
     if (type === view) return previousView === null ? 'z-[3]' : 'animate-card-in';
@@ -119,6 +121,11 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
         if (type !== 'recover') onAuthenticated();
     };
 
+    const handleGoogleLogin = async () => {
+        try { await login();} 
+        catch (error) { console.error(`[ERROR] ${error}`); };
+    };
+
     return (
         <form
             inert={!open || leaving || view !== type}
@@ -167,7 +174,11 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
                         <span className="h-px flex-1 bg-(--text)/10" />
                     </div>
 
-                    <button type="button" className="cursor-pointer rounded-xl border border-(--text)/10 bg-(--text)/8 py-3 text-sm font-bold transition hover:bg-(--text)/12">
+                    <button 
+                        type="button" 
+                        className="cursor-pointer rounded-xl border border-(--text)/10 bg-(--text)/8 py-3 text-sm font-bold transition hover:bg-(--text)/12"
+                        onClick={handleGoogleLogin}
+                    >
                         Continua con Google
                     </button>
                 </>
@@ -282,3 +293,4 @@ const LoginPage = () => {
     );
 };
 export default LoginPage;
+// #endregion
