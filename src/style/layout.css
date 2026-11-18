@@ -46,8 +46,8 @@ body {
 };
 
 @utility dcs-sidebar-container-mobile {
-  @apply fixed inset-x-2 bottom-2 z-50 flex justify-around border-t border-(--text)/10 p-2 sm:hidden bg-(--bg)
-    rounded-full;
+  @apply fixed inset-x-2 bottom-2 z-50 flex justify-around border-t border-(--text)/10 p-2 sm:hidden bg-(--fake-glass-tint)
+    rounded-full py-3;
 };
 /* #endregion */
 
