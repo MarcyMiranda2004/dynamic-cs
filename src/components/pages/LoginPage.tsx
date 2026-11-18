@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState, type CSSProperties, type SubmitEvent, } from "react";
 import {Navigate, useNavigate} from "react-router-dom";
 import {LOGO_TRANSITION_NAME, navigateWithLogoFlight, prefersReducedMotion} from "@/utils/viewTransition";
-import {auth, emailLogin, emailRegister, getAuthErrorMessage, login, passwordReset} from "@/config/firebaseConfig";
+import {auth, emailLogin, emailRegister, getAuthErrorMessage, login, passwordReset, updateUsername} from "@/config/firebaseConfig";
 import {EyeIcon, EyeOffIcon} from "lucide-react";
 
 // #region Style 
@@ -128,6 +128,11 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
         onSwitch(next);
     };
 
+    const generateUsername = () => {
+        const username = email.split("@")[0]
+        return username;
+    };
+
     const run = async (action: () => Promise<unknown>) => {
         setSubmitting(true);
         setMessage(null);
@@ -156,7 +161,19 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
         }
 
         const action = type === 'register' ? emailRegister : emailLogin;
-        if (await run(() => action(email, password))) onAuthenticated();
+        const ok = await run (async () => {
+            await action(email, password);
+
+            if (type === "register") {
+                try {
+                    await updateUsername(generateUsername());
+                } catch (error) {
+                    console.error(`[ERROR] ${error}`)
+                };
+            };
+        });
+
+        if (ok) onAuthenticated();
     };
 
     const handleGoogleLogin = async () => {

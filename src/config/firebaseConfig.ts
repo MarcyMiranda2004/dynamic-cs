@@ -1,12 +1,12 @@
 import {FirebaseError, initializeApp} from "firebase/app";
-import {getAnalytics} from "firebase/analytics";
-import {createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut} from 'firebase/auth';
+import {createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithRedirect, signOut, updateProfile} from 'firebase/auth';
 import {
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
 } from 'firebase/firestore';
 
+// #region Initialization config
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -19,19 +19,20 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// #endregion
 
-// auth
-export const auth = getAuth(app);
-
+// #region DB and Storage
 // Cache offline on IndexedDB
 const tabManager = {tabManager: persistentMultipleTabManager()};
 const localCache = {localCache: persistentLocalCache(tabManager)};
 
 export const db = initializeFirestore(app, localCache);
+// #endregion
 
-// login / logout
-export const login = () => signInWithPopup(auth, new GoogleAuthProvider());
+// #region Authentication
+export const auth = getAuth(app);
+
+export const login = () => signInWithRedirect(auth, new GoogleAuthProvider());
 export const logout = () => signOut(auth);
 
 export const emailLogin = (email: string, password: string) =>
@@ -40,8 +41,26 @@ export const emailLogin = (email: string, password: string) =>
 export const emailRegister = (email: string, password: string) =>
   createUserWithEmailAndPassword(auth, email.trim(), password);
 
-export const passwordReset = (email: string) => sendPasswordResetEmail(auth, email.trim());
+export const passwordReset = (email: string) =>
+  sendPasswordResetEmail(auth, email.trim());
 
+export const updateUsername = async (username: string) => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Utente non autenticato");
+
+  const fixedUsername = username.trim();
+  if (!fixedUsername) throw new Error("Username non valido")
+
+  await updateProfile(auth.currentUser!, {displayName: fixedUsername});
+  return fixedUsername;
+};
+
+// export const updatePhoto = async (user) => {
+//   await updateProfile(auth.currentUser!, {photoURL: })
+// };
+// #®endregion
+
+// #region Error Handling
 // messaggi di errore tradotti
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/invalid-credential': 'Email o password non corretti.',
@@ -71,3 +90,4 @@ export const getAuthErrorMessage = (error: unknown): string | null => {
 
   return 'Qualcosa è andato storto. Riprova.';
 };
+// #endregion

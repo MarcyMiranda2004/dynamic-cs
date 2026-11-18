@@ -1,6 +1,7 @@
 import {Outlet} from "react-router-dom";
 import Navbar from "@/components/elements/Navbar";
 import Sidebar from "@/components/elements/Sidebar";
+import type {User} from "firebase/auth";
 
 const SPOT = 'absolute rounded-full blur-spot max-sm:blur-[2.56rem]';
 
@@ -19,13 +20,13 @@ const AppBackground = () => (
     </div>
 );
 
-const AppLayout = () => {
+const AppLayout = ({ user }: { user: User | null }) => {
     return (
         <div className="dcs-app-shell isolate">
             <AppBackground />
 
             <header>
-                <Navbar />
+                <Navbar user={user} />
             </header>
 
             <div className="dcs-app-body">

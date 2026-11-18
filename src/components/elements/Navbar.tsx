@@ -2,6 +2,7 @@ import DcsLogo from "@/components/elements/DcsLogo";
 import {logout} from "@/config/firebaseConfig";
 import type {ActionLinkButton} from "@/types/global-types";
 import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
+import type {User} from "firebase/auth";
 import {ChevronRightIcon, LogOutIcon, SettingsIcon, UserIcon} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -22,7 +23,7 @@ const LandingSpot = ({ destination }: { destination: string }) => {
     )
 };
 
-const UserMenu = () => {
+const UserMenu = ({ user }: { user: User | null }) => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const menuRef = useRef<HTMLDivElement>(null);
@@ -71,13 +72,16 @@ const UserMenu = () => {
             >
                 <div className="flex items-center gap-2">
                     {/* Img profilo dell'utente */}
-                    {/* <img src="" size={} className="" /> */}
-                    <span className="flex items-center rounded-full p-2 border border-(--accent-border) bg-(--accent-bg)">
-                        <UserIcon size={18} />
-                    </span>
-
+                    {user?.photoURL ? (
+                        <img src={user?.photoURL}  className="p-2 rounded-full size-18"/>
+                    ) : (
+                        <span className="flex items-center rounded-full p-2 border border-(--accent-border) bg-(--accent-bg)">
+                           <UserIcon size={18} />
+                        </span>
+                    )}
+                    
                     {/* Username dell'utente */}
-                    <p>Username</p>
+                    <p>{user?.displayName ?? user?.email?.split("@")[0] ?? "Username"}</p>
                 </div>
 
                 <ChevronRightIcon size={14} className={`mx-2 ${isOpen ? "rotate-90" : ""}`} />
@@ -106,14 +110,14 @@ const UserMenu = () => {
     );
 };
 
-const Navbar = () => {
+const Navbar = ({ user }: { user: User | null }) => {
     return (
         <nav className="flex items-center justify-between py-4 px-8">
             {/* slot di atterraggio del logo per l'animazione in transizione login => home */}
             <LandingSpot destination="/" />
 
             {/* menu utente */}
-            <UserMenu />
+            <UserMenu user={user} />
         </nav>
     );
 };

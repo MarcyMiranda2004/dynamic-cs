@@ -14,34 +14,22 @@ import ProfilePage from './components/pages/ProfilePage'
 import SettingsPage from './components/pages/SettingsPage'
 import SheetsPage from './components/pages/SheetsPage'
 import CharactersPage from './components/pages/CharactersPage'
-import {useEffect, useState} from 'react'
-import {onAuthStateChanged, type User} from 'firebase/auth'
-import {auth} from './config/firebaseConfig'
+import {useGetUser} from './hooks/auth/useGetUser'
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  },[]);
+  const user = useGetUser();
 
   return (
     <>
       <ThemeToggle />
 
-     {!loading && (
+     {!user.loading && (
         <Routes>
           {/* /login resta sempre raggiungibile: dopo l'accesso la pagina deve restare montata per concludere l'animazione di uscita */}
           <Route path='login' element={<LoginPage />} />
 
           {/* Tutte le altre pagine stanno nella shell (sidebar a sinistra, navbar e contenuto a destra) e richiedono l'accesso */}
-          <Route element={user ? <AppLayout /> : <Navigate to='/login' replace />}>
+          <Route element={user ? <AppLayout user={user.user} /> : <Navigate to='/login' replace />}>
             <Route path='*' element={<NotFoundPage />} />
 
             <Route path='profile' element={<ProfilePage />} />
