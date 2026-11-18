@@ -1,6 +1,6 @@
 /* Classi di struttura della pagina e contenitori. */
 
-/* #region Generico: struttura della pagina */
+/* #region Structure */
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -20,7 +20,7 @@ body {
 };
 /* #endregion */
 
-/* #region Generico: contenitori */
+/* #region Containers */
 @utility dcs-container {
   @apply container mx-auto p-4;
 };
@@ -46,11 +46,12 @@ body {
 };
 
 @utility dcs-sidebar-container-mobile {
-  @apply fixed inset-x-0 bottom-0 z-50 flex justify-around border-t border-(--text)/10 p-2 sm:hidden bg-(--bg);
+  @apply fixed inset-x-2 bottom-2 z-50 flex justify-around border-t border-(--text)/10 p-2 sm:hidden bg-(--bg)
+    rounded-full;
 };
 /* #endregion */
 
-/* #region Base effetto finto vetro */
+/* #region Fake Glass Base */
 @utility dcs-fake-glass {
   background: linear-gradient(to bottom, var(--fake-glass-top), var(--fake-glass-bottom) 75%);
   border: 1px solid var(--fake-glass-border);
