@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import ThemeToggle from '@/components/common/theme/ThemeToggle'
 import NotFoundPage from './components/pages/NotFoundPage'
 import HomePage from '@/components/pages/HomePage'
 import LoginPage from './components/pages/LoginPage'
@@ -21,15 +20,13 @@ function App() {
 
   return (
     <>
-      <ThemeToggle />
-
      {!user.loading && (
         <Routes>
           {/* /login resta sempre raggiungibile: dopo l'accesso la pagina deve restare montata per concludere l'animazione di uscita */}
           <Route path='login' element={<LoginPage />} />
 
           {/* Tutte le altre pagine stanno nella shell (sidebar a sinistra, navbar e contenuto a destra) e richiedono l'accesso */}
-          <Route element={user ? <AppLayout user={user.user} /> : <Navigate to='/login' replace />}>
+          <Route element={user.user ? <AppLayout user={user.user} /> : <Navigate to='/login' replace />}>
             <Route path='*' element={<NotFoundPage />} />
 
             <Route path='profile' element={<ProfilePage />} />

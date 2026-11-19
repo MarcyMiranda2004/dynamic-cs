@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState, type CSSProperties, type SubmitEvent, } from "react";
 import {Navigate, useNavigate} from "react-router-dom";
 import {LOGO_TRANSITION_NAME, navigateWithLogoFlight, prefersReducedMotion} from "@/utils/viewTransition";
-import {auth, emailLogin, emailRegister, getAuthErrorMessage, login, passwordReset, updateUsername} from "@/config/firebaseConfig";
+import {auth, emailLogin, emailRegister, getAuthErrorMessage, googleLogin, passwordReset, updateUsername} from "@/config/firebaseConfig";
 import {EyeIcon, EyeOffIcon} from "lucide-react";
 
 // #region Style 
@@ -178,7 +178,7 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
 
     const handleGoogleLogin = async () => {
         if (submitting) return;
-        if (await run(login)) onAuthenticated();
+        if (await run(googleLogin)) onAuthenticated();
     };
 
     return (

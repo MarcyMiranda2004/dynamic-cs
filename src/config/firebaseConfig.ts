@@ -1,5 +1,5 @@
 import {FirebaseError, initializeApp} from "firebase/app";
-import {createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithRedirect, signOut, updateProfile} from 'firebase/auth';
+import {createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, signOut, updateProfile} from 'firebase/auth';
 import {
   initializeFirestore,
   persistentLocalCache,
@@ -32,8 +32,17 @@ export const db = initializeFirestore(app, localCache);
 // #region Authentication
 export const auth = getAuth(app);
 
-export const login = () => signInWithRedirect(auth, new GoogleAuthProvider());
 export const logout = () => signOut(auth);
+
+export const googleLogin = () => {
+  const provider = new GoogleAuthProvider();
+
+  const signIn = import.meta.env.DEV
+    ? signInWithPopup(auth, provider)
+    : signInWithRedirect(auth, provider);
+
+  return signIn;
+}
 
 export const emailLogin = (email: string, password: string) =>
   signInWithEmailAndPassword(auth, email.trim(), password);

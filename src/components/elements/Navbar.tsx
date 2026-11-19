@@ -73,7 +73,7 @@ const UserMenu = ({ user }: { user: User | null }) => {
                 <div className="flex items-center gap-2">
                     {/* Img profilo dell'utente */}
                     {user?.photoURL ? (
-                        <img src={user?.photoURL}  className="p-2 rounded-full size-18"/>
+                        <img src={user?.photoURL}  className="rounded-full size-10"/>
                     ) : (
                         <span className="flex items-center rounded-full p-2 border border-(--accent-border) bg-(--accent-bg)">
                            <UserIcon size={18} />
