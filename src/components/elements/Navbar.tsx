@@ -15,10 +15,10 @@ const LandingSpot = ({ destination }: { destination: string }) => {
         <div 
             role="img" 
             aria-label="Dynamic CS" 
-            className="grid size-[4.70em] place-items-center text-xs cursor-pointer"
+            className="grid size-[5em] place-items-center text-xs dcs-fake-glass rounded-full"
             onClick={() => navigate(`${destination ?? ""}`)}
         >
-            <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} className="dcs-logo-neon" />
+            <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} className="dcs-logo-neon cursor-pointer" />
         </div>
     )
 };
