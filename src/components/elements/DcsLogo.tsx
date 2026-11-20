@@ -11,7 +11,6 @@ interface DcsLogoProps extends ComponentProps<'span'> {
     size?: keyof typeof SIZES;
 }
 
-// Hover neon, opt-in: <DcsLogo className="dcs-logo-neon" />. La classe è in layout.css (region "Logo: hover neon").
 const DcsLogo = ({className = '', label, size = 'sm', ...props}: DcsLogoProps) => (
     <span {...props} className={`relative isolate inline-block whitespace-nowrap font-semibold leading-none text-dcs-red ${SIZES[size]} ${className}`}>
         <svg
@@ -19,7 +18,7 @@ const DcsLogo = ({className = '', label, size = 'sm', ...props}: DcsLogoProps) =
             aria-hidden="true"
             className="pointer-events-none absolute left-1/2 top-1/2 -z-10 size-[4.75em] -translate-x-1/2 -translate-y-1/2 overflow-visible"
         >
-            {/* anelli fissi: tratto di 1px costante, qualunque sia la dimensione del logo */}
+            {/* anelli fissi */}
             <circle cx="50" cy="50" r="95" fill="none" strokeWidth="1" vectorEffect="non-scaling-stroke" className="dcs-logo-ring stroke-gray-600/40" />
             <circle cx="50" cy="50" r="60" fill="none" strokeWidth="1" vectorEffect="non-scaling-stroke" className="dcs-logo-ring stroke-gray-600/40" />
 
@@ -30,7 +29,7 @@ const DcsLogo = ({className = '', label, size = 'sm', ...props}: DcsLogoProps) =
                 <circle cx="50" cy="-10" r="5" transform="rotate(240 50 50)" className="dcs-logo-dot fill-dcs-red opacity-80" />
             </g>
 
-            {/* pallini dell'anello esterno, senso antiorario e sfalsati di 60° */}
+            {/* pallini dell'anello esterno, senso antiorario  */}
             <g className="dcs-logo-orbit transform-view origin-[50px_50px] animate-orbit-ccw motion-reduce:animate-none drop-shadow-[0_0_8px_var(--color-dcs-red)]">
                 <circle cx="50" cy="-45" r="5" transform="rotate(60 50 50)" className="dcs-logo-dot fill-dcs-red opacity-80" />
                 <circle cx="50" cy="-45" r="5" transform="rotate(180 50 50)" className="dcs-logo-dot fill-dcs-red opacity-80" />

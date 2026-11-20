@@ -21,14 +21,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 // #endregion
 
-// #region DB and Storage
-// Cache offline on IndexedDB
-const tabManager = {tabManager: persistentMultipleTabManager()};
-const localCache = {localCache: persistentLocalCache(tabManager)};
-
-export const db = initializeFirestore(app, localCache);
-// #endregion
-
 // #region Authentication
 export const auth = getAuth(app);
 
@@ -67,7 +59,19 @@ export const updateUsername = async (username: string) => {
 // export const updatePhoto = async (user) => {
 //   await updateProfile(auth.currentUser!, {photoURL: })
 // };
-// #®endregion
+// #endregion
+
+// #region Base DB and Storage
+// Cache offline on IndexedDB
+const tabManager = {tabManager: persistentMultipleTabManager()};
+const localCache = {localCache: persistentLocalCache(tabManager)};
+
+export const db = initializeFirestore(app, localCache);
+// #endregion
+
+// #region Firestore
+
+// #endregion
 
 // #region Error Handling
 // messaggi di errore tradotti

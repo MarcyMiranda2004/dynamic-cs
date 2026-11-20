@@ -1,5 +1,4 @@
-/* #region Generico: barra con i colori dei token ui-* */
-/* Barra di scorrimento generica: colori dai token ui-*, che ogni scheda imposta dal proprio tema */
+/* #region Generico */
 @utility scrollbar-ui {
   &::-webkit-scrollbar {
     @apply h-2 w-2 size-1 bg-transparent;
@@ -17,7 +16,6 @@
     @apply bg-ui-accent-glow;
   }
 
-  /* Firefox non legge ::-webkit-scrollbar: qui usa le proprietà standard. Chrome, che le legge entrambe, ignorerebbe ::-webkit-scrollbar */
   @supports not selector(::-webkit-scrollbar) {
     scrollbar-width: thin;
     scrollbar-color: var(--color-ui-accent) transparent;
@@ -25,13 +23,12 @@
 }
 /* #endregion */
 
-/* #region Scheda Cyberpunk Red: barra squadrata da terminale, con righe di scansione e fermi quadrati */
+/* #region Scheda Cyberpunk Red: barra squadrata da terminale */
 @utility scrollbar-cpr {
   &::-webkit-scrollbar {
     @apply h-2.5 w-2.5 bg-cpr-track;
   }
 
-  /* scrollbar-ui mette un raggio pieno sulle stesse barre (modali e pagina) e Chrome non lo sovrascrive sempre: !important lo azzera */
   &::-webkit-scrollbar-track {
     @apply bg-cpr-track;
     border-radius: 0 !important;
@@ -47,7 +44,6 @@
     @apply bg-cpr-thumb-hover;
   }
 
-  /* Estremità quadrate, senza freccia: restano due blocchi pieni in fondo e in cima */
   &::-webkit-scrollbar-button {
     @apply h-2.5 w-2.5 bg-cpr-red-deep;
   }

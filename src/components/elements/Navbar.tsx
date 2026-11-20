@@ -15,7 +15,7 @@ const LandingSpot = ({ destination }: { destination: string }) => {
         <div 
             role="img" 
             aria-label="Dynamic CS" 
-            className="grid size-[5em] place-items-center text-xs dcs-fake-glass rounded-full"
+            className="grid size-[5em] place-items-center text-xs rounded-full hover:dcs-fake-glass"
             onClick={() => navigate(`${destination ?? ""}`)}
         >
             <DcsLogo {...{[LOGO_SLOT_ATTRIBUTE]: ''}} style={{viewTransitionName: LOGO_TRANSITION_NAME}} className="dcs-logo-neon cursor-pointer" />

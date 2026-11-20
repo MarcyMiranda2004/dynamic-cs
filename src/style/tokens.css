@@ -114,8 +114,8 @@
 
 /* #region Fake Glass Tokens */
 :root {
-  --fake-glass-lift: 40%; /* quanto bianco si mescola al colore di fondo */
-  --fake-glass-tint: 15%; /* quanto accent entra nella parte alta della card (più basso = rosso più chiaro) */
+  --fake-glass-lift: 40%;
+  --fake-glass-tint: 15%;
   --fake-glass-bottom: color-mix(in srgb, white var(--fake-glass-lift), var(--bg));
   --fake-glass-top: color-mix(in srgb, var(--accent) var(--fake-glass-tint), var(--fake-glass-bottom));
   --fake-glass-border: color-mix(in srgb, var(--text) 12%, transparent);  --fake-glass-shadow: rgb(0 0 0 / 0.3);
