@@ -1,6 +1,6 @@
 /* Classi di struttura della pagina e contenitori. */
 
-/* #region Generico: struttura della pagina */
+/* #region Structure */
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -9,23 +9,302 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-}
+};
 
 html {
   @apply scrollbar-ui
-}
+};
 
 body {
   margin: 0;
+};
+/* #endregion */
+
+/* #region Form controls */
+/* font minimo per mobile */
+@media (pointer: coarse), (max-width: 1024px) {
+  input, select, textarea { font-size: 16px !important; }
 }
 /* #endregion */
 
-/* #region Generico: contenitori */
+/* #region Containers */
 @utility dcs-container {
-  @apply container mx-auto p-4
-}
+  @apply container mx-auto p-4;
+};
+
+@utility dcs-app-shell {
+  @apply flex min-h-svh flex-1 flex-col;
+};
+
+@utility dcs-app-body {
+  @apply flex min-w-0 flex-1 max-sm:pb-24;
+};
+
+@utility dcs-main-shell {
+  @apply w-full grow inset-0 ;
+};
 
 @utility dcs-main-container {
-  @apply dcs-container min-h-[100vh]
+  @apply dcs-container min-w-0 flex-1;
+};
+
+@utility dcs-sidebar-container-desktop {
+  @apply hidden shrink-0 p-4 sm:block;
+};
+
+@utility dcs-sidebar-container-mobile {
+  @apply w-fit mx-auto bg-linear-to-b from-(--fake-glass-bottom) to-(--bg)/90 to-75% fixed inset-x-2 bottom-2 z-50 flex justify-around p-2 sm:hidden rounded-full;
+};
+/* #endregion */
+
+/* #region Fake Glass Base */
+@utility dcs-fake-glass {
+  background: linear-gradient(to bottom, var(--fake-glass-top), var(--fake-glass-bottom) 75%);
+  border: 1px solid var(--fake-glass-border);
+  box-shadow: 0 14px 28px -12px var(--fake-glass-shadow);
 }
+/* #endregion */
+
+/* #region Nav-buttons */
+@utility dcs-nav-button {
+  @apply relative isolate flex flex-col items-center rounded-2xl border border-transparent p-2 text-xs font-semibold text-(--text)/75 cursor-pointer
+    transition-all duration-300 ease-out motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--dcs-neon);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, var(--fake-glass-top), var(--fake-glass-bottom) 75%);
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  };
+
+  & > svg {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s, filter 0.3s;
+  };
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:hover:not([aria-current="page"]) {
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--fake-glass-border) 60%, transparent);
+    /* box-shadow: 0 8px 16px -10px var(--fake-glass-shadow); */
+  }
+
+  &:hover:not([aria-current="page"])::before {
+    opacity: 0.55;
+  }
+
+  &:hover:not([aria-current="page"]) > svg {
+    transform: translateY(-1px) scale(1.12);
+    color: var(--dcs-neon);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--dcs-neon) 60%, transparent));
+  }
+
+  &[aria-current="page"] {
+    @apply font-bold text-(--text);
+    box-shadow: 0 2px 18px -12px var(--fake-glass-shadow);
+  }
+
+  &[aria-current="page"]::before {
+    opacity: 1;
+  };
+
+  /* icona neon */
+  &[aria-current="page"] > svg {
+    transform: scale(1.12);
+    color: var(--dcs-neon);
+    filter:
+      drop-shadow(0 0 5px color-mix(in srgb, var(--dcs-neon) 80%, transparent))
+      drop-shadow(0 0 12px color-mix(in srgb, var(--dcs-neon) 45%, transparent));
+  };
+
+  /* barretta desktop messa left */
+  &::after {
+    content: "";
+    position: absolute;
+    left: calc(-1rem - 1px);
+    top: 50%;
+    width: 0.25rem;
+    height: 1.5rem;
+    border-radius: 0 9999px 9999px 0;
+    background: var(--dcs-neon);
+    box-shadow: 0 0 6px var(--dcs-neon), 0 0 14px color-mix(in srgb, var(--dcs-neon) 60%, transparent);
+    opacity: 0;
+    transform: translateY(-50%) scaleY(0.2);
+    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  };
+
+  &[aria-current="page"]::after {
+    opacity: 1;
+    transform: translateY(-50%) scaleY(1);
+  };
+
+  /* formato mobile */
+  @media (width < 40rem) {
+    @apply px-6;
+
+    &::after {
+      left: 50%;
+      top: calc(-0.5rem - 1px);
+      width: 1.5rem;
+      height: 0.25rem;
+      border-radius: 0 0 9999px 9999px;
+      transform: translateX(-50%) scaleX(0.2);
+    };
+
+    &[aria-current="page"]::after {
+      transform: translateX(-50%) scaleX(1);
+    };
+
+    &[aria-current="page"] {
+      @apply rounded-full;
+    };
+  };
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before, &::after, & > svg { transition: none; };
+  };
+}
+/* #endregion */
+
+/* #region Logo: hover neon */
+@utility dcs-logo-neon {
+  transition: color 0.3s ease-out;
+
+  & .dcs-logo-ring, & .dcs-logo-dot, & .dcs-logo-orbit {
+    transition: fill 0.3s ease-out, stroke 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out;
+  };
+
+  @media (hover: hover) {
+    & > svg { pointer-events: auto; };
+
+    &:hover { color: var(--dcs-neon); };
+
+    &:hover .dcs-logo-ring {
+      stroke: color-mix(in srgb, var(--text) 60%, transparent);
+    };
+
+    &:hover .dcs-logo-dot {
+      fill: var(--dcs-neon);
+      opacity: 1;
+    };
+
+    &:hover .dcs-logo-orbit {
+      filter: drop-shadow(0 0 4px var(--dcs-neon)) drop-shadow(0 0 10px color-mix(in srgb, var(--dcs-neon) 55%, transparent));
+    };
+  };
+
+  @media (prefers-reduced-motion: reduce) {
+    &, & * { transition: none; };
+  };
+};
+
+/* #endregion */
+
+/* #region Menu e dropdown */
+@utility dcs-menu-base {
+  @apply dcs-fake-glass rounded-2xl overflow-hidden overflow-y-auto transition-[max-height,opacity,transform,translate] duration-200 p-2;
+};
+
+/* trigger del menu utente */
+@utility dcs-menu-trigger {
+  --trigger-border: color-mix(in srgb, var(--text) 18%, transparent);
+  --trigger-border-active: color-mix(in srgb, var(--text) 28%, transparent);
+
+  @apply relative isolate z-80! flex w-fit items-center justify-between rounded-full border border-(--trigger-border) p-1 text-(--text)/80 cursor-pointer
+    transition-all duration-300 ease-out motion-reduce:transition-none
+    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--dcs-neon);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, var(--fake-glass-top), var(--fake-glass-bottom) 75%);
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  };
+
+  & > svg {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s, filter 0.3s;
+  };
+
+  &:hover:not([data-open="true"]) {
+    color: var(--text);
+    border-color: var(--trigger-border-active);
+    box-shadow: 0 8px 16px -10px var(--fake-glass-shadow);
+  };
+
+  &:hover:not([data-open="true"])::before { opacity: 0.55; };
+
+  &[data-open="true"] {
+    color: var(--text);
+    border-color: var(--trigger-border-active);
+    box-shadow: 0 14px 10px -12px var(--fake-glass-shadow);
+  };
+
+  &[data-open="true"]::before { opacity: 1; };
+
+  &[data-open="true"] > svg {
+    color: var(--dcs-neon);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--dcs-neon) 80%, transparent));
+  };
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before, & > svg { transition: none; };
+  };
+};
+
+/* item del menu utente*/
+@utility dcs-menu-item {
+  @apply flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold text-(--text)/80 cursor-pointer
+    transition-[color,background-color] duration-200 motion-reduce:transition-none
+    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--dcs-neon);
+
+  & > svg {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s, filter 0.3s;
+  }
+
+  &:hover {
+    color: var(--text);
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+  }
+
+  &:hover > svg {
+    transform: scale(1.12);
+    color: var(--dcs-neon);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--dcs-neon) 60%, transparent));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & > svg {
+      transition: none;
+    }
+  }
+}
+
+/* base per menu in absolute */
+@utility dcs-menu-absolute { @apply dcs-menu-base absolute z-50 w-full mt-1 max-h-fit; };
+
+/* menu che esce da sotto il trigger */
+@utility dcs-menu-under {
+  @apply absolute z-30 inset-x-0 max-h-fit overflow-hidden overflow-y-auto rounded-2xl rounded-t-none p-2 pt-7 transition-all duration-200;
+  top: calc(100% - 1.2rem);
+  background: var(--fake-glass-bottom);
+  border: 1px solid var(--fake-glass-border);
+  box-shadow: 0 10px 24px -12px var(--fake-glass-shadow);
+};
+
+/* base per menu fixed */
+@utility dcs-menu-fixed { @apply dcs-menu-base fixed z-100000 max-h-fit; };
+
+/* stati per menu aperto e chiuso */
+@utility dcs-menu-open  { @apply max-h-1000 opacity-100 visible translate-y-0; };
+@utility dcs-menu-close { @apply max-h-0 opacity-0 invisible -translate-y-4 pointer-events-none; };
 /* #endregion */

@@ -1,20 +1,76 @@
-import {LOGO_SLOT_ATTRIBUTE, LOGO_TRANSITION_NAME} from "@/utils/viewTransition";
+import type {ActionLinkButton} from "@/types/global-types";
+import {FileSpreadsheetIcon, HomeIcon, UsersIcon} from "lucide-react";
+import {useLocation, useNavigate} from "react-router-dom";
+
+// vertical = colonna della sidebar desktop, horizontal = barra in basso su mobile
+const SidebarContent = ({orientation}: {orientation: 'vertical' | 'horizontal'}) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const buttons: ActionLinkButton[] = [
+        {
+            id: "home",
+            label: "Home",
+            icon: <HomeIcon size={16} />,
+            destination: "/"
+        },
+        {
+            id: "characters",
+            label: "Personaggi",
+            icon: <UsersIcon size={16} />,
+            destination: "/characters"
+        },
+        {
+            id: "sheets",
+            label: "Schede",
+            icon: <FileSpreadsheetIcon size={14} />,
+            destination: "/sheets"
+        },
+    ];
+
+    const matchButton = buttons.find((btn: ActionLinkButton) => btn.destination === location.pathname);
+    const activeButtonId = matchButton ? matchButton.id : null
+
+    return (
+        <div className={
+            orientation === 'vertical' 
+                ? 'sticky top-4 flex flex-col gap-4 w-fit' 
+                : 'flex w-full justify-around gap-2'
+        }>
+            {buttons.map((button: ActionLinkButton) => { 
+                const isActive = activeButtonId === button.id;
+
+                return (
+                    <button
+                        key={button.id}
+                        onClick={() =>  navigate(button.destination)}
+                        aria-label={button.label}
+                        disabled={button?.disabled ?? false}
+                        aria-current={isActive ? "page" : undefined}
+                        className="dcs-nav-button"
+                    >
+                        {button?.icon}
+                        {button.label}
+                    </button>
+                );
+            })}
+        </div>
+    );
+};
 
 const Sidebar = () => {
     return (
-        <aside>
-            <div
-                // slot di atterraggio del logo per l'animazione in transizione login => home
-                {...{[LOGO_SLOT_ATTRIBUTE]: ''}}
-                aria-hidden="true"
-                className="pointer-events-none fixed left-4 top-3 h-7 w-14"
-                style={{viewTransitionName: LOGO_TRANSITION_NAME}}
-            />
+        <>
+            {/* Desktop: aside direttamente figlio di shell  */}
+            <aside className="dcs-sidebar-container-desktop" aria-label="Navigazione principale">
+                <SidebarContent orientation="vertical" />
+            </aside>
 
-            <div>
-                
-            </div>
-        </aside>
+            {/* Mobile: barra fissa in basso */}
+            <nav className="dcs-sidebar-container-mobile" aria-label="Navigazione principale">
+                <SidebarContent orientation="horizontal" />
+            </nav>
+        </>
     );
 };
 export default Sidebar;

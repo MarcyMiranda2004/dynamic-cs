@@ -1,8 +1,10 @@
-import {useEffect, useRef, useState, type CSSProperties, type FormEvent} from "react";
-import {useNavigate} from "react-router-dom";
+import {useEffect, useRef, useState, type CSSProperties, type SubmitEvent, } from "react";
+import {Navigate, useNavigate} from "react-router-dom";
 import {LOGO_TRANSITION_NAME, navigateWithLogoFlight, prefersReducedMotion} from "@/utils/viewTransition";
+import {auth, emailLogin, emailRegister, getAuthErrorMessage, googleLogin, passwordReset, updateUsername} from "@/config/firebaseConfig";
+import {EyeIcon, EyeOffIcon} from "lucide-react";
 
-// Quanto resta il logo fermo al centro, dopo l'invio del form, prima di partire verso la home.
+// #region Style 
 const LEAVE_HOLD_MS = 1100;
 
 const EASE = 'ease-[cubic-bezier(.7,0,.2,1)]';
@@ -10,7 +12,7 @@ const LOGO_SIZE = 'clamp(2.5rem, 11vw, 6rem)';
 
 const CARD = 'col-start-1 row-start-1 flex h-[34rem] flex-col self-start rounded-3xl border border-(--text)/12 p-4 text-(--text) shadow-2xl sm:p-6';
 const CARD_BACKGROUND: CSSProperties = {background: 'linear-gradient(to bottom, color-mix(in srgb, var(--accent) 24%, var(--bg)), var(--bg) 75%)'};
-const FIELD_CLASS = 'rounded-xl border border-(--text)/10 bg-(--text)/5 px-4 py-3 text-sm font-normal text-(--text) outline-none placeholder:text-(--text)/40 focus:border-(--accent)';
+const FIELD_CLASS = 'w-full rounded-xl border border-(--text)/10 bg-(--text)/5 px-4 py-3 text-sm font-normal text-(--text) outline-none placeholder:text-(--text)/40 focus:border-(--accent)';
 const FOOTER_LINK_CLASS = 'cursor-pointer transition hover:text-(--text)';
 
 const SPOT_BASE = 'rounded-full blur-spot animate-spot-grow absolute max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:blur-[2.56rem]';
@@ -42,6 +44,10 @@ const CARDS_WRAPPER_BASE = 'pointer-events-none absolute left-1/2 top-[calc(50%-
 const CARDS_WRAPPER_TRANSITION = 'transition duration-300 motion-reduce:transition-none';
 const CARDS_WRAPPER_REVEAL = 'group-data-[open=true]:pointer-events-auto group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-1100 group-data-[open=true]:duration-400';
 
+const CARD_SETTLED_CLASS = 'z-[1] translate-y-[22px] scale-[.96] brightness-[.62] opacity-0';
+// #endregion
+
+// #region Components 
 type View = 'login' | 'register' | 'recover';
 
 const AUTH_CONTENT: Record<View, {eyebrow: string, title: string, submitLabel: string}> = {
@@ -49,8 +55,6 @@ const AUTH_CONTENT: Record<View, {eyebrow: string, title: string, submitLabel: s
     register: {eyebrow: 'Registrazione', title: 'Crea il tuo archivio', submitLabel: 'Crea account'},
     recover: {eyebrow: 'Recupero password', title: 'Recupera il tuo archivio', submitLabel: 'Invia istruzioni'},
 };
-
-const CARD_SETTLED_CLASS = 'z-[1] translate-y-[22px] scale-[.96] brightness-[.62] opacity-0';
 
 const cardClass = (type: View, view: View, previousView: View | null) => {
     if (type === view) return previousView === null ? 'z-[3]' : 'animate-card-in';
@@ -112,11 +116,69 @@ interface AuthCardProps {
 const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, onAuthenticated}: AuthCardProps) => {
     const {eyebrow, title, submitLabel} = AUTH_CONTENT[type];
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [message, setMessage] = useState<{kind: 'error' | 'success', text: string} | null>(null);
+
+    const switchTo = (next: View) => {
+        setMessage(null);
+        setShowPassword(false);
+        onSwitch(next);
+    };
+
+    const generateUsername = () => {
+        const username = email.split("@")[0]
+        return username;
+    };
+
+    const run = async (action: () => Promise<unknown>) => {
+        setSubmitting(true);
+        setMessage(null);
+
+        try {
+            await action();
+            return true;
+        } catch (error) {
+            const text = getAuthErrorMessage(error);
+            if (text) setMessage({kind: 'error', text});
+            return false;
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // Login e registrazione (con login automatico) portano alla home. Il recupero password no: manda solo le istruzioni.
-        // TODO: quando ci sarà Firebase Auth, chiamare onAuthenticated solo a operazione riuscita.
-        if (type !== 'recover') onAuthenticated();
+        if (submitting) return;
+
+        if (type === 'recover') {
+            if (await run(() => passwordReset(email))) {
+                setMessage({kind: 'success', text: "Se l'indirizzo è registrato, riceverai un'email con le istruzioni per reimpostare la password."});
+            }
+            return;
+        }
+
+        const action = type === 'register' ? emailRegister : emailLogin;
+        const ok = await run (async () => {
+            await action(email, password);
+
+            if (type === "register") {
+                try {
+                    await updateUsername(generateUsername());
+                } catch (error) {
+                    console.error(`[ERROR] ${error}`)
+                };
+            };
+        });
+
+        if (ok) onAuthenticated();
+    };
+
+    const handleGoogleLogin = async () => {
+        if (submitting) return;
+        if (await run(googleLogin)) onAuthenticated();
     };
 
     return (
@@ -129,33 +191,71 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
             <span className="text-[10px] font-semibold uppercase tracking-[.2em] text-(--text)/60">{eyebrow}</span>
             <h2 className="mt-1 text-3xl font-bold leading-tight">{title}</h2>
 
-            {type === 'register' && (
-                <label className="mt-5 flex flex-col gap-2 text-xs font-semibold">
-                    Username
-                    <input type="text" required placeholder="Username" className={FIELD_CLASS} />
-                </label>
-            )}
-
             <div className={`${type === 'register' ? 'mt-4' : 'mt-5'} flex flex-col gap-2 text-xs font-semibold`}>
                 <label>Email</label>
-                <input type="email" required placeholder="nome@esempio.it" className={FIELD_CLASS} />
+                <input 
+                    type="email"
+                    placeholder="nome@esempio.it"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={FIELD_CLASS}
+                    required 
+                />
             </div>
 
             {type !== 'recover' && (
                 <div className="mt-4 flex flex-col gap-2 text-xs font-semibold">
                     <div className="flex items-center justify-between">
                         <label>Password</label>
+
                         {type === 'login' && (
-                            <button type="button" onClick={() => onSwitch('recover')} className="cursor-pointer transition text-(--text)/60 hover:text-(--text)">
+                            <button 
+                                type="button" 
+                                onClick={() => switchTo('recover')}
+                                className="cursor-pointer transition text-(--text)/60 hover:text-(--text)"
+                            >
                                 password dimenticata ?
                             </button>
                         )}
                     </div>
-                    <input type="password" required placeholder="••••••••" className={FIELD_CLASS} />
+
+                    <div className="relative flex items-center w-full">
+                        <input 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            autoComplete={type === 'register' ? "new-password" : "current-password"}
+                            minLength={type === 'register' ? 6 : undefined}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={`${FIELD_CLASS} pr-11`}
+                            required
+                        />
+
+                        <button
+                            type="button"
+                            aria-label={showPassword ? "Nascondi password" : "Mostra password"}
+                            aria-pressed={showPassword}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer p-2 text-(--text)/60 transition hover:text-(--text)"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => setShowPassword((visible) => !visible)}
+                        >
+                            {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+                        </button>
+                    </div>
                 </div>
             )}
 
-            <button type="submit" className="mt-4 cursor-pointer rounded-xl bg-(--accent) py-3 text-sm font-bold text-white shadow-[0_8px_30px_color-mix(in_srgb,var(--accent)_45%,transparent)] transition hover:brightness-110">
+            {message && (
+                <p
+                    role={message.kind === 'error' ? 'alert' : 'status'}
+                    className={`mt-3 text-xs leading-snug ${message.kind === 'error' ? 'text-red-400' : 'text-emerald-400'}`}
+                >
+                    {message.text}
+                </p>
+            )}
+
+            <button type="submit" disabled={submitting} className="mt-4 cursor-pointer rounded-xl bg-(--accent) py-3 text-sm font-bold text-white shadow-[0_8px_30px_color-mix(in_srgb,var(--accent)_45%,transparent)] transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60">
                 {submitLabel}
             </button>
 
@@ -167,7 +267,11 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
                         <span className="h-px flex-1 bg-(--text)/10" />
                     </div>
 
-                    <button type="button" className="cursor-pointer rounded-xl border border-(--text)/10 bg-(--text)/8 py-3 text-sm font-bold transition hover:bg-(--text)/12">
+                    <button 
+                        type="button" 
+                        className="cursor-pointer rounded-xl border border-(--text)/10 bg-(--text)/8 py-3 text-sm font-bold transition hover:bg-(--text)/12"
+                        onClick={handleGoogleLogin}
+                    >
                         Continua con Google
                     </button>
                 </>
@@ -177,10 +281,10 @@ const AuthCard = ({type, view, previousView, open, leaving, onSwitch, onClose, o
                 {type === 'login' ? (
                     <>
                         <button type="button" onClick={onClose} className={FOOTER_LINK_CLASS}>← Indietro</button>
-                        <button type="button" onClick={() => onSwitch('register')} className={FOOTER_LINK_CLASS}>Registrati →</button>
+                        <button type="button" onClick={() => switchTo('register')} className={FOOTER_LINK_CLASS}>Registrati →</button>
                     </>
                 ) : (
-                    <button type="button" onClick={() => onSwitch('login')} className={FOOTER_LINK_CLASS}>← Accedi</button>
+                    <button type="button" onClick={() => switchTo('login')} className={FOOTER_LINK_CLASS}>← Accedi</button>
                 )}
             </div>
         </form>
@@ -192,8 +296,11 @@ const LoginPage = () => {
     const [view, setView] = useState<View>('login');
     const [previousView, setPreviousView] = useState<View | null>(null);
     const [leaving, setLeaving] = useState(false);
+    
     const navigate = useNavigate();
     const leaveTimer = useRef<number | undefined>(undefined);
+
+   const [alreadySignedIn] = useState(() => auth.currentUser !== null);
 
     useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
@@ -202,7 +309,6 @@ const LoginPage = () => {
         setView(next);
     };
 
-    // Accesso riuscito: la card sparisce, il logo va al centro, poi dissolvenza verso la home con il logo che vola nell'angolo.
     const handleAuthenticated = () => {
         if (leaving) return;
         setLeaving(true);
@@ -211,6 +317,8 @@ const LoginPage = () => {
             prefersReducedMotion() ? 0 : LEAVE_HOLD_MS,
         );
     };
+
+    if (alreadySignedIn) return <Navigate to="/" replace />;
 
     return (
         <div className="group fixed inset-0 overflow-hidden" data-open={open} style={{'--logo': LOGO_SIZE} as CSSProperties}>
@@ -232,7 +340,7 @@ const LoginPage = () => {
 
                     {/* Il nome di transizione  in uscita */}
                     <div className={LOGO_ROW} style={{viewTransitionName: leaving ? LOGO_TRANSITION_NAME : undefined}}>
-                        <Orbits className="size-[4.6667em] scale-[.625] opacity-0 group-data-[open=true]:scale-100 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-200" />
+                        <Orbits className="size-[4.75em] scale-[.625] opacity-0 group-data-[open=true]:scale-100 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-200" />
 
                         <div className={`relative top-[-0.06em] flex items-baseline transition-[top] duration-600 ${EASE} motion-reduce:transition-none group-data-[open=true]:top-0`}>
                             <span aria-hidden="true" className={`${D_LETTER_BASE} ${D_LETTER_OPEN}`}>
@@ -282,3 +390,4 @@ const LoginPage = () => {
     );
 };
 export default LoginPage;
+// #endregion
